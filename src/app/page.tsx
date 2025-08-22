@@ -6,7 +6,7 @@ import { ExamCountdown } from '@/components/ExamCountdown';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { StudyPlanner } from '@/components/StudyPlanner';
 
-const EXAM_DATE = new Date('2025-05-04T00:00:00');
+const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
 export default function Home() {
   const [completionPercentage, setCompletionPercentage] = useState(0);

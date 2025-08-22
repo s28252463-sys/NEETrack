@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { StudyPlanner } from '@/components/StudyPlanner';
+import { MockTests } from '@/components/MockTests';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -34,6 +35,7 @@ export default function Home() {
         <div className="grid gap-8 lg:grid-cols-5">
           <div className="lg:col-span-3 space-y-8">
             <SyllabusTracker onProgressChange={setCompletionPercentage} />
+            <MockTests />
           </div>
           <div className="lg:col-span-2 space-y-8">
             <ExamCountdown examDate={EXAM_DATE} />

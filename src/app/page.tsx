@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { StudyPlanner } from '@/components/StudyPlanner';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
+import { MotivationalQuote } from '@/components/MotivationalQuote';
 import {
   Sidebar,
   SidebarContent,
@@ -59,9 +60,12 @@ export default function Home() {
     switch (activePage) {
       case 'dashboard':
         return (
-          <div className="grid gap-8 md:grid-cols-2">
-            <ExamCountdown examDate={EXAM_DATE} />
-            <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+          <div className="space-y-8">
+            <MotivationalQuote />
+            <div className="grid gap-8 md:grid-cols-2">
+              <ExamCountdown examDate={EXAM_DATE} />
+              <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+            </div>
           </div>
         );
       case 'syllabus':

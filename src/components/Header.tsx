@@ -30,7 +30,7 @@ export function Header() {
           fontSize="28" 
           fontWeight="bold" 
           fill="hsl(var(--foreground))"
-          className="hidden group-data-[state=expanded]/sidebar-wrapper:block"
+          className="group-data-[state=collapsed]/sidebar-wrapper:hidden"
           >
           NEETrack
         </text>

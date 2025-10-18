@@ -1,23 +1,40 @@
 export function Header() {
   return (
-    <header className="flex items-center justify-center py-6 bg-card border-b">
+    <header className="flex items-center justify-center py-4 bg-card border-b">
       <div className="container mx-auto flex items-center justify-center">
         <svg
-          className="h-12 w-12 text-primary"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
+          className="h-16"
+          viewBox="0 0 200 60"
+          xmlns="http://www.w3.org/2000/svg"
         >
-            <path d="M12 2L14.39 8.36L21 9.27L15.55 14.47L17.21 21.02L12 17.77L6.79 21.02L8.45 14.47L3 9.27L9.61 8.36L12 2Z" fill="hsl(var(--accent))" stroke="hsl(var(--accent))" />
-            <path d="M12 2L14.39 8.36L21 9.27L15.55 14.47L17.21 21.02L12 17.77L6.79 21.02L8.45 14.47L3 9.27L9.61 8.36L12 2Z" stroke="hsl(var(--primary))" strokeWidth="1" />
-            <circle cx="12" cy="12" r="3" fill="hsl(var(--primary))" />
+          <defs>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style={{stopColor: 'hsl(var(--primary))', stopOpacity:1}} />
+              <stop offset="100%" style={{stopColor: 'hsl(var(--accent))', stopOpacity:1}} />
+            </linearGradient>
+          </defs>
+          <path 
+            d="M 10 30 a 20 20 0 1 0 40 0 a 20 20 0 1 0 -40 0" 
+            fill="url(#grad1)" 
+          />
+          <circle cx="30" cy="30" r="8" fill="white" />
+          <path 
+            d="M 30 22 a 8 8 0 0 1 0 16"
+            fill="none"
+            stroke="hsl(var(--primary))"
+            strokeWidth="2"
+          />
+           <text 
+            x="65" 
+            y="38" 
+            fontFamily="Poppins, sans-serif" 
+            fontSize="28" 
+            fontWeight="bold" 
+            fill="hsl(var(--foreground))"
+            >
+            NEETrack
+          </text>
         </svg>
-        <h1 className="ml-4 text-4xl font-headline font-bold text-gray-800 dark:text-gray-200">
-          NEETrack
-        </h1>
       </div>
     </header>
   );

@@ -59,13 +59,9 @@ export default function Home() {
     switch (activePage) {
       case 'dashboard':
         return (
-          <div className="grid gap-8 lg:grid-cols-5">
-            <div className="lg:col-span-3 space-y-8">
-              <ExamCountdown examDate={EXAM_DATE} />
-            </div>
-            <div className="lg:col-span-2 space-y-8">
-              <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
-            </div>
+          <div className="grid gap-8 md:grid-cols-2">
+            <ExamCountdown examDate={EXAM_DATE} />
+            <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
           </div>
         );
       case 'syllabus':

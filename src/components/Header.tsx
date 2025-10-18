@@ -16,7 +16,7 @@ export function Header() {
           d="M 10 30 a 20 20 0 1 0 40 0 a 20 20 0 1 0 -40 0" 
           fill="url(#grad1)" 
         />
-        <circle cx="30" cy="30" r="8" fill="white" />
+        <circle cx="30" cy="30" r="8" fill="hsl(var(--background))" />
         <path 
           d="M 30 22 a 8 8 0 0 1 0 16"
           fill="none"
@@ -30,7 +30,7 @@ export function Header() {
           fontSize="28" 
           fontWeight="bold" 
           fill="hsl(var(--foreground))"
-          className="hidden group-data-[state=expanded]/sidebar:block"
+          className="hidden group-data-[state=expanded]/sidebar-wrapper:block"
           >
           NEETrack
         </text>

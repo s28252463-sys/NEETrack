@@ -6,6 +6,7 @@ import { ExamCountdown } from '@/components/ExamCountdown';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { StudyPlanner } from '@/components/StudyPlanner';
 import { MockTests } from '@/components/MockTests';
+import { PomodoroTimer } from '@/components/PomodoroTimer';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -40,6 +41,7 @@ export default function Home() {
           <div className="lg:col-span-2 space-y-8">
             <ExamCountdown examDate={EXAM_DATE} />
             <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+            <PomodoroTimer />
           </div>
         </div>
       </main>

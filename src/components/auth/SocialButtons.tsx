@@ -4,6 +4,10 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { useAuth, useFirestore } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
@@ -15,18 +19,46 @@ const GoogleIcon = () => (
 export function SocialButtons() {
     const { toast } = useToast();
     const [isGooglePending, setIsGooglePending] = useState(false);
+    const auth = useAuth();
+    const firestore = useFirestore();
+    const router = useRouter();
 
-    const handleGoogleSignIn = () => {
-        // This is where Firebase logic will go.
+    const handleGoogleSignIn = async () => {
         setIsGooglePending(true);
-        // For now, just show a toast.
-        setTimeout(() => {
+        const provider = new GoogleAuthProvider();
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const user = result.user;
+            
+            // Check if user already exists in Firestore
+            const userDocRef = doc(firestore, "users", user.uid);
+            const userDoc = await getDoc(userDocRef);
+
+            if (!userDoc.exists()) {
+              // Create a new user profile in Firestore
+              await setDoc(userDocRef, {
+                uid: user.uid,
+                displayName: user.displayName,
+                email: user.email,
+                photoURL: user.photoURL,
+                createdAt: new Date().toISOString(),
+              });
+            }
+
             toast({
-                title: "Coming Soon!",
-                description: "Google Sign-In will be implemented soon.",
+                title: "Success!",
+                description: "Signed in with Google.",
             });
+            router.push('/');
+        } catch (error: any) {
+            toast({
+                variant: "destructive",
+                title: "Google Sign-In Failed",
+                description: error.message || "An unexpected error occurred.",
+            });
+        } finally {
             setIsGooglePending(false);
-        }, 1000);
+        }
     }
 
     return (

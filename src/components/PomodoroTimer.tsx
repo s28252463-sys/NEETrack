@@ -17,6 +17,11 @@ export function PomodoroTimer() {
   const [timeRemaining, setTimeRemaining] = useState(WORK_DURATION);
   const [isActive, setIsActive] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const getDuration = useCallback((currentMode: TimerMode) => {
     switch (currentMode) {
@@ -44,13 +49,11 @@ export function PomodoroTimer() {
         const nextMode = newSessionCount % 4 === 0 ? 'longBreak' : 'shortBreak';
         setMode(nextMode);
         setTimeRemaining(getDuration(nextMode));
-        // Optionally play a sound
-        new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play();
+        if (isClient) new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play();
       } else {
         setMode('work');
         setTimeRemaining(getDuration('work'));
-         // Optionally play a sound
-         new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play();
+        if (isClient) new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play();
       }
     }
 
@@ -59,7 +62,7 @@ export function PomodoroTimer() {
         clearInterval(interval);
       }
     };
-  }, [isActive, timeRemaining, mode, sessionCount, getDuration]);
+  }, [isActive, timeRemaining, mode, sessionCount, getDuration, isClient]);
 
   const handleToggle = () => {
     setIsActive(!isActive);

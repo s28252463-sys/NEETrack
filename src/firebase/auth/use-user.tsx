@@ -1,20 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { onAuthStateChanged, type User } from 'firebase/auth';
-import { useAuth } from '../provider';
-import { useDoc } from '../firestore/use-doc';
-import { doc } from 'firebase/firestore';
-import { useFirestore } from '../provider';
+import { FirebaseContext, useAuth } from '../provider';
 
 export function useUser() {
+  const context = useContext(FirebaseContext);
+  if (context === undefined) {
+    throw new Error('useUser must be used within a FirebaseProvider');
+  }
+  
   const auth = useAuth();
-  const firestore = useFirestore();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const userProfileRef = user ? doc(firestore, 'users', user.uid) : null;
-  const { data: userProfile, loading: profileLoading } = useDoc(userProfileRef);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -25,9 +23,5 @@ export function useUser() {
     return () => unsubscribe();
   }, [auth]);
 
-  return {
-    user,
-    userProfile,
-    loading: loading || profileLoading,
-  };
+  return { user, loading };
 }

@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useAuth, useFirestore } from '@/firebase';
-import { useRouter } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
 
 const formSchema = z.object({
@@ -25,7 +24,6 @@ export function SignupForm() {
   const { toast } = useToast();
   const auth = useAuth();
   const firestore = useFirestore();
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -42,9 +40,9 @@ export function SignupForm() {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
-      // Update profile and save to firestore in the background
-      await updateProfile(user, { displayName: values.name });
-      await setDoc(doc(firestore, "users", user.uid), {
+      // These can run in the background without blocking the UI
+      updateProfile(user, { displayName: values.name });
+      setDoc(doc(firestore, "users", user.uid), {
         uid: user.uid,
         displayName: values.name,
         email: values.email,
@@ -56,7 +54,7 @@ export function SignupForm() {
         title: "Account Created!",
         description: "You have been successfully signed up.",
       });
-      router.push('/');
+      // The redirect will be handled by the page now
     } catch (error: any) {
       toast({
         variant: "destructive",

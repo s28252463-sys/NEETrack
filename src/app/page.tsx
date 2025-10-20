@@ -16,10 +16,18 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarInset,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, Home as HomeIcon } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, Home as HomeIcon, User, LogOut } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
+import { useUser } from '@/firebase/auth/use-user';
+import { useRouter } from 'next/navigation';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { signOut } from 'firebase/auth';
+import { useAuth } from '@/firebase';
+import Link from 'next/link';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -27,6 +35,9 @@ export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [daysLeft, setDaysLeft] = useState<number>(0);
+  const { user, loading: userLoading } = useUser();
+  const router = useRouter();
+  const auth = useAuth();
 
   useEffect(() => {
     const calculateDaysLeft = () => {
@@ -42,6 +53,14 @@ export default function HomePage() {
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24);
     return () => clearInterval(interval);
   }, []);
+
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return 'U';
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('');
+  };
 
   const renderContent = () => {
     switch (activePage) {
@@ -100,10 +119,36 @@ export default function HomePage() {
                   </SidebarMenuItem>
               </SidebarMenu>
           </SidebarContent>
+          <SidebarFooter>
+            {user ? (
+              <div className="flex items-center gap-3 p-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
+                  <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
+                </Avatar>
+                <div className="flex flex-col group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+                  <span className="text-sm font-medium truncate">{user.displayName}</span>
+                  <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+                </div>
+                <Button onClick={() => signOut(auth)} variant="ghost" size="icon" className="ml-auto group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
+            ) : (
+              <div className="p-2">
+                <Button asChild className="w-full justify-start group-data-[state=collapsed]/sidebar-wrapper:justify-center group-data-[mobile=true]/sidebar:justify-start">
+                  <Link href="/login">
+                    <User className="h-5 w-5" />
+                    <span className="ml-2 group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Sign In</span>
+                  </Link>
+                </Button>
+              </div>
+            )}
+          </SidebarFooter>
       </Sidebar>
       <SidebarInset>
         <div className="flex flex-col min-h-screen">
-          <header className="flex items-center justify-start p-4 border-b md:hidden">
+          <header className="flex items-center justify-between p-2 border-b md:hidden">
               <SidebarTrigger />
               <div className="mx-auto">
                 <Header />

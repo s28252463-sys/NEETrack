@@ -7,6 +7,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
+import { useUser } from '@/firebase/auth/use-user';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
 
 interface SyllabusTrackerProps {
   onProgressChange: (progress: number) => void;
@@ -69,23 +72,44 @@ const SubjectAccordion = ({
 
 export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
   const totalTopics = useMemo(() => allTopics.length, []);
+  const { user } = useUser();
+  const firestore = useFirestore();
   
-  const [completedTopics, setCompletedTopics] = useState<Set<string>>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('completedTopics');
-      return saved ? new Set(JSON.parse(saved)) : new Set();
-    }
-    return new Set();
-  });
+  const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    async function loadProgress() {
+      if (user) {
+        const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
+        const docSnap = await getDoc(userProgressRef);
+        if (docSnap.exists()) {
+          setCompletedTopics(new Set(docSnap.data().completedTopics || []));
+        }
+      } else {
+        const saved = localStorage.getItem('completedTopics');
+        if (saved) {
+          setCompletedTopics(new Set(JSON.parse(saved)));
+        }
+      }
+      setIsLoading(false);
+    }
+    loadProgress();
+  }, [user, firestore]);
+  
   const progress = useMemo(() => (completedTopics.size / totalTopics) * 100, [completedTopics.size, totalTopics]);
 
   useEffect(() => {
-    onProgressChange(progress);
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('completedTopics', JSON.stringify(Array.from(completedTopics)));
+    if (!isLoading) {
+      onProgressChange(progress);
+      if (user) {
+        const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
+        setDoc(userProgressRef, { completedTopics: Array.from(completedTopics) }, { merge: true });
+      } else {
+        localStorage.setItem('completedTopics', JSON.stringify(Array.from(completedTopics)));
+      }
     }
-  }, [completedTopics, progress, onProgressChange]);
+  }, [completedTopics, progress, onProgressChange, user, firestore, isLoading]);
 
   const handleToggleTopic = useCallback((topicId: string, isCompleted: boolean) => {
     setCompletedTopics(prev => {
@@ -113,16 +137,20 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <Accordion type="multiple" className="w-full">
-          {syllabus.map(subject => (
-             <SubjectAccordion 
-              key={subject.id} 
-              subject={subject} 
-              completedTopics={completedTopics} 
-              handleToggleTopic={handleToggleTopic}
-            />
-          ))}
-        </Accordion>
+        {isLoading ? (
+          <p>Loading your progress...</p>
+        ) : (
+          <Accordion type="multiple" className="w-full">
+            {syllabus.map(subject => (
+              <SubjectAccordion 
+                key={subject.id} 
+                subject={subject} 
+                completedTopics={completedTopics} 
+                handleToggleTopic={handleToggleTopic}
+              />
+            ))}
+          </Accordion>
+        )}
       </CardContent>
     </Card>
   );

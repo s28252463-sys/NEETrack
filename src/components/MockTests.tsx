@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
+import { useUser } from '@/firebase/auth/use-user';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
 
 interface Test {
   id: string;
@@ -16,50 +19,77 @@ interface Test {
 }
 
 export function MockTests() {
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [tests, setTests] = useState<Test[]>([]);
   const [newTestName, setNewTestName] = useState('');
   const [newTestSyllabus, setNewTestSyllabus] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    let unsubscribe: () => void = () => {};
+    if (user) {
+      const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
+      unsubscribe = onSnapshot(testsColRef, (snapshot) => {
+        const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Test));
+        setTests(userTests);
+        setIsLoading(false);
+      });
+    } else {
+      // Handle logged-out state (e.g., from localStorage)
       const savedTests = localStorage.getItem('mockTests');
       if (savedTests) {
         setTests(JSON.parse(savedTests));
       }
+      setIsLoading(false);
     }
-  }, []);
-
+    return () => unsubscribe();
+  }, [user, firestore]);
+  
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    // Save to localStorage for logged-out users
+    if (!user) {
       localStorage.setItem('mockTests', JSON.stringify(tests));
     }
-  }, [tests]);
+  }, [tests, user]);
 
-  const handleAddTest = (e: React.FormEvent) => {
+  const handleAddTest = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTestName.trim() || !newTestSyllabus.trim()) return;
-    
-    const newTest: Test = {
-      id: crypto.randomUUID(),
+
+    const newTest = {
       name: newTestName,
       syllabus: newTestSyllabus,
       score: '',
     };
-    setTests(prev => [...prev, newTest]);
+    
+    if (user) {
+      const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
+      await addDoc(testsColRef, newTest);
+    } else {
+      setTests(prev => [...prev, { ...newTest, id: crypto.randomUUID() }]);
+    }
     setNewTestName('');
     setNewTestSyllabus('');
   };
 
   const handleScoreChange = (id: string, score: string) => {
-    setTests(prev =>
-      prev.map(test =>
-        test.id === id ? { ...test, score } : test
-      )
-    );
+    const updatedTests = tests.map(test => (test.id === id ? { ...test, score } : test));
+    setTests(updatedTests);
+
+    if (user) {
+      const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
+      updateDoc(testDocRef, { score });
+    }
   };
   
-  const handleDeleteTest = (id: string) => {
-    setTests(prev => prev.filter(test => test.id !== id));
+  const handleDeleteTest = async (id: string) => {
+    if (user) {
+      const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
+      await deleteDoc(testDocRef);
+    } else {
+      setTests(prev => prev.filter(test => test.id !== id));
+    }
   }
 
   return (
@@ -103,7 +133,9 @@ export function MockTests() {
         
         <div className="space-y-4">
             <h3 className="font-semibold font-headline text-lg">Your Tests</h3>
-            {tests.length === 0 ? (
+            {isLoading ? (
+              <p>Loading tests...</p>
+            ) : tests.length === 0 ? (
                 <p className="text-muted-foreground text-sm">You haven't added any tests yet.</p>
             ) : (
                 <ul className="space-y-4">

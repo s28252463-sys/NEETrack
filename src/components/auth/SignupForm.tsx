@@ -9,8 +9,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { useAuth, useFirestore } from '@/firebase';
+import { useRouter } from 'next/navigation';
+import { doc, setDoc } from 'firebase/firestore';
 
 const formSchema = z.object({
+  name: z.string().min(2, { message: 'Name must be at least 2 characters long.' }),
   email: z.string().email({ message: 'Please enter a valid email address.' }),
   password: z.string().min(8, { message: 'Password must be at least 8 characters long.' }),
 });
@@ -18,32 +23,66 @@ const formSchema = z.object({
 export function SignupForm() {
   const [isPending, setIsPending] = useState(false);
   const { toast } = useToast();
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       email: '',
       password: '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // This is where Firebase logic will go.
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsPending(true);
-    // For now, just show a toast.
-    setTimeout(() => {
-        toast({
-            title: "Coming Soon!",
-            description: "Sign up functionality will be implemented soon.",
-        });
-        setIsPending(false);
-    }, 1000);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+      const user = userCredential.user;
+
+      await updateProfile(user, { displayName: values.name });
+      
+      await setDoc(doc(firestore, "users", user.uid), {
+        uid: user.uid,
+        displayName: values.name,
+        email: values.email,
+        createdAt: new Date().toISOString(),
+      });
+
+      toast({
+        title: "Account Created!",
+        description: "You have been successfully signed up.",
+      });
+      router.push('/');
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Sign Up Failed",
+        description: error.message || "An unexpected error occurred.",
+      });
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input placeholder="John Doe" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <FormField
           control={form.control}
           name="email"

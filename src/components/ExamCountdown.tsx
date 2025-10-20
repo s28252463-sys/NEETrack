@@ -10,8 +10,15 @@ interface ExamCountdownProps {
 
 export function ExamCountdown({ examDate }: ExamCountdownProps) {
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) return;
+
     const calculateDaysLeft = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -27,7 +34,7 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
     const intervalId = setInterval(calculateDaysLeft, 1000 * 60 * 60); // Update every hour
     
     return () => clearInterval(intervalId);
-  }, [examDate]);
+  }, [examDate, isClient]);
 
   return (
     <Card className="shadow-lg">
@@ -38,7 +45,7 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
         <CalendarDays className="h-5 w-5 text-primary" />
       </CardHeader>
       <CardContent>
-        {daysLeft !== null ? (
+        {isClient && daysLeft !== null ? (
           <div className="text-4xl font-bold text-primary">{daysLeft}</div>
         ) : (
           <div className="text-4xl font-bold text-primary">-</div>

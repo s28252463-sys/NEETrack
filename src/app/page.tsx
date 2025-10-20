@@ -39,6 +39,11 @@ export default function HomePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -92,20 +97,22 @@ export default function HomePage() {
     }
   };
 
-  if (loading) {
+  if (!isClient || loading) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <div className="ml-4 space-y-2">
-                <Skeleton className="h-4 w-[250px]" />
-                <Skeleton className="h-4 w-[200px]" />
+            <div className="flex items-center">
+                <Skeleton className="h-12 w-12 rounded-full" />
+                <div className="ml-4 space-y-2">
+                    <Skeleton className="h-4 w-[250px]" />
+                    <Skeleton className="h-4 w-[200px]" />
+                </div>
             </div>
         </div>
     );
   }
   
   if (!user) {
-    return null; // or a loading spinner, as the redirect will handle it
+    return null; // The useEffect hook will handle the redirect
   }
 
   return (
@@ -143,13 +150,21 @@ export default function HomePage() {
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
-            {user ? (
+            {loading ? (
+                <div className="flex items-center gap-3 p-2">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <div className="flex flex-col gap-1 group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-32" />
+                    </div>
+                </div>
+            ) : user ? (
               <div className="flex items-center gap-3 p-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
                   <AvatarFallback>{getInitials(user.displayName)}</AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+                <div className="flex flex-col overflow-hidden group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
                   <span className="text-sm font-medium truncate">{user.displayName}</span>
                   <span className="text-xs text-muted-foreground truncate">{user.email}</span>
                 </div>

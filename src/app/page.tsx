@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
+import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { StudyPlanner } from '@/components/StudyPlanner';
@@ -23,7 +23,7 @@ import { MockTests } from '@/components/MockTests';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
-export default function Home() {
+export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [daysLeft, setDaysLeft] = useState<number>(0);
@@ -90,25 +90,25 @@ export default function Home() {
                   <SidebarMenuItem>
                       <SidebarMenuButton onClick={() => setActivePage('dashboard')} isActive={activePage === 'dashboard'} tooltip="Dashboard">
                           <HomeIcon />
-                          <span>Dashboard</span>
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Dashboard</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                       <SidebarMenuButton onClick={() => setActivePage('syllabus')} isActive={activePage === 'syllabus'} tooltip="Syllabus Tracker">
                           <ListChecks />
-                          <span>Syllabus Tracker</span>
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Syllabus Tracker</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                       <SidebarMenuButton onClick={() => setActivePage('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
                           <ClipboardList />
-                          <span>Mock Tests</span>
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Mock Tests</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                       <SidebarMenuButton onClick={() => setActivePage('pomodoro')} isActive={activePage === 'pomodoro'} tooltip="Pomodoro Timer">
                           <Timer />
-                          <span>Pomodoro Timer</span>
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Pomodoro Timer</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
               </SidebarMenu>
@@ -125,7 +125,14 @@ export default function Home() {
           <main className="container mx-auto px-4 py-8 flex-grow">
             {renderContent()}
           </main>
-          <footer className="text-center py-4 text-muted-foreground text-sm">
+          <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
+            <div>
+              <p>Found this tool helpful? Support the developers with a small donation!</p>
+              <p>Your contribution helps keep the app running and improving.</p>
+            </div>
+            <div className="flex justify-center">
+                <Image src="https://i.ibb.co/ypsx1fD/qr-code.png" alt="Donation QR Code" width={128} height={128} className="rounded-md" />
+            </div>
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

@@ -23,18 +23,10 @@ export function Header() {
           stroke="hsl(var(--primary))"
           strokeWidth="2"
         />
-         <text 
-          x="65" 
-          y="38" 
-          fontFamily="Poppins, sans-serif" 
-          fontSize="28" 
-          fontWeight="bold" 
-          fill="hsl(var(--foreground))"
-          className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline"
-          >
-          NEETrack
-        </text>
       </svg>
+      <span className="text-2xl font-headline font-bold text-gray-800 dark:text-gray-200 ml-2 group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+        NEETrack
+      </span>
     </div>
   );
 }

@@ -17,7 +17,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, Home as HomeIcon } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 
@@ -131,7 +131,7 @@ export default function HomePage() {
               <p>Your contribution helps keep the app running and improving.</p>
             </div>
             <div className="flex justify-center">
-                <Image src="https://i.ibb.co/ypsx1fD/qr-code.png" alt="Donation QR Code" width={128} height={128} className="rounded-md" />
+                <Image src="https://i.ibb.co/L6V2W0b/qr-code.png" alt="Donation QR Code" width={128} height={128} className="rounded-md" />
             </div>
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>

@@ -18,7 +18,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, Home as HomeIcon, User, LogOut } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { signOut } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -35,9 +36,15 @@ export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [daysLeft, setDaysLeft] = useState<number>(0);
-  const { user, loading: userLoading } = useUser();
+  const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
 
   useEffect(() => {
     const calculateDaysLeft = () => {
@@ -84,6 +91,22 @@ export default function HomePage() {
         return <div>Dashboard</div>;
     }
   };
+
+  if (loading) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="ml-4 space-y-2">
+                <Skeleton className="h-4 w-[250px]" />
+                <Skeleton className="h-4 w-[200px]" />
+            </div>
+        </div>
+    );
+  }
+  
+  if (!user) {
+    return null; // or a loading spinner, as the redirect will handle it
+  }
 
   return (
     <div className="flex min-h-screen bg-background text-foreground">

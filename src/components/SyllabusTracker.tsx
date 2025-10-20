@@ -80,16 +80,21 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
 
   useEffect(() => {
     async function loadProgress() {
-      if (user) {
+      setIsLoading(true);
+      if (user && firestore) {
         const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
         const docSnap = await getDoc(userProgressRef);
         if (docSnap.exists()) {
           setCompletedTopics(new Set(docSnap.data().completedTopics || []));
+        } else {
+            setCompletedTopics(new Set());
         }
-      } else {
+      } else if (typeof window !== 'undefined') {
         const saved = localStorage.getItem('completedTopics');
         if (saved) {
           setCompletedTopics(new Set(JSON.parse(saved)));
+        } else {
+            setCompletedTopics(new Set());
         }
       }
       setIsLoading(false);
@@ -97,16 +102,17 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
     loadProgress();
   }, [user, firestore]);
   
-  const progress = useMemo(() => (completedTopics.size / totalTopics) * 100, [completedTopics.size, totalTopics]);
+  const progress = useMemo(() => (totalTopics > 0 ? (completedTopics.size / totalTopics) * 100 : 0), [completedTopics.size, totalTopics]);
 
   useEffect(() => {
     if (!isLoading) {
       onProgressChange(progress);
-      if (user) {
+      const dataToSave = Array.from(completedTopics);
+      if (user && firestore) {
         const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-        setDoc(userProgressRef, { completedTopics: Array.from(completedTopics) }, { merge: true });
-      } else {
-        localStorage.setItem('completedTopics', JSON.stringify(Array.from(completedTopics)));
+        setDoc(userProgressRef, { completedTopics: dataToSave }, { merge: true });
+      } else if (typeof window !== 'undefined') {
+        localStorage.setItem('completedTopics', JSON.stringify(dataToSave));
       }
     }
   }, [completedTopics, progress, onProgressChange, user, firestore, isLoading]);

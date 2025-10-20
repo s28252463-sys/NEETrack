@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -52,6 +53,7 @@ export default function HomePage() {
   }, [user, loading, router]);
 
   useEffect(() => {
+    if (!isClient) return;
     const calculateDaysLeft = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -64,7 +66,7 @@ export default function HomePage() {
     calculateDaysLeft();
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24);
     return () => clearInterval(interval);
-  }, []);
+  }, [isClient]);
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -75,6 +77,9 @@ export default function HomePage() {
   };
 
   const renderContent = () => {
+    if (!isClient) {
+      return null;
+    }
     switch (activePage) {
       case 'dashboard':
         return (

@@ -19,7 +19,7 @@ interface Test {
 }
 
 export function MockTests() {
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const firestore = useFirestore();
   const [tests, setTests] = useState<Test[]>([]);
   const [newTestName, setNewTestName] = useState('');
@@ -28,11 +28,17 @@ export function MockTests() {
 
   useEffect(() => {
     let unsubscribe: () => void = () => {};
-    if (user) {
+    if (userLoading) return; // Wait until user status is known
+    
+    setIsLoading(true);
+    if (user && firestore) {
       const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
       unsubscribe = onSnapshot(testsColRef, (snapshot) => {
         const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Test));
         setTests(userTests);
+        setIsLoading(false);
+      }, (error) => {
+        console.error("Error fetching mock tests from Firestore:", error);
         setIsLoading(false);
       });
     } else {
@@ -44,14 +50,14 @@ export function MockTests() {
       setIsLoading(false);
     }
     return () => unsubscribe();
-  }, [user, firestore]);
+  }, [user, firestore, userLoading]);
   
   useEffect(() => {
-    // Save to localStorage for logged-out users
-    if (!user) {
+    // Save to localStorage for logged-out users, only after initial load
+    if (!user && !isLoading) {
       localStorage.setItem('mockTests', JSON.stringify(tests));
     }
-  }, [tests, user]);
+  }, [tests, user, isLoading]);
 
   const handleAddTest = async (e: React.FormEvent) => {
     e.preventDefault();

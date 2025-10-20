@@ -72,7 +72,7 @@ const SubjectAccordion = ({
 
 export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
   const totalTopics = useMemo(() => allTopics.length, []);
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const firestore = useFirestore();
   
   const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
@@ -80,16 +80,22 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
 
   useEffect(() => {
     async function loadProgress() {
+      if (userLoading) return; // Wait until user state is resolved
       setIsLoading(true);
       if (user && firestore) {
         const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-        const docSnap = await getDoc(userProgressRef);
-        if (docSnap.exists()) {
-          setCompletedTopics(new Set(docSnap.data().completedTopics || []));
-        } else {
+        try {
+            const docSnap = await getDoc(userProgressRef);
+            if (docSnap.exists()) {
+              setCompletedTopics(new Set(docSnap.data().completedTopics || []));
+            } else {
+                setCompletedTopics(new Set());
+            }
+        } catch(e) {
+            console.error("Error loading syllabus progress from Firestore:", e);
             setCompletedTopics(new Set());
         }
-      } else if (typeof window !== 'undefined') {
+      } else {
         const saved = localStorage.getItem('completedTopics');
         if (saved) {
           setCompletedTopics(new Set(JSON.parse(saved)));
@@ -100,20 +106,21 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
       setIsLoading(false);
     }
     loadProgress();
-  }, [user, firestore]);
+  }, [user, firestore, userLoading]);
   
   const progress = useMemo(() => (totalTopics > 0 ? (completedTopics.size / totalTopics) * 100 : 0), [completedTopics.size, totalTopics]);
 
   useEffect(() => {
-    if (!isLoading) {
-      onProgressChange(progress);
-      const dataToSave = Array.from(completedTopics);
-      if (user && firestore) {
-        const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-        setDoc(userProgressRef, { completedTopics: dataToSave }, { merge: true });
-      } else if (typeof window !== 'undefined') {
-        localStorage.setItem('completedTopics', JSON.stringify(dataToSave));
-      }
+    // Prevent saving initial empty state before data is loaded
+    if (isLoading) return; 
+
+    onProgressChange(progress);
+    const dataToSave = Array.from(completedTopics);
+    if (user && firestore) {
+      const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
+      setDoc(userProgressRef, { completedTopics: dataToSave }, { merge: true });
+    } else {
+      localStorage.setItem('completedTopics', JSON.stringify(dataToSave));
     }
   }, [completedTopics, progress, onProgressChange, user, firestore, isLoading]);
 

@@ -131,7 +131,7 @@ export default function HomePage() {
               <p>Your contribution helps keep the app running and improving.</p>
             </div>
             <div className="flex justify-center">
-                <Image src="https://i.ibb.co/L6V2W0b/qr-code.png" alt="Donation QR Code" width={128} height={128} className="rounded-md" />
+                <Image src="https://8upload.com/image/68f5f647ac27a/qr.jpg" alt="Donation QR Code" width={128} height={128} className="rounded-md" />
             </div>
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>

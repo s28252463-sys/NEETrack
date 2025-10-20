@@ -17,7 +17,7 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, Home as HomeIcon } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 
@@ -29,13 +29,6 @@ export default function HomePage() {
   const [daysLeft, setDaysLeft] = useState<number>(0);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-        const savedPercentage = localStorage.getItem('completionPercentage');
-        if (savedPercentage) {
-            setCompletionPercentage(JSON.parse(savedPercentage));
-        }
-    }
-
     const calculateDaysLeft = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -49,12 +42,6 @@ export default function HomePage() {
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24);
     return () => clearInterval(interval);
   }, []);
-
-  useEffect(() => {
-      if(typeof window !== 'undefined') {
-        localStorage.setItem('completionPercentage', JSON.stringify(completionPercentage));
-      }
-  }, [completionPercentage]);
 
   const renderContent = () => {
     switch (activePage) {

@@ -42,13 +42,14 @@ export function SignupForm() {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
-      // Don't await these promises to make UI feel faster
-      updateProfile(user, { displayName: values.name });
-      setDoc(doc(firestore, "users", user.uid), {
+      // Update profile and save to firestore in the background
+      await updateProfile(user, { displayName: values.name });
+      await setDoc(doc(firestore, "users", user.uid), {
         uid: user.uid,
         displayName: values.name,
         email: values.email,
         createdAt: new Date().toISOString(),
+        photoURL: user.photoURL
       });
 
       toast({

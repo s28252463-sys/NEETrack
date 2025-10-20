@@ -1,4 +1,5 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app';
+
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { firebaseConfig } from './config';
@@ -15,30 +16,29 @@ import {
 } from './provider';
 
 let firebaseApp: FirebaseApp;
-let auth: Auth;
-let firestore: Firestore;
+
+// This function is memoized, so it will only run once.
+function getFirebaseApp(): FirebaseApp {
+  if (getApps().length === 0) {
+    return initializeApp(firebaseConfig);
+  } else {
+    return getApp();
+  }
+}
 
 function initializeFirebase(): {
   firebaseApp: FirebaseApp;
   auth: Auth;
   firestore: Firestore;
 } {
-  // Check if running on the client side
-  if (typeof window !== 'undefined') {
-    if (!getApps().length) {
-      firebaseApp = initializeApp(firebaseConfig);
-      auth = getAuth(firebaseApp);
-      firestore = getFirestore(firebaseApp);
-    } else {
-      firebaseApp = getApps()[0];
-      auth = getAuth(firebaseApp);
-      firestore = getFirestore(firebaseApp);
-    }
-  }
-  
-  // @ts-ignore
-  return { firebaseApp, auth, firestore };
+  const app = getFirebaseApp();
+  return {
+    firebaseApp: app,
+    auth: getAuth(app),
+    firestore: getFirestore(app),
+  };
 }
+
 
 export {
   initializeFirebase,

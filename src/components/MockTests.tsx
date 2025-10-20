@@ -10,6 +10,8 @@ import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
 import { useUser } from '@/firebase/auth/use-user';
 import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 interface Test {
   id: string;
@@ -27,20 +29,24 @@ export function MockTests() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let unsubscribe: () => void = () => {};
     if (userLoading) return; // Wait until user status is known
     
     setIsLoading(true);
     if (user && firestore) {
       const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
-      unsubscribe = onSnapshot(testsColRef, (snapshot) => {
+      const unsubscribe = onSnapshot(testsColRef, (snapshot) => {
         const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Test));
         setTests(userTests);
         setIsLoading(false);
       }, (error) => {
-        console.error("Error fetching mock tests from Firestore:", error);
+        const permissionError = new FirestorePermissionError({
+            path: testsColRef.path,
+            operation: 'list',
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
         setIsLoading(false);
       });
+      return () => unsubscribe();
     } else {
       // Handle logged-out state (e.g., from localStorage)
       const savedTests = localStorage.getItem('mockTests');
@@ -49,7 +55,6 @@ export function MockTests() {
       }
       setIsLoading(false);
     }
-    return () => unsubscribe();
   }, [user, firestore, userLoading]);
   
   useEffect(() => {
@@ -59,7 +64,7 @@ export function MockTests() {
     }
   }, [tests, user, isLoading]);
 
-  const handleAddTest = async (e: React.FormEvent) => {
+  const handleAddTest = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTestName.trim() || !newTestSyllabus.trim()) return;
 
@@ -71,7 +76,14 @@ export function MockTests() {
     
     if (user) {
       const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
-      await addDoc(testsColRef, newTest);
+      addDoc(testsColRef, newTest).catch(serverError => {
+          const permissionError = new FirestorePermissionError({
+              path: `${testsColRef.path}/<new_document>`,
+              operation: 'create',
+              requestResourceData: newTest,
+          } satisfies SecurityRuleContext);
+          errorEmitter.emit('permission-error', permissionError);
+      });
     } else {
       setTests(prev => [...prev, { ...newTest, id: crypto.randomUUID() }]);
     }
@@ -85,14 +97,28 @@ export function MockTests() {
 
     if (user) {
       const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
-      updateDoc(testDocRef, { score });
+      const originalTest = tests.find(t => t.id === id);
+      updateDoc(testDocRef, { score }).catch(serverError => {
+        const permissionError = new FirestorePermissionError({
+            path: testDocRef.path,
+            operation: 'update',
+            requestResourceData: { ...originalTest, score },
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
+      });
     }
   };
   
-  const handleDeleteTest = async (id: string) => {
+  const handleDeleteTest = (id: string) => {
     if (user) {
       const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
-      await deleteDoc(testDocRef);
+      deleteDoc(testDocRef).catch(serverError => {
+        const permissionError = new FirestorePermissionError({
+            path: testDocRef.path,
+            operation: 'delete',
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
+      });
     } else {
       setTests(prev => prev.filter(test => test.id !== id));
     }

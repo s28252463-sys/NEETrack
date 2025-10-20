@@ -10,6 +10,9 @@ import { Label } from '@/components/ui/label';
 import { useUser } from '@/firebase/auth/use-user';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+
 
 interface SyllabusTrackerProps {
   onProgressChange: (progress: number) => void;
@@ -92,8 +95,11 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
                 setCompletedTopics(new Set());
             }
         } catch(e) {
-            console.error("Error loading syllabus progress from Firestore:", e);
-            setCompletedTopics(new Set());
+            const permissionError = new FirestorePermissionError({
+                path: userProgressRef.path,
+                operation: 'get',
+            } satisfies SecurityRuleContext);
+            errorEmitter.emit('permission-error', permissionError);
         }
       } else {
         const saved = localStorage.getItem('completedTopics');
@@ -111,16 +117,24 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
   const progress = useMemo(() => (totalTopics > 0 ? (completedTopics.size / totalTopics) * 100 : 0), [completedTopics.size, totalTopics]);
 
   useEffect(() => {
-    // Prevent saving initial empty state before data is loaded
     if (isLoading) return; 
 
     onProgressChange(progress);
-    const dataToSave = Array.from(completedTopics);
+    const dataToSave = { completedTopics: Array.from(completedTopics) };
+    
     if (user && firestore) {
       const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-      setDoc(userProgressRef, { completedTopics: dataToSave }, { merge: true });
+      setDoc(userProgressRef, dataToSave, { merge: true })
+        .catch(serverError => {
+            const permissionError = new FirestorePermissionError({
+                path: userProgressRef.path,
+                operation: 'update',
+                requestResourceData: dataToSave,
+            } satisfies SecurityRuleContext);
+            errorEmitter.emit('permission-error', permissionError);
+        });
     } else {
-      localStorage.setItem('completedTopics', JSON.stringify(dataToSave));
+      localStorage.setItem('completedTopics', JSON.stringify(dataToSave.completedTopics));
     }
   }, [completedTopics, progress, onProgressChange, user, firestore, isLoading]);
 

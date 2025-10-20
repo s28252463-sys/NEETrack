@@ -14,22 +14,29 @@ import {
   useAuth,
 } from './provider';
 
+let firebaseApp: FirebaseApp;
+let auth: Auth;
+let firestore: Firestore;
+
 function initializeFirebase(): {
   firebaseApp: FirebaseApp;
   auth: Auth;
   firestore: Firestore;
 } {
-  if (getApps().length) {
-    const firebaseApp = getApps()[0];
-    const auth = getAuth(firebaseApp);
-    const firestore = getFirestore(firebaseApp);
-    return { firebaseApp, auth, firestore };
+  // Check if running on the client side
+  if (typeof window !== 'undefined') {
+    if (!getApps().length) {
+      firebaseApp = initializeApp(firebaseConfig);
+      auth = getAuth(firebaseApp);
+      firestore = getFirestore(firebaseApp);
+    } else {
+      firebaseApp = getApps()[0];
+      auth = getAuth(firebaseApp);
+      firestore = getFirestore(firebaseApp);
+    }
   }
-
-  const firebaseApp = initializeApp(firebaseConfig);
-  const auth = getAuth(firebaseApp);
-  const firestore = getFirestore(firebaseApp);
-
+  
+  // @ts-ignore
   return { firebaseApp, auth, firestore };
 }
 

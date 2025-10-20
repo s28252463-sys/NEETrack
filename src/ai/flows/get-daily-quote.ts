@@ -35,7 +35,13 @@ const getDailyQuoteFlow = ai.defineFlow(
     outputSchema: DailyQuoteOutputSchema,
   },
   async () => {
-    const {output} = await prompt();
-    return output!;
+    const response = await ai.generate({
+      prompt: prompt.prompt,
+      model: 'googleai/gemini-1.5-flash',
+      output: {
+        schema: DailyQuoteOutputSchema,
+      },
+    });
+    return response.output!;
   }
 );

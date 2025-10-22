@@ -16,6 +16,7 @@ const DailyQuoteOutputSchema = z.object({
 });
 export type DailyQuoteOutput = z.infer<typeof DailyQuoteOutputSchema>;
 
+// This is the exported function that should be called from outside.
 export async function getDailyQuote(): Promise<DailyQuoteOutput> {
     return getDailyQuoteFlow();
 }
@@ -29,13 +30,14 @@ const prompt = ai.definePrompt({
   `,
 });
 
+// This is the internal flow definition.
 const getDailyQuoteFlow = ai.defineFlow(
   {
     name: 'getDailyQuoteFlow',
     outputSchema: DailyQuoteOutputSchema,
   },
   async () => {
-    const {output} = await prompt();
+    const {output} = await prompt({});
     return output!;
   }
 );

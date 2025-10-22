@@ -14,6 +14,7 @@ const studyPlanSchema = z.object({
 export async function getStudyPlan(data: z.infer<typeof studyPlanSchema>) {
   try {
     const validatedData = studyPlanSchema.parse(data);
+    // Correctly call the exported wrapper function
     const result = await suggestStudyGoals(validatedData);
     if (!result.suggestedGoals) {
         return { success: false, error: 'AI could not generate a plan. Please try again.' };

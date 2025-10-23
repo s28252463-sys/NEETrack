@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getDailyQuote } from '@/app/actions';
+import { getDailyQuoteAction } from '@/app/actions';
 import { Card, CardContent } from '@/components/ui/card';
 import { Lightbulb } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
@@ -34,7 +34,7 @@ export function MotivationalQuote() {
       }
 
       setLoading(true);
-      const result = await getDailyQuote();
+      const result = await getDailyQuoteAction();
       if (result.success && result.quote) {
         const newQuote = { quote: result.quote, author: result.author || 'Anonymous' };
         setQuote(newQuote);

@@ -12,6 +12,8 @@ import { Loader2 } from 'lucide-react';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { useAuth, useFirestore } from '@/firebase';
 import { doc, setDoc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters long.' }),
@@ -40,15 +42,29 @@ export function SignupForm() {
       const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
       const user = userCredential.user;
 
-      // These can run in the background without blocking the UI
-      updateProfile(user, { displayName: values.name });
-      setDoc(doc(firestore, "users", user.uid), {
+      // Update Firebase Auth profile
+      await updateProfile(user, { displayName: values.name });
+
+      // Create user document in Firestore
+      const userDocRef = doc(firestore, "users", user.uid);
+      const newUserProfile = {
         uid: user.uid,
         displayName: values.name,
         email: values.email,
         createdAt: new Date().toISOString(),
         photoURL: user.photoURL
-      });
+      };
+
+      // Set the document, but don't wait for it. Catch errors for security rules.
+      setDoc(userDocRef, newUserProfile)
+        .catch(serverError => {
+            const permissionError = new FirestorePermissionError({
+                path: userDocRef.path,
+                operation: 'create',
+                requestResourceData: newUserProfile,
+            } satisfies SecurityRuleContext);
+            errorEmitter.emit('permission-error', permissionError);
+        });
 
       toast({
         title: "Account Created!",

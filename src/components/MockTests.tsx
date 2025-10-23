@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
 import { useUser } from '@/firebase/auth/use-user';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
@@ -29,15 +29,36 @@ export function MockTests() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (userLoading) return; // Wait until user status is known
+    if (userLoading) return;
     
     setIsLoading(true);
     if (user && firestore) {
+      // Logic for logged-in user
       const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
-      const unsubscribe = onSnapshot(testsColRef, (snapshot) => {
+      const unsubscribe = onSnapshot(testsColRef, async (snapshot) => {
         const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Test));
-        setTests(userTests);
+        
+        // Migrate localStorage tests to Firestore on first load after login
+        const localDataRaw = localStorage.getItem('mockTests');
+        if (localDataRaw) {
+          const localTests: Omit<Test, 'id'>[] = JSON.parse(localDataRaw);
+          if (localTests.length > 0) {
+            const batch = writeBatch(firestore);
+            localTests.forEach(test => {
+              const newDocRef = doc(collection(firestore, `users/${user.uid}/mockTests`));
+              batch.set(newDocRef, test);
+            });
+            await batch.commit();
+            localStorage.removeItem('mockTests'); // Clear local data after migration
+          }
+        }
+        
+        // Fetch all tests again after potential migration
+        const finalSnapshot = await getDocs(testsColRef);
+        const finalList = finalSnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Test));
+        setTests(finalList);
         setIsLoading(false);
+
       }, (error) => {
         const permissionError = new FirestorePermissionError({
             path: testsColRef.path,
@@ -48,7 +69,7 @@ export function MockTests() {
       });
       return () => unsubscribe();
     } else {
-      // Handle logged-out state (e.g., from localStorage)
+      // Logic for logged-out user
       const savedTests = localStorage.getItem('mockTests');
       if (savedTests) {
         setTests(JSON.parse(savedTests));
@@ -56,9 +77,9 @@ export function MockTests() {
       setIsLoading(false);
     }
   }, [user, firestore, userLoading]);
-  
+
   useEffect(() => {
-    // Save to localStorage for logged-out users, only after initial load
+    // Persist to localStorage only for logged-out users and after initial load
     if (!user && !isLoading) {
       localStorage.setItem('mockTests', JSON.stringify(tests));
     }
@@ -68,13 +89,13 @@ export function MockTests() {
     e.preventDefault();
     if (!newTestName.trim() || !newTestSyllabus.trim()) return;
 
-    const newTest = {
+    const newTest: Omit<Test, 'id'> = {
       name: newTestName,
       syllabus: newTestSyllabus,
       score: '',
     };
     
-    if (user) {
+    if (user && firestore) {
       const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
       addDoc(testsColRef, newTest).catch(serverError => {
           const permissionError = new FirestorePermissionError({
@@ -92,17 +113,18 @@ export function MockTests() {
   };
 
   const handleScoreChange = (id: string, score: string) => {
-    const updatedTests = tests.map(test => (test.id === id ? { ...test, score } : test));
-    setTests(updatedTests);
+    const originalTest = tests.find(t => t.id === id);
+    const updatedTest = { ...originalTest, score };
 
-    if (user) {
+    setTests(prev => prev.map(test => (test.id === id ? updatedTest as Test : test)));
+
+    if (user && firestore) {
       const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
-      const originalTest = tests.find(t => t.id === id);
       updateDoc(testDocRef, { score }).catch(serverError => {
         const permissionError = new FirestorePermissionError({
             path: testDocRef.path,
             operation: 'update',
-            requestResourceData: { ...originalTest, score },
+            requestResourceData: updatedTest,
         } satisfies SecurityRuleContext);
         errorEmitter.emit('permission-error', permissionError);
       });
@@ -110,7 +132,7 @@ export function MockTests() {
   };
   
   const handleDeleteTest = (id: string) => {
-    if (user) {
+    if (user && firestore) {
       const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
       deleteDoc(testDocRef).catch(serverError => {
         const permissionError = new FirestorePermissionError({

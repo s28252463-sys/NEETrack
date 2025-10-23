@@ -34,15 +34,15 @@ export async function getStudyPlan(data: SuggestStudyGoalsInput) {
 export async function getDailyQuoteAction() {
   try {
     const result = await getDailyQuoteFlow();
-    if (!result.quote) {
+    if (!result || !result.quote) {
       return {
         success: false,
         error: 'Could not generate a quote. Please try again.',
       };
     }
     return {success: true, quote: result.quote, author: result.author};
-  } catch (error) {
-    console.error('Error getting daily quote:', error);
+  } catch (error: any) {
+    console.error('Error getting daily quote:', error.message || error);
     return {
       success: false,
       error: 'An unexpected error occurred while generating the quote.',

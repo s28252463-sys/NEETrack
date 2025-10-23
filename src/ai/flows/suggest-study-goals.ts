@@ -13,6 +13,12 @@ import {
   SuggestStudyGoalsOutputSchema,
 } from '@/ai/schemas';
 
+export async function suggestStudyGoals(
+  input: SuggestStudyGoalsInput
+): Promise<SuggestStudyGoalsOutput> {
+  return suggestStudyGoalsFlow(input);
+}
+
 const suggestStudyGoalsPrompt = ai.definePrompt({
   name: 'suggestStudyGoalsPrompt',
   model: googleAI.model('gemini-1.5-flash-latest'),
@@ -39,9 +45,3 @@ const suggestStudyGoalsFlow = ai.defineFlow(
     return output!;
   }
 );
-
-export async function suggestStudyGoals(
-  input: SuggestStudyGoalsInput
-): Promise<SuggestStudyGoalsOutput> {
-  return suggestStudyGoalsFlow(input);
-}

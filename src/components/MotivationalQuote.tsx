@@ -12,20 +12,19 @@ export function MotivationalQuote() {
 
   useEffect(() => {
     const fetchQuote = async () => {
-      // Use date string as key to fetch quote only once per day
+      setLoading(true);
       const today = new Date().toISOString().split('T')[0];
-      const storedQuote = localStorage.getItem('dailyQuote');
+      const storedQuoteRaw = localStorage.getItem('dailyQuote');
       
-      if (storedQuote) {
+      if (storedQuoteRaw) {
         try {
-          const { date, data } = JSON.parse(storedQuote);
-          if (date === today && data) {
-            setQuote(data);
+          const storedQuote = JSON.parse(storedQuoteRaw);
+          if (storedQuote.date === today && storedQuote.data) {
+            setQuote(storedQuote.data);
             setLoading(false);
             return;
           }
         } catch (e) {
-          // Invalid JSON in localStorage, fetch new quote
           localStorage.removeItem('dailyQuote');
         }
       }
@@ -41,7 +40,6 @@ export function MotivationalQuote() {
     };
 
     fetchQuote();
-    // The empty dependency array [] ensures this effect runs only once on the client, after mount.
   }, []);
 
   return (

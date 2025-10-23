@@ -7,6 +7,10 @@ import {ai} from '@/ai/genkit';
 import {googleAI} from '@genkit-ai/googleai';
 import {DailyQuoteOutput, DailyQuoteOutputSchema} from '@/ai/schemas';
 
+export async function getDailyQuote(): Promise<DailyQuoteOutput> {
+  return getDailyQuoteFlow();
+}
+
 const getDailyQuotePrompt = ai.definePrompt({
   name: 'getDailyQuotePrompt',
   model: googleAI.model('gemini-1.5-flash-latest'),
@@ -27,7 +31,3 @@ const getDailyQuoteFlow = ai.defineFlow(
     return output!;
   }
 );
-
-export async function getDailyQuote(): Promise<DailyQuoteOutput> {
-  return getDailyQuoteFlow();
-}

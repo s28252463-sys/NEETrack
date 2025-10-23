@@ -83,33 +83,45 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
 
   useEffect(() => {
     async function loadProgress() {
-      if (userLoading) return; // Wait until user state is resolved
+      if (userLoading) return; 
       setIsLoading(true);
-      if (user && firestore) {
-        const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-        try {
-            const docSnap = await getDoc(userProgressRef);
-            if (docSnap.exists()) {
-              setCompletedTopics(new Set(docSnap.data().completedTopics || []));
-            } else {
-                setCompletedTopics(new Set());
+
+      try {
+        if (user && firestore) {
+          const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
+          const docSnap = await getDoc(userProgressRef);
+          if (docSnap.exists()) {
+            setCompletedTopics(new Set(docSnap.data().completedTopics || []));
+          } else {
+            // If no Firestore data, check localStorage for migration
+            const saved = localStorage.getItem('completedTopics');
+            const localTopics = saved ? new Set<string>(JSON.parse(saved)) : new Set<string>();
+            setCompletedTopics(localTopics);
+            // If there's local data, save it to Firestore for the newly logged-in user
+            if (localTopics.size > 0) {
+              await setDoc(userProgressRef, { completedTopics: Array.from(localTopics) }, { merge: true });
             }
-        } catch(e) {
+          }
+        } else {
+          // User is logged out, use localStorage
+          const saved = localStorage.getItem('completedTopics');
+          if (saved) {
+            setCompletedTopics(new Set(JSON.parse(saved)));
+          }
+        }
+      } catch (e: any) {
+         if (e.code === 'permission-denied' && user) {
             const permissionError = new FirestorePermissionError({
-                path: userProgressRef.path,
+                path: `users/${user.uid}/progress/syllabus`,
                 operation: 'get',
             } satisfies SecurityRuleContext);
             errorEmitter.emit('permission-error', permissionError);
-        }
-      } else {
-        const saved = localStorage.getItem('completedTopics');
-        if (saved) {
-          setCompletedTopics(new Set(JSON.parse(saved)));
         } else {
-            setCompletedTopics(new Set());
+            console.error("An unexpected error occurred while loading progress:", e);
         }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     }
     loadProgress();
   }, [user, firestore, userLoading]);

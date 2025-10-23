@@ -8,6 +8,9 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useAuth, useFirestore } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
@@ -35,14 +38,24 @@ export function SocialButtons() {
             const userDoc = await getDoc(userDocRef);
 
             if (!userDoc.exists()) {
-              // Create a new user profile in Firestore
-              await setDoc(userDocRef, {
+              const newUserProfile = {
                 uid: user.uid,
                 displayName: user.displayName,
                 email: user.email,
                 photoURL: user.photoURL,
                 createdAt: new Date().toISOString(),
-              });
+              };
+
+              // Create a new user profile in Firestore
+              setDoc(userDocRef, newUserProfile)
+                .catch(serverError => {
+                    const permissionError = new FirestorePermissionError({
+                        path: userDocRef.path,
+                        operation: 'create',
+                        requestResourceData: newUserProfile,
+                    } satisfies SecurityRuleContext);
+                    errorEmitter.emit('permission-error', permissionError);
+                });
             }
 
             toast({

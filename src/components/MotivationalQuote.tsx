@@ -12,17 +12,21 @@ export function MotivationalQuote() {
 
   useEffect(() => {
     const fetchQuote = async () => {
-      setLoading(true);
       // Use date string as key to fetch quote only once per day
       const today = new Date().toISOString().split('T')[0];
       const storedQuote = localStorage.getItem('dailyQuote');
       
       if (storedQuote) {
-        const { date, data } = JSON.parse(storedQuote);
-        if (date === today && data) {
-          setQuote(data);
-          setLoading(false);
-          return;
+        try {
+          const { date, data } = JSON.parse(storedQuote);
+          if (date === today && data) {
+            setQuote(data);
+            setLoading(false);
+            return;
+          }
+        } catch (e) {
+          // Invalid JSON in localStorage, fetch new quote
+          localStorage.removeItem('dailyQuote');
         }
       }
 

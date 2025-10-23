@@ -21,7 +21,7 @@ const getDailyQuoteFlow = ai.defineFlow(
     outputSchema: DailyQuoteOutputSchema,
   },
   async () => {
-    const {output} = await getDailyQuotePrompt({});
+    const {output} = await getDailyQuotePrompt();
     return output!;
   }
 );

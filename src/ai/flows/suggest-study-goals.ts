@@ -5,6 +5,7 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleAI} from '@genkit-ai/googleai';
 import {
   SuggestStudyGoalsInput,
   SuggestStudyGoalsInputSchema,
@@ -14,6 +15,7 @@ import {
 
 const suggestStudyGoalsPrompt = ai.definePrompt({
   name: 'suggestStudyGoalsPrompt',
+  model: googleAI.model('gemini-1.5-flash-latest'),
   input: {schema: SuggestStudyGoalsInputSchema},
   output: {schema: SuggestStudyGoalsOutputSchema},
   prompt: `You are an AI assistant designed to provide personalized daily study goals for NEET UG aspirants.

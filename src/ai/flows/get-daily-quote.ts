@@ -4,10 +4,12 @@
  */
 
 import {ai} from '@/ai/genkit';
+import {googleAI} from '@genkit-ai/googleai';
 import {DailyQuoteOutput, DailyQuoteOutputSchema} from '@/ai/schemas';
 
 const getDailyQuotePrompt = ai.definePrompt({
   name: 'getDailyQuotePrompt',
+  model: googleAI.model('gemini-1.5-flash-latest'),
   output: {schema: DailyQuoteOutputSchema},
   prompt: `You are an AI assistant that provides motivational quotes for students preparing for the highly competitive NEET UG medical entrance exam in India.
 

@@ -9,31 +9,24 @@ import { Skeleton } from './ui/skeleton';
 export function MotivationalQuote() {
   const [quote, setQuote] = useState<{ quote: string; author: string } | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // This ensures the rest of the code only runs on the client.
-    setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    if (!isClient) return;
-
     const fetchQuote = async () => {
+      setLoading(true);
       // Use date string as key to fetch quote only once per day
       const today = new Date().toISOString().split('T')[0];
       const storedQuote = localStorage.getItem('dailyQuote');
       
       if (storedQuote) {
         const { date, data } = JSON.parse(storedQuote);
-        if (date === today) {
+        if (date === today && data) {
           setQuote(data);
           setLoading(false);
           return;
         }
       }
 
-      setLoading(true);
+      // If no valid quote in storage, fetch a new one
       const result = await getDailyQuoteAction();
       if (result.success && result.quote) {
         const newQuote = { quote: result.quote, author: result.author || 'Anonymous' };
@@ -44,13 +37,14 @@ export function MotivationalQuote() {
     };
 
     fetchQuote();
-  }, [isClient]);
+    // The empty dependency array [] ensures this effect runs only once on the client, after mount.
+  }, []);
 
   return (
     <Card className="bg-accent/20 border-accent/30 shadow-md">
       <CardContent className="p-6 flex items-start gap-4">
         <Lightbulb className="h-8 w-8 text-accent-foreground mt-1 flex-shrink-0" />
-        {!isClient || loading ? (
+        {loading ? (
           <div className="space-y-2 flex-grow">
             <Skeleton className="h-5 w-4/5" />
             <Skeleton className="h-4 w-1/4" />

@@ -40,6 +40,11 @@ export default function HomePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
+  const [isClient, setIsClient] = useState(false)
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -48,6 +53,7 @@ export default function HomePage() {
   }, [user, loading, router]);
 
   useEffect(() => {
+    if (!isClient) return;
     const calculateDaysLeft = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -60,7 +66,7 @@ export default function HomePage() {
     calculateDaysLeft();
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24);
     return () => clearInterval(interval);
-  }, []);
+  }, [isClient]);
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -164,7 +170,7 @@ export default function HomePage() {
                   <span className="text-sm font-medium truncate">{user.displayName}</span>
                   <span className="text-xs text-muted-foreground truncate">{user.email}</span>
                 </div>
-                <Button onClick={() => signOut(auth)} variant="ghost" size="icon" className="ml-auto group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+                <Button onClick={() => auth && signOut(auth)} variant="ghost" size="icon" className="ml-auto group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
                   <LogOut className="h-4 w-4" />
                 </Button>
               </div>

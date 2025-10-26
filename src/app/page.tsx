@@ -199,13 +199,6 @@ export default function HomePage() {
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
-            <div>
-              <p>Found this tool helpful? Support the developers with a small donation!</p>
-              <p>Your contribution helps keep the app running and improving.</p>
-            </div>
-            <div className="flex justify-center">
-                <Image src="/donation-qr.png" alt="Donation QR Code" width={128} height={128} className="rounded-md" />
-            </div>
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

@@ -69,6 +69,13 @@ export default function HomePage() {
       .map((n) => n[0])
       .join('');
   };
+  
+  const handleSignOut = async () => {
+    if (auth) {
+      await signOut(auth);
+      // The useUser hook will trigger the redirect to /login
+    }
+  };
 
   const renderContent = useCallback(() => {
     switch (activePage) {
@@ -154,15 +161,7 @@ export default function HomePage() {
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
-            {loading ? (
-                <div className="flex items-center gap-3 p-2">
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                    <div className="flex flex-col gap-1 group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
-                        <Skeleton className="h-4 w-24" />
-                        <Skeleton className="h-3 w-32" />
-                    </div>
-                </div>
-            ) : user ? (
+            {user ? (
               <div className="flex items-center gap-3 p-2">
                 <Avatar className="h-8 w-8">
                   <AvatarImage src={user.photoURL || ''} alt={user.displayName || 'User'} />
@@ -172,7 +171,7 @@ export default function HomePage() {
                   <span className="text-sm font-medium truncate">{user.displayName}</span>
                   <span className="text-xs text-muted-foreground truncate">{user.email}</span>
                 </div>
-                <Button onClick={() => auth && signOut(auth)} variant="ghost" size="icon" className="ml-auto group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+                <Button onClick={handleSignOut} variant="ghost" size="icon" className="ml-auto group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
                   <LogOut className="h-4 w-4" />
                 </Button>
               </div>

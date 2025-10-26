@@ -5,7 +5,7 @@ import { useUser } from '@/firebase/auth/use-user';
 import { useFirestore, useStorage } from '@/firebase';
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -55,7 +55,6 @@ export function StudyMaterial() {
       setMaterials(fetchedMaterials);
       setIsLoading(false);
     }, (error) => {
-      console.error(error);
       const permissionError = new FirestorePermissionError({
           path: 'studyMaterials',
           operation: 'list',
@@ -98,12 +97,11 @@ export function StudyMaterial() {
       },
       (error) => {
         setIsUploading(false);
-        toast({
-          variant: 'destructive',
-          title: 'Upload Failed',
-          description: 'Could not upload the file. Please try again.',
-        });
-        console.error('Upload error:', error);
+        const permissionError = new FirestorePermissionError({
+            path: storagePath,
+            operation: 'create', // Storage operations can be mapped to CRUD
+        } satisfies SecurityRuleContext);
+        errorEmitter.emit('permission-error', permissionError);
       },
       async () => {
         try {
@@ -158,10 +156,12 @@ export function StudyMaterial() {
 
       const fileRef = ref(storage, material.storagePath);
       const docRef = doc(firestore, 'studyMaterials', material.id);
+      
+      const docPromise = deleteDoc(docRef);
+      const storagePromise = deleteObject(fileRef);
 
       try {
-        await deleteObject(fileRef);
-        await deleteDoc(docRef);
+        await Promise.all([docPromise, storagePromise]);
         toast({
             title: 'Deleted',
             description: `${material.fileName} has been removed.`,
@@ -249,7 +249,7 @@ export function StudyMaterial() {
                     <p className="text-sm text-muted-foreground">{Math.round(uploadProgress)}% complete</p>
                 </div>
               )}
-              <Button type="submit" disabled={isUploading}>
+              <Button type="submit" disabled={isUploading || !file || !description || !subject}>
                 {isUploading ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Uploading...</> : <><Upload className="mr-2 h-4 w-4" /> Share Material</>}
               </Button>
             </form>
@@ -262,7 +262,20 @@ export function StudyMaterial() {
           </CardHeader>
           <CardContent>
               {isLoading ? (
-                  <p>Loading materials...</p>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-4">
+                      <div className="space-y-2">
+                        <div className="h-4 w-[250px] bg-muted rounded animate-pulse" />
+                        <div className="h-4 w-[200px] bg-muted rounded animate-pulse" />
+                      </div>
+                    </div>
+                     <div className="flex items-center space-x-4">
+                      <div className="space-y-2">
+                        <div className="h-4 w-[250px] bg-muted rounded animate-pulse" />
+                        <div className="h-4 w-[200px] bg-muted rounded animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
               ) : materials.length === 0 ? (
                   <p className="text-muted-foreground text-sm">No study materials have been shared yet.</p>
               ) : (

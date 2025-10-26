@@ -68,7 +68,20 @@ export function StudyMaterial() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
+      if (selectedFile.size > MAX_FILE_SIZE) {
+        toast({
+          variant: 'destructive',
+          title: 'File Too Large',
+          description: 'The maximum file size is 2MB. Please select a smaller file.',
+        });
+        setFile(null);
+        e.target.value = ''; // Reset the file input
+      } else {
+        setFile(selectedFile);
+      }
     }
   };
 
@@ -136,6 +149,9 @@ export function StudyMaterial() {
           setFile(null);
           setDescription('');
           setSubject('');
+          // This is a bit of a hack to clear the file input visually
+          const fileInput = document.getElementById('file-upload') as HTMLInputElement;
+          if(fileInput) fileInput.value = '';
 
         } catch (error) {
             console.error('Error post-upload:', error);
@@ -234,7 +250,7 @@ export function StudyMaterial() {
                     </div>
                 </div>
               <div className="space-y-2">
-                  <Label htmlFor="file-upload">File</Label>
+                  <Label htmlFor="file-upload">File (Max 2MB)</Label>
                   <Input 
                       id="file-upload"
                       type="file" 

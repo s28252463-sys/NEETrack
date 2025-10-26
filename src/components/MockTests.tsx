@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
 import { useUser } from '@/firebase/auth/use-user';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
@@ -26,38 +26,30 @@ export function MockTests() {
   const [tests, setTests] = useState<Test[]>([]);
   const [newTestName, setNewTestName] = useState('');
   const [newTestSyllabus, setNewTestSyllabus] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (userLoading) return;
-    
-    setIsLoading(true);
+    if (userLoading) {
+      return; // Wait until user status is determined
+    }
+
     if (user && firestore) {
-      // Logic for logged-in user
+      // User is logged in, use Firestore
       const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
-      const unsubscribe = onSnapshot(testsColRef, async (snapshot) => {
+      const unsubscribe = onSnapshot(testsColRef, (snapshot) => {
         const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Test));
+        setTests(userTests);
         
-        // Migrate localStorage tests to Firestore on first load after login
+        // One-time migration from localStorage if Firestore is empty
         const localDataRaw = localStorage.getItem('mockTests');
-        if (localDataRaw) {
-          const localTests: Omit<Test, 'id'>[] = JSON.parse(localDataRaw);
-          if (localTests.length > 0) {
-            const batch = writeBatch(firestore);
-            localTests.forEach(test => {
-              const newDocRef = doc(collection(firestore, `users/${user.uid}/mockTests`));
-              batch.set(newDocRef, test);
-            });
-            await batch.commit();
-            localStorage.removeItem('mockTests'); // Clear local data after migration
-          }
+        if (localDataRaw && userTests.length === 0) {
+            const localTests: Omit<Test, 'id'>[] = JSON.parse(localDataRaw);
+            if (Array.isArray(localTests) && localTests.length > 0) {
+                localTests.forEach(test => {
+                    addDoc(testsColRef, test);
+                });
+                localStorage.removeItem('mockTests'); // Clear after migration
+            }
         }
-        
-        // Fetch all tests again after potential migration
-        const finalSnapshot = await getDocs(testsColRef);
-        const finalList = finalSnapshot.docs.map(d => ({ id: d.id, ...d.data() } as Test));
-        setTests(finalList);
-        setIsLoading(false);
 
       }, (error) => {
         const permissionError = new FirestorePermissionError({
@@ -65,25 +57,30 @@ export function MockTests() {
             operation: 'list',
         } satisfies SecurityRuleContext);
         errorEmitter.emit('permission-error', permissionError);
-        setIsLoading(false);
       });
       return () => unsubscribe();
     } else {
-      // Logic for logged-out user
+      // User is logged out, use localStorage
       const savedTests = localStorage.getItem('mockTests');
       if (savedTests) {
-        setTests(JSON.parse(savedTests));
+        try {
+            const parsedTests = JSON.parse(savedTests);
+            if (Array.isArray(parsedTests)) {
+                setTests(parsedTests);
+            }
+        } catch (e) {
+            setTests([]);
+        }
       }
-      setIsLoading(false);
     }
   }, [user, firestore, userLoading]);
 
+  // Persist to localStorage only for logged-out users
   useEffect(() => {
-    // Persist to localStorage only for logged-out users and after initial load
-    if (!user && !isLoading) {
+    if (!user && !userLoading) {
       localStorage.setItem('mockTests', JSON.stringify(tests));
     }
-  }, [tests, user, isLoading]);
+  }, [tests, user, userLoading]);
 
   const handleAddTest = (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,21 +110,22 @@ export function MockTests() {
   };
 
   const handleScoreChange = (id: string, score: string) => {
-    const originalTest = tests.find(t => t.id === id);
-    const updatedTest = { ...originalTest, score };
-
-    setTests(prev => prev.map(test => (test.id === id ? updatedTest as Test : test)));
+    const updatedTests = tests.map(test => (test.id === id ? { ...test, score } : test));
+    setTests(updatedTests);
 
     if (user && firestore) {
-      const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
-      updateDoc(testDocRef, { score }).catch(serverError => {
-        const permissionError = new FirestorePermissionError({
-            path: testDocRef.path,
-            operation: 'update',
-            requestResourceData: updatedTest,
-        } satisfies SecurityRuleContext);
-        errorEmitter.emit('permission-error', permissionError);
-      });
+        const testToUpdate = updatedTests.find(t => t.id === id);
+        if (testToUpdate) {
+            const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
+            updateDoc(testDocRef, { score }).catch(serverError => {
+                const permissionError = new FirestorePermissionError({
+                    path: testDocRef.path,
+                    operation: 'update',
+                    requestResourceData: { score },
+                } satisfies SecurityRuleContext);
+                errorEmitter.emit('permission-error', permissionError);
+            });
+        }
     }
   };
   
@@ -187,7 +185,7 @@ export function MockTests() {
         
         <div className="space-y-4">
             <h3 className="font-semibold font-headline text-lg">Your Tests</h3>
-            {isLoading ? (
+            {userLoading ? (
               <p>Loading tests...</p>
             ) : tests.length === 0 ? (
                 <p className="text-muted-foreground text-sm">You haven't added any tests yet.</p>

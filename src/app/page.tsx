@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
@@ -40,11 +40,6 @@ export default function HomePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -53,7 +48,6 @@ export default function HomePage() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (!isClient) return;
     const calculateDaysLeft = () => {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -66,7 +60,7 @@ export default function HomePage() {
     calculateDaysLeft();
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24);
     return () => clearInterval(interval);
-  }, [isClient]);
+  }, []);
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -76,10 +70,7 @@ export default function HomePage() {
       .join('');
   };
 
-  const renderContent = () => {
-    if (!isClient) {
-      return null;
-    }
+  const renderContent = useCallback(() => {
     switch (activePage) {
       case 'dashboard':
         return (
@@ -100,9 +91,9 @@ export default function HomePage() {
       default:
         return <div>Dashboard</div>;
     }
-  };
+  }, [activePage, completionPercentage, daysLeft]);
 
-  if (!isClient || loading) {
+  if (loading) {
     return (
         <div className="flex h-screen w-full items-center justify-center">
             <div className="flex items-center">

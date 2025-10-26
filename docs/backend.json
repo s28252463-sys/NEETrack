@@ -64,6 +64,48 @@
             }
         },
         "required": ["name", "syllabus"]
+    },
+    "StudyMaterial": {
+        "title": "Study Material",
+        "description": "Represents an uploaded study material file.",
+        "type": "object",
+        "properties": {
+            "fileName": {
+                "type": "string",
+                "description": "The name of the uploaded file."
+            },
+            "description": {
+                "type": "string",
+                "description": "A short description of the material."
+            },
+            "subject": {
+                "type": "string",
+                "description": "The subject this material belongs to (e.g., Physics)."
+            },
+            "fileURL": {
+                "type": "string",
+                "format": "uri",
+                "description": "The download URL for the file in Firebase Storage."
+            },
+            "storagePath": {
+                "type": "string",
+                "description": "The path to the file in Firebase Storage."
+            },
+            "uploaderId": {
+                "type": "string",
+                "description": "The UID of the user who uploaded the file."
+            },
+            "uploaderName": {
+                "type": "string",
+                "description": "The display name of the user who uploaded the file."
+            },
+            "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "The timestamp when the material was uploaded."
+            }
+        },
+        "required": ["fileName", "fileURL", "storagePath", "uploaderId", "uploaderName", "createdAt"]
     }
   },
   "auth": {
@@ -81,6 +123,10 @@
     "/users/{userId}/mockTests/{testId}": {
         "schema": { "$ref": "#/entities/MockTest"},
         "description": "Stores individual mock test records for a specific user."
+    },
+    "/studyMaterials/{materialId}": {
+        "schema": { "$ref": "#/entities/StudyMaterial" },
+        "description": "Stores metadata for uploaded study materials."
     }
   }
 }

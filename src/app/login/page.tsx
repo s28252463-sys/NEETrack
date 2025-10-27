@@ -48,7 +48,7 @@ export default function LoginPage() {
 
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center p-4 login-page-bg overflow-hidden">
+    <div className="flex flex-col min-h-screen items-center justify-center p-8 login-page-bg overflow-hidden">
       <div className="relative flex flex-col items-center justify-end w-full max-w-md h-96">
         <Rays />
         <div className="absolute top-[5em] w-full animate-[float_2s_ease-in-out_infinite]">
@@ -68,9 +68,9 @@ export default function LoginPage() {
               </div>
             </div>
             <SocialButtons />
-            <p className="mt-2 text-center text-sm text-white [text-shadow:0px_1px_4px_rgb(0_0_0)]">
+            <p className="mt-4 text-center text-sm text-white font-semibold [text-shadow:0px_1px_4px_rgb(0_0_0)]">
               Don&apos;t have an account?{' '}
-              <Link href="/signup" className="font-semibold text-white hover:underline">
+              <Link href="/signup" className="font-bold text-white hover:underline">
                 Sign up
               </Link>
             </p>

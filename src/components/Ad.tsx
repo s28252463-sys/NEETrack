@@ -1,12 +1,26 @@
 'use client';
 
+import { useEffect } from 'react';
+
+declare global {
+    interface Window {
+        adsbygoogle: any;
+    }
+}
+
 const Ad = () => {
   const adClient = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID;
   const adSlot = process.env.NEXT_PUBLIC_ADSENSE_AD_SLOT;
 
+  useEffect(() => {
+    try {
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+    } catch (err) {
+        console.error("AdSense error:", err);
+    }
+  }, []);
+
   if (!adClient || !adSlot) {
-    // Return a placeholder or null if ad config is not set.
-    // This helps in development environments where ads aren't needed.
     return (
       <div className="w-full text-center p-4 bg-muted/50 rounded-lg">
         <p className="text-sm text-muted-foreground">Ad Placeholder</p>

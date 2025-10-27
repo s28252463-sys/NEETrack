@@ -20,13 +20,6 @@ const FOCUS_DATA_KEY = 'pomodoroFocusData';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
-declare global {
-    interface Window {
-        adsbygoogle: any;
-    }
-}
-
-
 export function PomodoroTimer() {
   const [mode, setMode] = useState<TimerMode>('work');
   const [timeRemaining, setTimeRemaining] = useState(WORK_DURATION);
@@ -40,16 +33,6 @@ export function PomodoroTimer() {
   useEffect(() => {
     setIsClient(true);
   }, []);
-  
-  useEffect(() => {
-      if (isClient) {
-          try {
-              (window.adsbygoogle = window.adsbygoogle || []).push({});
-          } catch (err) {
-              console.error("AdSense error:", err);
-          }
-      }
-  }, [isClient]);
 
   const getDuration = useCallback((currentMode: TimerMode) => {
     switch (currentMode) {

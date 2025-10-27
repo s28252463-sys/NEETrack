@@ -181,7 +181,7 @@ export default function HomePage() {
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
-            {activePage === 'pomodoro' && <Ad />}
+            <Ad />
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

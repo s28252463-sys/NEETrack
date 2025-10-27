@@ -25,10 +25,3 @@ export const SuggestStudyGoalsOutputSchema = z.object({
     .describe('A list of suggested daily study goals, tailored to the student.'),
 });
 export type SuggestStudyGoalsOutput = z.infer<typeof SuggestStudyGoalsOutputSchema>;
-
-// Schema for getDailyQuote flow
-export const DailyQuoteOutputSchema = z.object({
-  quote: z.string().describe('The motivational quote.'),
-  author: z.string().describe('The author of the quote (can be "Anonymous").'),
-});
-export type DailyQuoteOutput = z.infer<typeof DailyQuoteOutputSchema>;

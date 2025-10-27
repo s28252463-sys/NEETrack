@@ -1,66 +1,39 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getDailyQuoteAction } from '@/app/actions';
 import { Card, CardContent } from '@/components/ui/card';
-import { Lightbulb } from 'lucide-react';
-import { Skeleton } from './ui/skeleton';
+import { Quote } from 'lucide-react';
+import { motivationalQuotes } from '@/lib/quotes';
 
 export function MotivationalQuote() {
   const [quote, setQuote] = useState<{ quote: string; author: string } | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchQuote = async () => {
-      setLoading(true);
-      const today = new Date().toISOString().split('T')[0];
-      const storedQuoteRaw = localStorage.getItem('dailyQuote');
-      
-      if (storedQuoteRaw) {
-        try {
-          const storedQuote = JSON.parse(storedQuoteRaw);
-          if (storedQuote.date === today && storedQuote.data) {
-            setQuote(storedQuote.data);
-            setLoading(false);
-            return;
-          }
-        } catch (e) {
-          localStorage.removeItem('dailyQuote');
-        }
-      }
-
-      // If no valid quote in storage, fetch a new one
-      const result = await getDailyQuoteAction();
-      if (result.success && result.quote) {
-        const newQuote = { quote: result.quote, author: result.author || 'Anonymous' };
-        setQuote(newQuote);
-        localStorage.setItem('dailyQuote', JSON.stringify({ date: today, data: newQuote }));
-      }
-      setLoading(false);
-    };
-
-    fetchQuote();
+    const today = new Date();
+    const startOfYear = new Date(today.getFullYear(), 0, 0);
+    const diff = today.getTime() - startOfYear.getTime();
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+    
+    const quoteIndex = dayOfYear % motivationalQuotes.length;
+    setQuote(motivationalQuotes[quoteIndex]);
   }, []);
 
+  if (!quote) {
+    return null;
+  }
+
   return (
-    <Card className="bg-accent/20 border-accent/30 shadow-md">
-      <CardContent className="p-6 flex items-start gap-4">
-        <Lightbulb className="h-8 w-8 text-accent-foreground mt-1 flex-shrink-0" />
-        {loading ? (
-          <div className="space-y-2 flex-grow">
-            <Skeleton className="h-5 w-4/5" />
-            <Skeleton className="h-4 w-1/4" />
-          </div>
-        ) : quote ? (
-          <div className="flex-grow">
-            <blockquote className="text-lg font-medium text-accent-foreground">
+    <Card className="bg-gradient-to-br from-primary/80 to-accent/70 text-primary-foreground border-none shadow-xl">
+      <CardContent className="p-6 relative">
+        <Quote className="absolute top-4 left-4 h-10 w-10 text-white/20" />
+        <div className="relative z-10 text-center pt-8">
+            <blockquote className="text-xl font-semibold italic tracking-wide">
               “{quote.quote}”
             </blockquote>
-            <p className="text-right text-sm text-muted-foreground mt-2">— {quote.author}</p>
-          </div>
-        ) : (
-          <p className="text-muted-foreground">Could not load a quote today. Keep pushing forward!</p>
-        )}
+            <p className="text-right text-sm font-medium text-white/80 mt-4">— {quote.author}</p>
+        </div>
+         <Quote className="absolute bottom-4 right-4 h-10 w-10 text-white/20 transform rotate-180" />
       </CardContent>
     </Card>
   );

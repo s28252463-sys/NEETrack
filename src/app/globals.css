@@ -67,13 +67,13 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 224.3 76.3% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-accent: 217.2 32.6% 22.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -85,6 +85,28 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer components {
+  [data-sidebar="sidebar"] {
+      @apply bg-gradient-to-br from-primary/80 to-accent/70 text-primary-foreground border-none shadow-xl;
+  }
+  [data-sidebar="menu-button"], [data-sidebar="menu-sub-button"] {
+      @apply hover:bg-white/20 active:bg-white/20 text-primary-foreground;
+      @apply data-[active=true]:bg-white/20 data-[active=true]:text-primary-foreground;
+  }
+  [data-sidebar="menu-button"] > svg, [data-sidebar="footer"] svg, [data-sidebar="header"] svg {
+      @apply text-primary-foreground;
+  }
+   [data-sidebar="header"] .text-gray-800, [data-sidebar="footer"] .text-sm, [data-sidebar="footer"] .text-xs {
+      @apply text-primary-foreground;
+   }
+   [data-sidebar="footer"] .text-muted-foreground {
+      @apply text-primary-foreground/80;
+   }
+    .dark [data-sidebar="header"] .dark\:text-gray-200 {
+        @apply text-primary-foreground;
+    }
 }
 
 @layer utilities {

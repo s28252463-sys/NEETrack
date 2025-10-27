@@ -48,8 +48,21 @@ export default function LoginPage() {
 
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center p-8 login-page-bg overflow-hidden">
-      <div className="relative flex flex-col items-center justify-end w-full max-w-md h-96">
+    <div className="flex flex-col min-h-screen items-center justify-center p-8 login-page-bg overflow-hidden relative">
+      <div className="absolute top-4 right-4 z-20">
+        <Link href="/signup">
+          <span className="inline-block px-4 py-2 text-white font-bold tracking-wider rounded-md border-2 border-white hover:bg-white/20 transition-colors duration-300"
+           style={{
+              background: 'rgba(139, 189, 255, 0.59)',
+              boxShadow: '0px 0px 1px 2px #9ee5e3',
+              textShadow: '0 0 5px #fff',
+           }}>
+            Sign Up
+          </span>
+        </Link>
+      </div>
+
+      <div className="relative flex flex-col items-center justify-end w-full max-w-md h-[30rem]">
         <Rays />
         <div className="absolute top-[5em] w-full animate-[float_2s_ease-in-out_infinite]">
           <div className="login-form-container w-full">
@@ -68,12 +81,6 @@ export default function LoginPage() {
               </div>
             </div>
             <SocialButtons />
-            <p className="mt-4 text-center text-sm text-white font-semibold [text-shadow:0px_1px_4px_rgb(0_0_0)]">
-              Don&apos;t have an account?{' '}
-              <Link href="/signup" className="font-bold text-white hover:underline">
-                Sign up
-              </Link>
-            </p>
           </div>
         </div>
       </div>

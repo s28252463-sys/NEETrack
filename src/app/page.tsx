@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
 import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
-import { StudyPlanner } from '@/components/StudyPlanner';
+import { SmartStudySuggester } from '@/components/SmartStudySuggester';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
 import { MotivationalQuote } from '@/components/MotivationalQuote';
 import {
@@ -28,7 +27,6 @@ import { Button } from '@/components/ui/button';
 import { signOut } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import Link from 'next/link';
-import { Skeleton } from '@/components/ui/skeleton';
 import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
 import { cn } from '@/lib/utils';
@@ -77,7 +75,6 @@ export default function HomePage() {
   const handleSignOut = async () => {
     if (auth) {
       await signOut(auth);
-      // The useUser hook will trigger the redirect to /login
     }
   };
 
@@ -89,7 +86,7 @@ export default function HomePage() {
             <MotivationalQuote />
             <div className="grid gap-8 md:grid-cols-2">
               <ExamCountdown examDate={EXAM_DATE} />
-              <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+              <SmartStudySuggester progress={completionPercentage} daysLeft={daysLeft} />
             </div>
           </div>
         );
@@ -109,7 +106,8 @@ export default function HomePage() {
   }
   
   if (!user) {
-    return null; // The useEffect hook will handle the redirect
+    // This will be a brief blank screen while redirecting
+    return null;
   }
 
   return (

@@ -165,7 +165,7 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
   return (
     <Card className="shadow-lg">
       <CardHeader>
-        <CardTitle className="font-headline text-2xl text-glow">Syllabus Tracker</CardTitle>
+        <CardTitle className="font-headline text-2xl">Syllabus Tracker</CardTitle>
         <CardDescription>Mark topics as you complete them to track your progress.</CardDescription>
         <div className="pt-4 space-y-2">
             <div className="flex justify-between text-sm font-medium">

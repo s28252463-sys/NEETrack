@@ -149,7 +149,7 @@ export function MockTests() {
       <CardHeader>
         <div className="flex items-center gap-2">
             <ClipboardList className="h-6 w-6 text-primary" />
-            <CardTitle className="font-headline text-2xl text-glow">Mock Tests</CardTitle>
+            <CardTitle className="font-headline text-2xl">Mock Tests</CardTitle>
         </div>
         <CardDescription>
           Add your upcoming mock tests and track your scores.

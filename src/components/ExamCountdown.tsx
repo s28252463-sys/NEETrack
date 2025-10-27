@@ -46,9 +46,9 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
       </CardHeader>
       <CardContent>
         {isClient && daysLeft !== null ? (
-          <div className="text-4xl font-bold text-primary text-glow">{daysLeft}</div>
+          <div className="text-4xl font-bold text-primary">{daysLeft}</div>
         ) : (
-          <div className="text-4xl font-bold text-primary text-glow">-</div>
+          <div className="text-4xl font-bold text-primary">-</div>
         )}
         <p className="text-xs text-muted-foreground pt-1">
           days remaining until {examDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}

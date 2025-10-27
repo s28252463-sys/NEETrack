@@ -88,6 +88,10 @@ body {
 }
 
 @layer utilities {
+  .text-glow {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.8), 0 0 16px hsl(var(--primary) / 0.5);
+  }
+
   .login-page-bg {
     background: linear-gradient(0deg, #1b1323, #131a23, #131a23);
   }

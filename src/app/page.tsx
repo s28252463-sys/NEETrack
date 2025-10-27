@@ -18,7 +18,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, BookOpen } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -29,7 +29,6 @@ import { signOut } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
-import { StudyMaterial } from '@/components/StudyMaterial';
 import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
 import { cn } from '@/lib/utils';
@@ -100,8 +99,6 @@ export default function HomePage() {
         return <MockTests />;
       case 'pomodoro':
         return <div className="flex justify-center items-start pt-10"><PomodoroTimer /></div>;
-      case 'materials':
-        return <StudyMaterial />;
       default:
         return <div>Dashboard</div>;
     }
@@ -139,12 +136,6 @@ export default function HomePage() {
                       <SidebarMenuButton onClick={() => setActivePage('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
                           <ClipboardList />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Mock Tests</span>
-                      </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('materials')} isActive={activePage === 'materials'} tooltip="Study Material">
-                          <BookOpen />
-                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Study Material</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>

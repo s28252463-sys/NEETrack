@@ -76,7 +76,7 @@ export function SocialButtons() {
 
     return (
         <div className="grid grid-cols-1 gap-2">
-          <Button variant="outline" type="button" disabled={isGooglePending} onClick={handleGoogleSignIn}>
+          <Button variant="outline" type="button" disabled={isGooglePending} onClick={handleGoogleSignIn} className="login-form-button h-12 text-base">
             {isGooglePending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
             Google
           </Button>

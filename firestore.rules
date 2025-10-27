@@ -1,10 +1,14 @@
 /**
  * @file Firestore Security Rules
- * @core_philosophy This ruleset enforces a strict user-ownership model.  Each user can only access their own data, preventing unauthorized access to other users' information.
- * @data_structure All user-specific data is nested under the `/users/{userId}` collection. This includes profile information, syllabus progress, and mock test results.
- * @key_security_decisions User listing is explicitly disallowed. All write operations are restricted to the owner of the corresponding user ID. Data model is not strictly validated.
- * @denormalization N/A
- * @structural_segregation N/A
+ * @core_philosophy This ruleset enforces a strict user-ownership model. Each user can only read and write their own data,
+ *  and cannot access the data of other users unless explicitly permitted. Data shape is not validated during this prototyping phase.
+ * @data_structure
+ *  - /users/{userId}: Stores public profile information for each user.
+ *  - /users/{userId}/progress/syllabus: Stores syllabus progress for each user.
+ *  - /users/{userId}/mockTests/{testId}: Stores mock test data for each user.
+ * @key_security_decisions
+ *  - Users cannot list all users (or mock tests or syllabus).
+ *  - Only authenticated users can access data.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -13,12 +17,11 @@ service cloud.firestore {
     /**
      * @description Controls access to user profile documents.
      * @path /users/{userId}
-     * @allow (create) User with uid 'user123' can create their own profile document.
-     * @allow (get) User with uid 'user123' can read their own profile document.
-     * @allow (update) User with uid 'user123' can update their own profile document.
-     * @allow (delete) User with uid 'user123' can delete their own profile document.
-     * @deny (get) User with uid 'otherUser' cannot read user with uid 'user123' profile document.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) A user can create their own profile if the userId matches their auth UID.
+     * @allow (get, update, delete) A user can only get, update, or delete their own profile.
+     * @deny (create) A user cannot create a profile with a userId that does not match their auth UID.
+     * @deny (get, update, delete) A user cannot get, update, or delete another user's profile.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
       function isSignedIn() {
@@ -30,29 +33,27 @@ service cloud.firestore {
       }
 
       function isExistingOwner(userId) {
-        return request.auth.uid == userId && resource.data != null;
+        return isOwner(userId) && resource != null;
       }
 
-      allow get: if isOwner(userId);
-      allow list: if false; // User listing is not allowed
-
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if false;
       allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to syllabus progress documents for a specific user.
+     * @description Controls access to syllabus progress documents.
      * @path /users/{userId}/progress/syllabus
-     * @allow (create) User with uid 'user123' can create their own syllabus progress document.
-     * @allow (get) User with uid 'user123' can read their own syllabus progress document.
-     * @allow (update) User with uid 'user123' can update their own syllabus progress document.
-     * @allow (delete) User with uid 'user123' can delete their own syllabus progress document.
-     * @deny (get) User with uid 'otherUser' cannot read user with uid 'user123' syllabus progress document.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) A user can create their own syllabus progress if the userId matches their auth UID.
+     * @allow (get, update, delete) A user can only get, update, or delete their own syllabus progress.
+     * @deny (create) A user cannot create syllabus progress with a userId that does not match their auth UID.
+     * @deny (get, update, delete) A user cannot get, update, or delete another user's syllabus progress.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId}/progress/syllabus {
-       function isSignedIn() {
+      function isSignedIn() {
         return request.auth != null;
       }
 
@@ -61,54 +62,24 @@ service cloud.firestore {
       }
 
       function isExistingOwner(userId) {
-        return request.auth.uid == userId && resource.data != null;
+        return isOwner(userId) && resource != null;
       }
-
-      allow get: if isOwner(userId);
-      allow list: if false;
-
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
-
-        /**
-     * @description Controls access to pomodoro progress documents for a specific user.
-     * @path /users/{userId}/progress/pomodoro
-     * @allow (get) User with uid 'user123' can read their own pomodoro progress document.
-     * @deny (get) User with uid 'otherUser' cannot read user with uid 'user123' pomodoro progress document.
-     * @principle Enforces document ownership for all operations.
-     */
-    match /users/{userId}/progress/pomodoro {
-       function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return request.auth.uid == userId && resource.data != null;
-      }
-
-      allow get: if isOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
       allow list: if false;
       allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
-
 
     /**
-     * @description Controls access to mock test documents for a specific user.
+     * @description Controls access to mock test documents.
      * @path /users/{userId}/mockTests/{testId}
-     * @allow (create) User with uid 'user123' can create a mock test document under their user ID.
-     * @allow (get) User with uid 'user123' can read their own mock test document.
-     * @allow (update) User with uid 'user123' can update their own mock test document.
-     * @allow (delete) User with uid 'user123' can delete their own mock test document.
-     * @deny (get) User with uid 'otherUser' cannot read mock test document of user with uid 'user123'.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) A user can create their own mock test if the userId matches their auth UID.
+     * @allow (get, update, delete) A user can only get, update, or delete their own mock test.
+     * @allow (list) A user can list their own mock tests.
+     * @deny (create) A user cannot create a mock test with a userId that does not match their auth UID.
+     * @deny (get, update, delete) A user cannot get, update, or delete another user's mock test.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId}/mockTests/{testId} {
       function isSignedIn() {
@@ -120,15 +91,14 @@ service cloud.firestore {
       }
 
       function isExistingOwner(userId) {
-        return request.auth.uid == userId && resource.data != null;
+        return isOwner(userId) && resource != null;
       }
 
-      allow get: if isOwner(userId);
+      allow get: if isSignedIn() && isOwner(userId);
       allow list: if false;
-
       allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
   }
 }

@@ -32,8 +32,6 @@ import { Loader } from '@/components/Loader';
 import { cn } from '@/lib/utils';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const AD_SLOT = "1061788504";
-const AD_CLIENT = "ca-pub-6611267933431963";
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -183,7 +181,7 @@ export default function HomePage() {
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
-            {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && AD_SLOT && activePage === 'pomodoro' && <Ad adSlot={AD_SLOT} adClient={AD_CLIENT} />}
+            {activePage === 'pomodoro' && <Ad />}
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

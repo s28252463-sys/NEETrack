@@ -8,8 +8,15 @@ declare global {
     }
 }
 
-const Ad = ({ adSlot, adClient }: { adSlot: string; adClient: string }) => {
+const Ad = () => {
+  const adClient = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID;
+  const adSlot = process.env.NEXT_PUBLIC_ADSENSE_AD_SLOT;
+
   useEffect(() => {
+    if (!adClient || !adSlot) {
+        console.warn("AdSense environment variables not set. Ads will not be displayed.");
+        return;
+    }
     try {
       if (typeof window !== 'undefined' && window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -19,7 +26,11 @@ const Ad = ({ adSlot, adClient }: { adSlot: string; adClient: string }) => {
       // or blocked, so we can safely ignore it in many cases.
       // console.error('AdSense error:', err);
     }
-  }, [adSlot]); // Re-run effect if adSlot changes
+  }, [adSlot, adClient]);
+
+  if (!adClient || !adSlot) {
+    return null;
+  }
 
   return (
     <div className="w-full text-center" key={adSlot}>

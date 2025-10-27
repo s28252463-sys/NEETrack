@@ -68,7 +68,7 @@ export default function LoginPage() {
               </div>
             </div>
             <SocialButtons />
-            <p className="mt-2 text-center text-sm text-white/80">
+            <p className="mt-2 text-center text-sm text-white [text-shadow:0px_1px_4px_rgb(0_0_0)]">
               Don&apos;t have an account?{' '}
               <Link href="/signup" className="font-semibold text-white hover:underline">
                 Sign up

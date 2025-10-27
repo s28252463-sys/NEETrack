@@ -37,20 +37,20 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
   }, [examDate, isClient]);
 
   return (
-    <Card className="shadow-lg">
+    <Card className="bg-gradient-to-br from-primary/90 to-accent/80 text-primary-foreground border-none shadow-xl">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium font-headline">
           Countdown to NEET UG
         </CardTitle>
-        <CalendarDays className="h-5 w-5 text-primary" />
+        <CalendarDays className="h-5 w-5 text-primary-foreground" />
       </CardHeader>
       <CardContent>
         {isClient && daysLeft !== null ? (
-          <div className="text-4xl font-bold text-primary">{daysLeft}</div>
+          <div className="text-4xl font-bold">{daysLeft}</div>
         ) : (
-          <div className="text-4xl font-bold text-primary">-</div>
+          <div className="text-4xl font-bold">-</div>
         )}
-        <p className="text-xs text-muted-foreground pt-1">
+        <p className="text-xs text-primary-foreground/80 pt-1">
           days remaining until {examDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </CardContent>

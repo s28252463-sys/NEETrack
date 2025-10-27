@@ -85,23 +85,23 @@ export function SmartStudySuggester({ progress, daysLeft }: SmartStudySuggesterP
   }, [progress, daysLeft]);
 
   return (
-    <Card className="shadow-lg">
+    <Card className="bg-gradient-to-br from-primary/90 to-accent/80 text-primary-foreground border-none shadow-xl">
       <CardHeader>
         <div className="flex items-center gap-2">
-            <BrainCircuit className="h-6 w-6 text-primary" />
+            <BrainCircuit className="h-6 w-6 text-primary-foreground" />
             <CardTitle className="font-headline text-2xl">Smart Study Suggester</CardTitle>
         </div>
-        <CardDescription>
+        <CardDescription className="text-primary-foreground/80">
           Your personalized focus area based on your progress and time left.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="p-4 bg-primary/10 rounded-lg border border-primary/20 space-y-3">
+        <div className="p-4 bg-white/10 rounded-lg border border-white/20 space-y-3">
             <div className="flex items-center gap-3">
-                <suggestion.icon className="h-6 w-6 text-primary" />
+                <suggestion.icon className="h-6 w-6 text-primary-foreground" />
                 <h4 className="font-headline font-semibold text-lg">{suggestion.title}</h4>
             </div>
-            <p className="text-sm ml-9">{suggestion.description}</p>
+            <p className="text-sm ml-9 text-primary-foreground/90">{suggestion.description}</p>
         </div>
       </CardContent>
     </Card>

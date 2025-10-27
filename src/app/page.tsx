@@ -31,6 +31,7 @@ import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StudyMaterial } from '@/components/StudyMaterial';
 import Ad from '@/components/Ad';
+import { Loader } from '@/components/Loader';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 const AD_SLOT = "1061788504";
@@ -106,17 +107,7 @@ export default function HomePage() {
   }, [activePage, completionPercentage, daysLeft]);
 
   if (loading) {
-    return (
-        <div className="flex h-screen w-full items-center justify-center">
-            <div className="flex items-center">
-                <Skeleton className="h-12 w-12 rounded-full" />
-                <div className="ml-4 space-y-2">
-                    <Skeleton className="h-4 w-[250px]" />
-                    <Skeleton className="h-4 w-[200px]" />
-                </div>
-            </div>
-        </div>
-    );
+    return <Loader />;
   }
   
   if (!user) {

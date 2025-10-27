@@ -1,35 +1,17 @@
 'use client';
 
-import { useEffect } from 'react';
-
-declare global {
-    interface Window {
-        adsbygoogle: any;
-    }
-}
-
 const Ad = () => {
   const adClient = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID;
   const adSlot = process.env.NEXT_PUBLIC_ADSENSE_AD_SLOT;
 
-  useEffect(() => {
-    if (!adClient || !adSlot) {
-        console.warn("AdSense environment variables not set. Ads will not be displayed.");
-        return;
-    }
-    try {
-      if (typeof window !== 'undefined' && window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-      }
-    } catch (err) {
-      // It's common for this to throw an error when an ad is already loaded
-      // or blocked, so we can safely ignore it in many cases.
-      // console.error('AdSense error:', err);
-    }
-  }, [adSlot, adClient]);
-
   if (!adClient || !adSlot) {
-    return null;
+    // Return a placeholder or null if ad config is not set.
+    // This helps in development environments where ads aren't needed.
+    return (
+      <div className="w-full text-center p-4 bg-muted/50 rounded-lg">
+        <p className="text-sm text-muted-foreground">Ad Placeholder</p>
+      </div>
+    );
   }
 
   return (

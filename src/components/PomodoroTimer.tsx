@@ -8,7 +8,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@/firebase/auth/use-user';
 import { useFirestore } from '@/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { format, subDays, startOfDay } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { FocusGraph, type DailyFocus } from './FocusGraph';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
@@ -19,6 +19,13 @@ const LONG_BREAK_DURATION = 15 * 60; // 15 minutes
 const FOCUS_DATA_KEY = 'pomodoroFocusData';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
+
+declare global {
+    interface Window {
+        adsbygoogle: any;
+    }
+}
+
 
 export function PomodoroTimer() {
   const [mode, setMode] = useState<TimerMode>('work');
@@ -33,6 +40,16 @@ export function PomodoroTimer() {
   useEffect(() => {
     setIsClient(true);
   }, []);
+  
+  useEffect(() => {
+      if (isClient) {
+          try {
+              (window.adsbygoogle = window.adsbygoogle || []).push({});
+          } catch (err) {
+              console.error("AdSense error:", err);
+          }
+      }
+  }, [isClient]);
 
   const getDuration = useCallback((currentMode: TimerMode) => {
     switch (currentMode) {

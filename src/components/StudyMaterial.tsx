@@ -69,13 +69,13 @@ export function StudyMaterial() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
-      const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+      const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 
       if (selectedFile.size > MAX_FILE_SIZE) {
         toast({
           variant: 'destructive',
           title: 'File Too Large',
-          description: 'The maximum file size is 2MB. Please select a smaller file.',
+          description: 'The maximum file size is 15MB. Please select a smaller file.',
         });
         setFile(null);
         e.target.value = ''; // Reset the file input
@@ -250,7 +250,7 @@ export function StudyMaterial() {
                     </div>
                 </div>
               <div className="space-y-2">
-                  <Label htmlFor="file-upload">File (Max 2MB)</Label>
+                  <Label htmlFor="file-upload">File (Max 15MB)</Label>
                   <Input 
                       id="file-upload"
                       type="file" 

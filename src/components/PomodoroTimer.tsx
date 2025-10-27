@@ -10,6 +10,8 @@ import { useFirestore } from '@/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { format, subDays, startOfDay } from 'date-fns';
 import { FocusGraph, type DailyFocus } from './FocusGraph';
+import { errorEmitter } from '@/firebase/error-emitter';
+import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 const WORK_DURATION = 25 * 60; // 25 minutes
 const SHORT_BREAK_DURATION = 5 * 60; // 5 minutes
@@ -54,9 +56,21 @@ export function PomodoroTimer() {
     let data: DailyFocus[] = [];
     const focusDataRef = getFocusDataRef();
     if (focusDataRef) {
-      const docSnap = await getDoc(focusDataRef);
-      if (docSnap.exists()) {
-        data = docSnap.data().sessions || [];
+      try {
+        const docSnap = await getDoc(focusDataRef);
+        if (docSnap.exists()) {
+          data = docSnap.data().sessions || [];
+        }
+      } catch (e: any) {
+        if (e.code === 'permission-denied') {
+          const permissionError = new FirestorePermissionError({
+              path: focusDataRef.path,
+              operation: 'get',
+          } satisfies SecurityRuleContext);
+          errorEmitter.emit('permission-error', permissionError);
+        } else {
+            console.error("An unexpected error occurred while loading focus data:", e);
+        }
       }
     } else if (isClient) {
       const localData = localStorage.getItem(FOCUS_DATA_KEY);
@@ -76,8 +90,18 @@ export function PomodoroTimer() {
   const saveFocusData = useCallback(async (updatedData: DailyFocus[]) => {
     setFocusData(updatedData);
     const focusDataRef = getFocusDataRef();
+    const dataToSave = { sessions: updatedData };
+
     if (focusDataRef) {
-      await setDoc(focusDataRef, { sessions: updatedData });
+      setDoc(focusDataRef, dataToSave)
+        .catch(serverError => {
+            const permissionError = new FirestorePermissionError({
+                path: focusDataRef.path,
+                operation: 'create', // or 'update'
+                requestResourceData: dataToSave,
+            } satisfies SecurityRuleContext);
+            errorEmitter.emit('permission-error', permissionError);
+        });
     } else if (isClient) {
       localStorage.setItem(FOCUS_DATA_KEY, JSON.stringify(updatedData));
     }

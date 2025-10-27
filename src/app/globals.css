@@ -135,17 +135,9 @@ body {
   }
 
   /* Loader styles */
-  .loader-central {
-    box-shadow: 0.5em 1em 1em red,
-      -0.5em 0.5em 1em orange,
-      0.5em -0.5em 1em orangered,
-      -0.5em -0.5em 1em yellow;
-  }
-  .loader-external-shadow {
-     box-shadow: 0.5em 0.5em 3em red,
-      -0.5em 0.5em 3em orange,
-      0.5em -0.5em 3em orangered,
-      -0.5em -0.5em 3em yellow;
+  .loader-circle {
+    box-shadow: 0.5em 1em 1em red, -0.5em 0.5em 1em orange, 0.5em -0.5em 1em orangered, -0.5em -0.5em 1em yellow;
+    background-color: #212121;
   }
   .loader-intern::before {
     content: "100%";

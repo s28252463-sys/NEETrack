@@ -30,8 +30,11 @@ import { useAuth } from '@/firebase';
 import Link from 'next/link';
 import { Skeleton } from '@/components/ui/skeleton';
 import { StudyMaterial } from '@/components/StudyMaterial';
+import Ad from '@/components/Ad';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
+const AD_SLOT = "1061788504";
+const AD_CLIENT = "ca-pub-6611267933431963";
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -199,6 +202,7 @@ export default function HomePage() {
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
+            {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && AD_SLOT && <Ad adSlot={AD_SLOT} adClient={AD_CLIENT} />}
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

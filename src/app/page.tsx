@@ -32,6 +32,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { StudyMaterial } from '@/components/StudyMaterial';
 import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
+import { cn } from '@/lib/utils';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 const AD_SLOT = "1061788504";
@@ -189,7 +190,7 @@ export default function HomePage() {
                 <Header />
               </div>
           </header>
-          <main className="container mx-auto px-4 py-8 flex-grow">
+          <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'pomodoro'].includes(activePage) && 'dashboard-bg')}>
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">

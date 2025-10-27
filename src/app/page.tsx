@@ -95,7 +95,7 @@ export default function HomePage() {
       case 'tests':
         return <MockTests />;
       case 'pomodoro':
-        return <div className="flex justify-center items-start pt-10"><PomodoroTimer /></div>;
+        return <PomodoroTimer />;
       default:
         return <div>Dashboard</div>;
     }
@@ -183,7 +183,7 @@ export default function HomePage() {
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
-            {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && AD_SLOT && <Ad adSlot={AD_SLOT} adClient={AD_CLIENT} />}
+            {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && AD_SLOT && activePage === 'pomodoro' && <Ad adSlot={AD_SLOT} adClient={AD_CLIENT} />}
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

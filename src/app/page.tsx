@@ -86,14 +86,38 @@ export default function HomePage() {
               <ExamCountdown examDate={EXAM_DATE} />
               <SmartStudySuggester progress={completionPercentage} daysLeft={daysLeft} />
             </div>
+            <div className="pt-8">
+              <Ad />
+            </div>
           </div>
         );
       case 'syllabus':
-        return <SyllabusTracker onProgressChange={setCompletionPercentage} />;
+        return (
+          <>
+            <SyllabusTracker onProgressChange={setCompletionPercentage} />
+            <div className="pt-8">
+              <Ad />
+            </div>
+          </>
+        );
       case 'tests':
-        return <MockTests />;
+        return (
+          <>
+            <MockTests />
+            <div className="pt-8">
+              <Ad />
+            </div>
+          </>
+        );
       case 'pomodoro':
-        return <PomodoroTimer />;
+        return (
+          <>
+            <PomodoroTimer />
+            <div className="pt-8">
+              <Ad />
+            </div>
+          </>
+        );
       default:
         return <div>Dashboard</div>;
     }
@@ -181,7 +205,6 @@ export default function HomePage() {
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
-            <Ad />
             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>

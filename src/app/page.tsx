@@ -17,7 +17,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -30,6 +30,7 @@ import Link from 'next/link';
 import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
 import { cn } from '@/lib/utils';
+import { AboutUs } from '@/components/AboutUs';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -105,6 +106,9 @@ export default function HomePage() {
           <PomodoroTimer />
         );
         break;
+      case 'about':
+        content = <AboutUs />;
+        break;
       default:
         content = <div>Dashboard</div>;
     }
@@ -112,7 +116,6 @@ export default function HomePage() {
       <div className='space-y-8'>
         {content}
         <div className="pt-8">
-            {/* Using activePage as key forces remount on page change */}
             <Ad key={activePage} />
         </div>
       </div>
@@ -161,6 +164,12 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Pomodoro Timer</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
+                   <SidebarMenuItem>
+                      <SidebarMenuButton onClick={() => setActivePage('about')} isActive={activePage === 'about'} tooltip="About Us">
+                          <Info />
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
+                      </SidebarMenuButton>
+                  </SidebarMenuItem>
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
@@ -198,11 +207,11 @@ export default function HomePage() {
                 <Header />
               </div>
           </header>
-          <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'pomodoro'].includes(activePage) && 'dashboard-bg')}>
+          <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'pomodoro', 'about'].includes(activePage) && 'dashboard-bg')}>
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">
-            <p>Built for NEET UG Aspirants with ❤️</p>
+             <p>Built for NEET UG Aspirants with ❤️</p>
           </footer>
         </div>
       </SidebarInset>

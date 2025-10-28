@@ -173,6 +173,22 @@ body {
       linear-gradient(-90deg, var(--color), transparent 20%);
   }
 
+  .loader-background-animated {
+    width: 100%;
+    background: linear-gradient(
+      -45deg,
+      #00eff8,
+      #f800b4,
+      #ebf503,
+      #02f6c1,
+      #00eff8,
+      #9400f8
+    );
+    background-size: 400% 400%;
+    animation: gradient 30s ease infinite;
+    height: 100%;
+  }
+
   .dashboard-bg {
     --s: 105px; /* control the size */
     --c1: #b9b9b9;
@@ -254,4 +270,22 @@ body {
   98% { content: '98%'; }
   99% { content: '99%'; }
   100% { content: '100%'; }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  25% {
+    background-position: 50% 100%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  75% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }

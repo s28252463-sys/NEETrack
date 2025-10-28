@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 declare global {
     interface Window {
@@ -12,15 +12,21 @@ declare global {
 const Ad = () => {
   const adClient = process.env.NEXT_PUBLIC_ADSENSE_PUB_ID;
   const adSlot = process.env.NEXT_PUBLIC_ADSENSE_AD_SLOT;
-  const pathname = usePathname();
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    try {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-    } catch (err) {
-        console.error("AdSense error:", err);
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+        try {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+        } catch (err) {
+            console.error("AdSense error:", err);
+        }
     }
-  }, [pathname]); // Rerun the effect when the path changes
+  }, [isClient]);
 
   if (!adClient || !adSlot) {
     return (
@@ -30,8 +36,12 @@ const Ad = () => {
     );
   }
   
+  if (!isClient) {
+    return null;
+  }
+
   return (
-    <div key={pathname} className="w-full text-center">
+    <div className="w-full text-center">
       <ins
         className="adsbygoogle"
         style={{ display: 'block' }}

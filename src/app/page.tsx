@@ -77,50 +77,47 @@ export default function HomePage() {
   };
 
   const renderContent = useCallback(() => {
+    let content;
     switch (activePage) {
       case 'dashboard':
-        return (
+        content = (
           <div className="space-y-8">
             <MotivationalQuote />
             <div className="grid gap-8 md:grid-cols-2">
               <ExamCountdown examDate={EXAM_DATE} />
               <SmartStudySuggester progress={completionPercentage} daysLeft={daysLeft} />
             </div>
-            <div className="pt-8">
-              <Ad />
-            </div>
           </div>
         );
+        break;
       case 'syllabus':
-        return (
-          <>
-            <SyllabusTracker onProgressChange={setCompletionPercentage} />
-            <div className="pt-8">
-              <Ad />
-            </div>
-          </>
+        content = (
+          <SyllabusTracker onProgressChange={setCompletionPercentage} />
         );
+        break;
       case 'tests':
-        return (
-          <>
-            <MockTests />
-            <div className="pt-8">
-              <Ad />
-            </div>
-          </>
+        content = (
+          <MockTests />
         );
+        break;
       case 'pomodoro':
-        return (
-          <>
-            <PomodoroTimer />
-            <div className="pt-8">
-              <Ad />
-            </div>
-          </>
+        content = (
+          <PomodoroTimer />
         );
+        break;
       default:
-        return <div>Dashboard</div>;
+        content = <div>Dashboard</div>;
     }
+    return (
+      <div className='space-y-8'>
+        {content}
+        <div className="pt-8">
+            {/* Using activePage as key forces remount on page change */}
+            <Ad key={activePage} />
+        </div>
+      </div>
+    )
+
   }, [activePage, completionPercentage, daysLeft]);
 
   if (loading) {

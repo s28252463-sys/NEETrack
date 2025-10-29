@@ -124,7 +124,7 @@ export default function HomePage() {
       </div>
     )
 
-  }, [activePage, completionPercentage, daysLeft]);
+  }, [activePage, daysLeft]);
 
   if (loading) {
     return <Loader />;

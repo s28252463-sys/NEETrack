@@ -32,19 +32,19 @@ interface PomodoroSettings {
 
 const SessionTracker = ({ sessionCount }: { sessionCount: number }) => (
     <div className="flex flex-col items-center gap-4 w-full">
-        <div className="bg-gray-800 text-white rounded-full px-4 py-2">
+        <div className="bg-white/10 text-white rounded-full px-4 py-2">
             <p>Session {sessionCount % 4 || 4}/4</p>
         </div>
         <div className="flex items-center gap-2">
             {[1, 2, 3, 4].map((i) => (
                 <div key={i} className={cn(
                     "w-3 h-3 rounded-full",
-                    i <= sessionCount % 4 ? "bg-teal-400" : "bg-gray-300",
+                    i <= sessionCount % 4 ? "bg-teal-400" : "bg-white/30",
                     sessionCount % 4 === 0 && "bg-teal-400" // all filled on 4th session
                 )} />
             ))}
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-primary-foreground/80">
             <span>Short Break: 5 min</span> &bull; <span>Long Break: 15 min</span>
         </div>
     </div>
@@ -272,14 +272,14 @@ export function PomodoroTimer() {
 
   return (
     <div className="space-y-8">
-        <Card className="shadow-lg max-w-md mx-auto">
+        <Card className="shadow-lg max-w-md mx-auto bg-gradient-to-br from-gray-900 to-gray-800 text-primary-foreground border-none">
           <CardContent className="flex flex-col items-center justify-center space-y-8 pt-8">
             
              <div className="relative w-64 h-64">
                 <CircularProgress progress={progress} />
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <p className="text-muted-foreground tracking-widest text-sm">{modeText}</p>
-                    <p className="text-6xl font-semibold font-mono text-foreground tabular-nums">
+                    <p className="text-primary-foreground/70 tracking-widest text-sm">{modeText}</p>
+                    <p className="text-6xl font-semibold font-mono text-primary-foreground tabular-nums">
                         {formatTime(timeRemaining)}
                     </p>
                 </div>
@@ -296,7 +296,7 @@ export function PomodoroTimer() {
               </Button>
               <Popover>
                   <PopoverTrigger asChild>
-                      <Button variant="ghost" size="icon" className="text-muted-foreground">
+                      <Button variant="ghost" size="icon" className="text-primary-foreground/70 hover:text-primary-foreground">
                           <Settings />
                       </Button>
                   </PopoverTrigger>

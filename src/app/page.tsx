@@ -233,7 +233,7 @@ export default function HomePage() {
                 {/* Mobile header can be simpler */}
               </div>
           </header>
-          <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'pomodoro', 'about'].includes(activePage) && 'dashboard-bg')}>
+          <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'about'].includes(activePage) && 'dashboard-bg')}>
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">

@@ -15,6 +15,8 @@ import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 import { useRouter } from 'next/navigation';
 
+const ADMIN_UID = "E6cRkM6s6PbhW8T3b0L4VpmoeB32";
+
 interface StudyMaterial {
   lectureUrl?: string;
   notesUrl?: string;
@@ -143,7 +145,7 @@ const AdminSubjectAccordion = ({ subject }: { subject: Subject }) => {
                                 <Accordion type="multiple" className="w-full pl-4 border-l-2 ml-4">
                                      {subSubject.topics?.map(topic => (
                                         <AccordionItem key={topic.id} value={topic.id}>
-                                            <AccordionTrigger>{topic.name}</Trigger>
+                                            <AccordionTrigger>{topic.name}</AccordionTrigger>
                                             <AccordionContent>
                                                 <AdminTopicEditor subject={subSubject} topic={topic} />
                                             </AccordionContent>
@@ -164,12 +166,12 @@ export default function AdminPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && (!user || user.uid !== "E6cRkM6s6PbhW8T3b0L4VpmoeB32")) {
+        if (!loading && (!user || user.uid !== ADMIN_UID)) {
             router.push('/');
         }
     }, [user, loading, router]);
 
-    if (loading || !user || user.uid !== "E6cRkM6s6PbhW8T3b0L4VpmoeB32") {
+    if (loading || !user || user.uid !== ADMIN_UID) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
                <p>Loading or redirecting...</p>

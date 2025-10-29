@@ -30,6 +30,7 @@ interface StudyMaterial {
   notesUrl?: string;
   questionBankUrl?: string;
   shortNoteUrl?: string;
+  annotatedNcertUrl?: string;
 }
 
 const TopicEditor = ({ subject, topic }: { subject: Subject | {id: string}, topic: Topic }) => {
@@ -111,6 +112,10 @@ const TopicEditor = ({ subject, topic }: { subject: Subject | {id: string}, topi
         <div>
           <Label htmlFor={`shortnote-${topic.id}`}>Short Note (Drive URL)</Label>
           <Input id={`shortnote-${topic.id}`} value={materials.shortNoteUrl || ''} onChange={e => handleInputChange('shortNoteUrl', e.target.value)} />
+        </div>
+         <div>
+          <Label htmlFor={`annotated-ncert-${topic.id}`}>Annotated NCERT (Drive URL)</Label>
+          <Input id={`annotated-ncert-${topic.id}`} value={materials.annotatedNcertUrl || ''} onChange={e => handleInputChange('annotatedNcertUrl', e.target.value)} />
         </div>
       </div>
       <Button type="submit" size="sm">Save {topic.name}</Button>

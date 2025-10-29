@@ -107,6 +107,11 @@
           "type": "string",
           "format": "uri",
           "description": "Google Drive link for short notes."
+        },
+        "annotatedNcertUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Google Drive link for the annotated NCERT."
         }
       }
     }

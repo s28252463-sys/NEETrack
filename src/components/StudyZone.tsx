@@ -14,12 +14,14 @@ import { doc, getDoc } from 'firebase/firestore';
 import { BookOpen, Youtube, FileText, FileQuestion, StickyNote } from 'lucide-react';
 import { YouTubePlayer } from './YouTubePlayer';
 import Link from 'next/link';
+import { Button } from './ui/button';
 
 interface StudyMaterial {
   lectureUrl?: string;
   notesUrl?: string;
   questionBankUrl?: string;
   shortNoteUrl?: string;
+  annotatedNcertUrl?: string;
 }
 
 const TopicMaterials = ({ subject, topic }: { subject: Subject | {id: string}, topic: Topic }) => {
@@ -99,6 +101,12 @@ const TopicMaterials = ({ subject, topic }: { subject: Subject | {id: string}, t
             <Link href={materials.shortNoteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-muted hover:bg-muted/80 rounded-md transition-colors">
                 <StickyNote className="text-primary h-5 w-5"/>
                 <span className="font-medium">Short Notes</span>
+            </Link>
+        )}
+        {materials.annotatedNcertUrl && (
+            <Link href={materials.annotatedNcertUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-muted hover:bg-muted/80 rounded-md transition-colors">
+                <FileText className="text-primary h-5 w-5"/>
+                <span className="font-medium">Annotated NCERT</span>
             </Link>
         )}
       </div>

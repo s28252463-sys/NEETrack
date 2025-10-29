@@ -3,9 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
-import { SmartStudySuggester } from '@/components/SmartStudySuggester';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
-import { MotivationalQuote } from '@/components/MotivationalQuote';
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +15,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen, Shield } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -33,9 +31,9 @@ import { cn } from '@/lib/utils';
 import { AboutUs } from '@/components/AboutUs';
 import { StudyZone } from '@/components/StudyZone';
 import { toast } from '@/hooks/use-toast';
+import { MotivationalQuote } from '@/components/MotivationalQuote';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const ADMIN_UID = "6sZhacZybZRnrTh95QdQWYS7RVB2";
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -45,8 +43,6 @@ export default function HomePage() {
   const router = useRouter();
   const auth = useAuth();
   
-  const isAdmin = user?.uid === ADMIN_UID;
-
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
@@ -91,7 +87,6 @@ export default function HomePage() {
             <MotivationalQuote />
             <div className="grid gap-8 md:grid-cols-2">
               <ExamCountdown examDate={EXAM_DATE} />
-              <SmartStudySuggester progress={completionPercentage} daysLeft={daysLeft} />
             </div>
           </div>
         );
@@ -184,16 +179,6 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {isAdmin && (
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Admin Panel">
-                          <Link href="/admin">
-                            <Shield />
-                            <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
-                          </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

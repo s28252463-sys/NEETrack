@@ -15,7 +15,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen, ShieldCheck } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -23,7 +23,7 @@ import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { signOut } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 import Link from 'next/link';
 import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
@@ -32,6 +32,7 @@ import { AboutUs } from '@/components/AboutUs';
 import { StudyZone } from '@/components/StudyZone';
 import { toast } from '@/hooks/use-toast';
 import { MotivationalQuote } from '@/components/MotivationalQuote';
+import { doc, getDoc } from 'firebase/firestore';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -42,12 +43,29 @@ export default function HomePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
+  const firestore = useFirestore();
+  const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
     }
   }, [user, loading, router]);
+
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+        if (user && firestore) {
+            const userDocRef = doc(firestore, 'users', user.uid);
+            const docSnap = await getDoc(userDocRef);
+            if (docSnap.exists() && docSnap.data().admin === true) {
+                setIsAdmin(true);
+            } else {
+                setIsAdmin(false);
+            }
+        }
+    };
+    checkAdminStatus();
+  }, [user, firestore]);
 
   useEffect(() => {
     const calculateDaysLeft = () => {
@@ -75,6 +93,14 @@ export default function HomePage() {
   const handleSignOut = async () => {
     if (auth) {
       await signOut(auth);
+    }
+  };
+
+  const handleNavigation = (page: string) => {
+    if (page === 'admin') {
+      router.push('/admin');
+    } else {
+      setActivePage(page);
     }
   };
 
@@ -144,41 +170,49 @@ export default function HomePage() {
           <SidebarContent>
               <SidebarMenu>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('dashboard')} isActive={activePage === 'dashboard'} tooltip="Dashboard">
+                      <SidebarMenuButton onClick={() => handleNavigation('dashboard')} isActive={activePage === 'dashboard'} tooltip="Dashboard">
                           <HomeIcon />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Dashboard</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('syllabus')} isActive={activePage === 'syllabus'} tooltip="Syllabus Tracker">
+                      <SidebarMenuButton onClick={() => handleNavigation('syllabus')} isActive={activePage === 'syllabus'} tooltip="Syllabus Tracker">
                           <ListChecks />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Syllabus Tracker</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('study-zone')} isActive={activePage === 'study-zone'} tooltip="Study Zone">
+                      <SidebarMenuButton onClick={() => handleNavigation('study-zone')} isActive={activePage === 'study-zone'} tooltip="Study Zone">
                           <BookOpen />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Study Zone</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
+                      <SidebarMenuButton onClick={() => handleNavigation('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
                           <ClipboardList />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Mock Tests</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('pomodoro')} isActive={activePage === 'pomodoro'} tooltip="Pomodoro Timer">
+                      <SidebarMenuButton onClick={() => handleNavigation('pomodoro')} isActive={activePage === 'pomodoro'} tooltip="Pomodoro Timer">
                           <Timer />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Pomodoro Timer</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                    <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => setActivePage('about')} isActive={activePage === 'about'} tooltip="About Us">
+                      <SidebarMenuButton onClick={() => handleNavigation('about')} isActive={activePage === 'about'} tooltip="About Us">
                           <Info />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
+                  {isAdmin && (
+                    <SidebarMenuItem>
+                        <SidebarMenuButton onClick={() => handleNavigation('admin')} tooltip="Admin Panel">
+                            <ShieldCheck />
+                            <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

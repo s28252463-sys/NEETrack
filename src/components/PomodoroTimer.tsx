@@ -209,14 +209,14 @@ export function PomodoroTimer() {
         
         notificationTitle = "Time for a break!";
         notificationBody = `Great work! Starting your ${newSessionCount % 4 === 0 ? 'long' : 'short'} break.`;
-        if (typeof Audio !== 'undefined') new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play();
+        if (typeof Audio !== 'undefined') new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play().catch(e => console.error("Error playing sound:", e));
 
       } else {
         setMode('work');
         setTimeRemaining(getDuration('work'));
         notificationTitle = "Back to work!";
         notificationBody = "Your break is over. Let's get back to focusing.";
-        if (typeof Audio !== 'undefined') new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play();
+        if (typeof Audio !== 'undefined') new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play().catch(e => console.error("Error playing sound:", e));
       }
 
       if (isClient && Notification.permission === 'granted') {
@@ -229,6 +229,13 @@ export function PomodoroTimer() {
       if (notification) notification.close();
     };
   }, [isActive, timeRemaining, mode, sessionCount, getDuration, isClient, recordFocusSession]);
+  
+  const handleModeChange = (newMode: TimerMode) => {
+    setIsActive(false);
+    setMode(newMode);
+    setTimeRemaining(getDuration(newMode));
+  };
+
 
   const handleToggle = () => {
     setIsActive(!isActive);
@@ -273,7 +280,43 @@ export function PomodoroTimer() {
   return (
     <div className="space-y-8">
         <Card className="shadow-lg max-w-md mx-auto bg-gradient-to-br from-gray-900 to-gray-800 text-primary-foreground border-none">
-          <CardContent className="flex flex-col items-center justify-center space-y-8 pt-8">
+          <CardContent className="flex flex-col items-center justify-center space-y-6 pt-8">
+            
+            <div className="flex space-x-2 bg-black/20 p-1 rounded-full">
+              <Button
+                onClick={() => handleModeChange('work')}
+                variant={mode === 'work' ? 'secondary' : 'ghost'}
+                className={cn(
+                    "rounded-full px-4 py-1 h-auto text-sm",
+                    mode === 'work' ? "bg-white/90 text-slate-900" : "text-white/70 hover:bg-white/10 hover:text-white"
+                )}
+                size="sm"
+              >
+                Focus
+              </Button>
+              <Button
+                onClick={() => handleModeChange('shortBreak')}
+                variant={mode === 'shortBreak' ? 'secondary' : 'ghost'}
+                className={cn(
+                    "rounded-full px-4 py-1 h-auto text-sm",
+                    mode === 'shortBreak' ? "bg-white/90 text-slate-900" : "text-white/70 hover:bg-white/10 hover:text-white"
+                )}
+                size="sm"
+              >
+                Short Break
+              </Button>
+              <Button
+                onClick={() => handleModeChange('longBreak')}
+                variant={mode === 'longBreak' ? 'secondary' : 'ghost'}
+                className={cn(
+                    "rounded-full px-4 py-1 h-auto text-sm",
+                    mode === 'longBreak' ? "bg-white/90 text-slate-900" : "text-white/70 hover:bg-white/10 hover:text-white"
+                )}
+                size="sm"
+              >
+                Long Break
+              </Button>
+            </div>
             
              <div className="relative w-64 h-64">
                 <CircularProgress progress={progress} mode={mode} />
@@ -286,13 +329,12 @@ export function PomodoroTimer() {
             </div>
 
             <div className="flex items-center justify-center space-x-4 w-full">
-              <Button onClick={handleToggle} className="w-24 bg-teal-500 hover:bg-teal-600 text-white rounded-full">
-                {isActive ? <Pause /> : <Play />}
+              <Button onClick={handleToggle} className="w-28 h-12 bg-white hover:bg-gray-200 text-gray-900 rounded-full text-lg font-bold tracking-wider">
+                {isActive ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
                 <span className="ml-2">{isActive ? 'PAUSE' : 'START'}</span>
               </Button>
-              <Button onClick={handleReset} variant="destructive" className="w-24 bg-red-500 hover:bg-red-600 rounded-full">
+              <Button onClick={handleReset} variant="ghost" size="icon" className="text-primary-foreground/70 hover:text-primary-foreground">
                 <RefreshCw />
-                <span className="ml-2">RESET</span>
               </Button>
               <Popover>
                   <PopoverTrigger asChild>

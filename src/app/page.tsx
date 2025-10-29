@@ -35,7 +35,7 @@ import { StudyZone } from '@/components/StudyZone';
 import { toast } from '@/hooks/use-toast';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const ADMIN_UID = "6sZhacZybZRnrTh95QdQWYS7RVB2"; // Important: Replace with your actual Firebase User ID
+const ADMIN_UID = "6sZhacZybZRnrTh95QdQWYS7RVB2";
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -233,7 +233,7 @@ export default function HomePage() {
                 {/* Mobile header can be simpler */}
               </div>
           </header>
-          <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'about'].includes(activePage) && 'dashboard-bg')}>
+          <main className={cn("container mx-auto px-4 py-8 flex-grow", !['pomodoro'].includes(activePage) && 'dashboard-bg')}>
             {renderContent()}
           </main>
           <footer className="text-center py-8 text-muted-foreground text-sm space-y-4">

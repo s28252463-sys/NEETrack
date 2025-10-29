@@ -23,7 +23,7 @@ import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/e
 import { BookOpen, Shield } from 'lucide-react';
 import Link from 'next/link';
 
-const ADMIN_UID = "6sZhacZybZRnrTh95QdQWYS7RVB2"; // Important: Replace with your actual Firebase User ID
+const ADMIN_UID = "6sZhacZybZRnrTh95QdQWYS7RVB2";
 
 interface StudyMaterial {
   lectureUrl?: string;

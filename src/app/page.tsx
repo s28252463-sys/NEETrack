@@ -44,13 +44,10 @@ export default function HomePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
-  const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
-    } else if (user) {
-      setIsAdmin(user.uid === ADMIN_UID);
     }
   }, [user, loading, router]);
 
@@ -193,7 +190,7 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {isAdmin && (
+                  {user && user.uid === ADMIN_UID && (
                     <SidebarMenuItem>
                         <SidebarMenuButton onClick={() => handleNavigation('admin')} tooltip="Admin Panel">
                             <ShieldCheck />

@@ -51,24 +51,24 @@ const AdminTopicEditor = ({ subject, topic }: { subject: Subject | {id: string},
 
   const handleSave = async () => {
     setIsSaving(true);
-    try {
-      // Use updateDoc which is more appropriate, but setDoc with merge is fine too.
-      await setDoc(docRef, materials, { merge: true });
-      toast({
-        title: "Success!",
-        description: `Materials for ${topic.name} have been saved.`,
-      });
-    } catch (error) {
-        // This will be caught by our custom error handler now
+    setDoc(docRef, materials, { merge: true })
+      .then(() => {
+        toast({
+          title: "Success!",
+          description: `Materials for ${topic.name} have been saved.`,
+        });
+      })
+      .catch((serverError) => {
         const permissionError = new FirestorePermissionError({
-            path: docRef.path,
-            operation: 'update',
-            requestResourceData: materials,
+          path: docRef.path,
+          operation: 'update',
+          requestResourceData: materials,
         } satisfies SecurityRuleContext);
         errorEmitter.emit('permission-error', permissionError);
-    } finally {
-      setIsSaving(false);
-    }
+      })
+      .finally(() => {
+        setIsSaving(false);
+      });
   };
 
   const handleInputChange = (field: keyof StudyMaterial, value: string) => {
@@ -143,7 +143,7 @@ const AdminSubjectAccordion = ({ subject }: { subject: Subject }) => {
                                 <Accordion type="multiple" className="w-full pl-4 border-l-2 ml-4">
                                      {subSubject.topics?.map(topic => (
                                         <AccordionItem key={topic.id} value={topic.id}>
-                                            <AccordionTrigger>{topic.name}</AccordionTrigger>
+                                            <AccordionTrigger>{topic.name}</Trigger>
                                             <AccordionContent>
                                                 <AdminTopicEditor subject={subSubject} topic={topic} />
                                             </AccordionContent>
@@ -163,13 +163,19 @@ export default function AdminPage() {
     const { user, loading } = useUser();
     const router = useRouter();
 
-    // Redirect if not logged in
     useEffect(() => {
-        if (!loading && !user) {
-            router.push('/login');
+        if (!loading && (!user || user.uid !== "E6cRkM6s6PbhW8T3b0L4VpmoeB32")) {
+            router.push('/');
         }
     }, [user, loading, router]);
 
+    if (loading || !user || user.uid !== "E6cRkM6s6PbhW8T3b0L4VpmoeB32") {
+        return (
+            <div className="flex h-screen w-full items-center justify-center">
+               <p>Loading or redirecting...</p>
+            </div>
+        )
+    }
 
     return (
         <div className="container mx-auto px-4 py-8">

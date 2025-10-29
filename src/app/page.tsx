@@ -35,6 +35,7 @@ import { MotivationalQuote } from '@/components/MotivationalQuote';
 import { doc, getDoc } from 'firebase/firestore';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
+const ADMIN_UID = "E6cRkM6s6PbhW8T3b0L4VpmoeB32";
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -43,29 +44,16 @@ export default function HomePage() {
   const { user, loading } = useUser();
   const router = useRouter();
   const auth = useAuth();
-  const firestore = useFirestore();
   const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
+    } else if (user) {
+      setIsAdmin(user.uid === ADMIN_UID);
     }
   }, [user, loading, router]);
 
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-        if (user && firestore) {
-            const userDocRef = doc(firestore, 'users', user.uid);
-            const docSnap = await getDoc(userDocRef);
-            if (docSnap.exists() && docSnap.data().admin === true) {
-                setIsAdmin(true);
-            } else {
-                setIsAdmin(false);
-            }
-        }
-    };
-    checkAdminStatus();
-  }, [user, firestore]);
 
   useEffect(() => {
     const calculateDaysLeft = () => {

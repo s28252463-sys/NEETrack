@@ -1,10 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Timer, Play, Pause, RefreshCw, Settings } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Play, Pause, RefreshCw, Settings } from 'lucide-react';
 import { useUser } from '@/firebase/auth/use-user';
 import { useFirestore } from '@/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -16,6 +15,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
+import { CircularProgress } from './CircularProgress';
+import { cn } from '@/lib/utils';
+
 
 const SHORT_BREAK_DURATION = 5 * 60; // 5 minutes
 const LONG_BREAK_DURATION = 15 * 60; // 15 minutes
@@ -27,6 +29,27 @@ type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 interface PomodoroSettings {
   workDuration: number;
 }
+
+const SessionTracker = ({ sessionCount }: { sessionCount: number }) => (
+    <div className="flex flex-col items-center gap-4 w-full">
+        <div className="bg-gray-800 text-white rounded-full px-4 py-2">
+            <p>Session {sessionCount % 4 || 4}/4</p>
+        </div>
+        <div className="flex items-center gap-2">
+            {[1, 2, 3, 4].map((i) => (
+                <div key={i} className={cn(
+                    "w-3 h-3 rounded-full",
+                    i <= sessionCount % 4 ? "bg-teal-400" : "bg-gray-300",
+                    sessionCount % 4 === 0 && "bg-teal-400" // all filled on 4th session
+                )} />
+            ))}
+        </div>
+        <div className="text-xs text-muted-foreground">
+            <span>Short Break: 5 min</span> &bull; <span>Long Break: 15 min</span>
+        </div>
+    </div>
+);
+
 
 export function PomodoroTimer() {
   const { toast } = useToast();
@@ -161,6 +184,11 @@ export function PomodoroTimer() {
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
+    let notification: Notification | undefined;
+    
+    if (isClient && Notification.permission === 'default') {
+        Notification.requestPermission();
+    }
 
     if (isActive && timeRemaining > 0) {
       interval = setInterval(() => {
@@ -168,25 +196,37 @@ export function PomodoroTimer() {
       }, 1000);
     } else if (timeRemaining === 0) {
       setIsActive(false);
+      let notificationTitle = '';
+      let notificationBody = '';
+
       if (mode === 'work') {
         const newSessionCount = sessionCount + 1;
         setSessionCount(newSessionCount);
-        recordFocusSession(); // Record the completed session
+        recordFocusSession(); 
         const nextMode = newSessionCount % 4 === 0 ? 'longBreak' : 'shortBreak';
         setMode(nextMode);
         setTimeRemaining(getDuration(nextMode));
+        
+        notificationTitle = "Time for a break!";
+        notificationBody = `Great work! Starting your ${newSessionCount % 4 === 0 ? 'long' : 'short'} break.`;
         if (isClient) new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play();
+
       } else {
         setMode('work');
         setTimeRemaining(getDuration('work'));
+        notificationTitle = "Back to work!";
+        notificationBody = "Your break is over. Let's get back to focusing.";
         if (isClient) new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play();
+      }
+
+      if (isClient && Notification.permission === 'granted') {
+          notification = new Notification(notificationTitle, { body: notificationBody });
       }
     }
 
     return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
+      if (interval) clearInterval(interval);
+      if (notification) notification.close();
     };
   }, [isActive, timeRemaining, mode, sessionCount, getDuration, isClient, recordFocusSession]);
 
@@ -199,12 +239,6 @@ export function PomodoroTimer() {
     setTimeRemaining(getDuration(mode));
   }, [mode, getDuration]);
 
-  const handleModeChange = (newMode: TimerMode) => {
-    setMode(newMode);
-    setIsActive(false);
-    setTimeRemaining(getDuration(newMode));
-  };
-  
   const handleWorkDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMinutes = parseInt(e.target.value, 10);
     if (!isNaN(newMinutes) && newMinutes >= 1 && newMinutes <= 120) {
@@ -226,73 +260,71 @@ export function PomodoroTimer() {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const progress = (timeRemaining / getDuration(mode)) * 100;
+  
+  const modeText = useMemo(() => {
+      switch(mode){
+          case 'work': return 'FOCUS';
+          case 'shortBreak': return 'SHORT BREAK';
+          case 'longBreak': return 'LONG BREAK';
+      }
+  }, [mode])
+
   return (
     <div className="space-y-8">
         <Card className="shadow-lg max-w-md mx-auto">
-          <CardHeader>
-             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Timer className="h-6 w-6 text-primary" />
-                    <CardTitle className="font-headline text-2xl">Pomodoro Timer</CardTitle>
+          <CardContent className="flex flex-col items-center justify-center space-y-8 pt-8">
+            
+             <div className="relative w-64 h-64">
+                <CircularProgress progress={progress} />
+                <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <p className="text-muted-foreground tracking-widest text-sm">{modeText}</p>
+                    <p className="text-6xl font-semibold font-mono text-foreground tabular-nums">
+                        {formatTime(timeRemaining)}
+                    </p>
                 </div>
-                 <Popover>
-                    <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <Settings className="h-5 w-5" />
-                        </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-60">
-                        <div className="grid gap-4">
-                            <div className="space-y-2">
-                                <h4 className="font-medium leading-none">Settings</h4>
-                                <p className="text-sm text-muted-foreground">
-                                    Customize your timer.
-                                </p>
-                            </div>
-                            <div className="grid gap-2">
-                                <Label htmlFor="work-duration">Work (minutes)</Label>
-                                <Input 
-                                    id="work-duration"
-                                    type="number"
-                                    min="1"
-                                    max="120"
-                                    value={workDuration / 60}
-                                    onChange={handleWorkDurationChange}
-                                />
-                            </div>
-                        </div>
-                    </PopoverContent>
-                </Popover>
             </div>
-            <CardDescription>
-                Focus on your studies with the Pomodoro technique.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center justify-center space-y-6">
-            <Tabs value={mode} onValueChange={(value) => handleModeChange(value as TimerMode)} className="w-full">
-                <TabsList className="grid w-full grid-cols-3">
-                    <TabsTrigger value="work">Work</TabsTrigger>
-                    <TabsTrigger value="shortBreak">Short Break</TabsTrigger>
-                    <TabsTrigger value="longBreak">Long Break</TabsTrigger>
-                </TabsList>
-            </Tabs>
 
-            <div className="text-7xl font-bold font-mono text-primary tabular-nums">
-              {formatTime(timeRemaining)}
-            </div>
-            <div className="flex items-center space-x-4">
-              <Button onClick={handleToggle} className="w-28">
-                {isActive ? <Pause className="mr-2" /> : <Play className="mr-2" />}
-                {isActive ? 'Pause' : 'Start'}
+            <div className="flex items-center justify-center space-x-4 w-full">
+              <Button onClick={handleToggle} className="w-24 bg-teal-500 hover:bg-teal-600 text-white rounded-full">
+                {isActive ? <Pause /> : <Play />}
+                <span className="ml-2">{isActive ? 'PAUSE' : 'START'}</span>
               </Button>
-              <Button onClick={handleReset} variant="outline">
-                <RefreshCw className="mr-2" />
-                Reset
+              <Button onClick={handleReset} variant="destructive" className="w-24 bg-red-500 hover:bg-red-600 rounded-full">
+                <RefreshCw />
+                <span className="ml-2">RESET</span>
               </Button>
+              <Popover>
+                  <PopoverTrigger asChild>
+                      <Button variant="ghost" size="icon" className="text-muted-foreground">
+                          <Settings />
+                      </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-60">
+                      <div className="grid gap-4">
+                          <div className="space-y-2">
+                              <h4 className="font-medium leading-none">Settings</h4>
+                              <p className="text-sm text-muted-foreground">
+                                  Customize your focus time.
+                              </p>
+                          </div>
+                          <div className="grid gap-2">
+                              <Label htmlFor="work-duration">Focus (minutes)</Label>
+                              <Input 
+                                  id="work-duration"
+                                  type="number"
+                                  min="1"
+                                  max="120"
+                                  value={workDuration / 60}
+                                  onChange={handleWorkDurationChange}
+                              />
+                          </div>
+                      </div>
+                  </PopoverContent>
+              </Popover>
             </div>
-            <p className="text-sm text-muted-foreground">
-                Today's completed sessions: <span className="font-bold">{focusData.find(d => d.date === format(new Date(), 'yyyy-MM-dd'))?.sessions || 0}</span>
-            </p>
+            
+            <SessionTracker sessionCount={sessionCount} />
           </CardContent>
         </Card>
         <FocusGraph data={focusData} />

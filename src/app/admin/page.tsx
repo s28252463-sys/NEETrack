@@ -64,23 +64,24 @@ const TopicEditor = ({ subject, topic }: { subject: Subject | {id: string}, topi
     fetchMaterials();
   }, [docRef, toast]);
 
-  const handleSave = async (e: React.FormEvent) => {
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await setDoc(docRef, materials, { merge: true });
-      toast({ title: 'Success', description: `Materials for ${topic.name} saved.` });
-    } catch (e: any) {
-       if (e.code === 'permission-denied') {
-            const permissionError = new FirestorePermissionError({
-                path: docRef.path,
-                operation: 'update',
-                requestResourceData: materials,
-            } satisfies SecurityRuleContext);
-            errorEmitter.emit('permission-error', permissionError);
-        } else {
-            toast({ variant: 'destructive', title: 'Error', description: 'Failed to save materials.' });
-        }
-    }
+    setDoc(docRef, materials, { merge: true })
+        .then(() => {
+            toast({ title: 'Success', description: `Materials for ${topic.name} saved.` });
+        })
+        .catch((serverError) => {
+            if (serverError.code === 'permission-denied') {
+                const permissionError = new FirestorePermissionError({
+                    path: docRef.path,
+                    operation: 'update',
+                    requestResourceData: materials,
+                } satisfies SecurityRuleContext);
+                errorEmitter.emit('permission-error', permissionError);
+            } else {
+                toast({ variant: 'destructive', title: 'Error', description: 'Failed to save materials.' });
+            }
+        });
   };
 
   const handleInputChange = (field: keyof StudyMaterial, value: string) => {

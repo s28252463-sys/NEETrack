@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Timer, Play, Pause, RefreshCw } from 'lucide-react';
+import { Timer, Play, Pause, RefreshCw, Settings } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useUser } from '@/firebase/auth/use-user';
 import { useFirestore } from '@/firebase';
@@ -12,17 +12,27 @@ import { format, subDays } from 'date-fns';
 import { FocusGraph, type DailyFocus } from './FocusGraph';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { useToast } from '@/hooks/use-toast';
 
-const WORK_DURATION = 25 * 60; // 25 minutes
 const SHORT_BREAK_DURATION = 5 * 60; // 5 minutes
 const LONG_BREAK_DURATION = 15 * 60; // 15 minutes
 const FOCUS_DATA_KEY = 'pomodoroFocusData';
+const POMODORO_SETTINGS_KEY = 'pomodoroSettings';
 
 type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
+interface PomodoroSettings {
+  workDuration: number;
+}
+
 export function PomodoroTimer() {
+  const { toast } = useToast();
+  const [workDuration, setWorkDuration] = useState(25 * 60);
   const [mode, setMode] = useState<TimerMode>('work');
-  const [timeRemaining, setTimeRemaining] = useState(WORK_DURATION);
+  const [timeRemaining, setTimeRemaining] = useState(workDuration);
   const [isActive, setIsActive] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
   const [isClient, setIsClient] = useState(false);
@@ -34,16 +44,38 @@ export function PomodoroTimer() {
     setIsClient(true);
   }, []);
 
+   // Load settings on component mount
+  useEffect(() => {
+    if (isClient) {
+      const savedSettings = localStorage.getItem(POMODORO_SETTINGS_KEY);
+      if (savedSettings) {
+        const settings: PomodoroSettings = JSON.parse(savedSettings);
+        setWorkDuration(settings.workDuration);
+        if (mode === 'work' && !isActive) {
+          setTimeRemaining(settings.workDuration);
+        }
+      }
+    }
+  }, [isClient, mode, isActive]);
+
   const getDuration = useCallback((currentMode: TimerMode) => {
     switch (currentMode) {
       case 'work':
-        return WORK_DURATION;
+        return workDuration;
       case 'shortBreak':
         return SHORT_BREAK_DURATION;
       case 'longBreak':
         return LONG_BREAK_DURATION;
     }
-  }, []);
+  }, [workDuration]);
+
+  // Update time remaining if duration changes
+  useEffect(() => {
+      if (!isActive) {
+          setTimeRemaining(getDuration(mode));
+      }
+  }, [workDuration, mode, isActive, getDuration]);
+
 
   const getFocusDataRef = useCallback(() => {
     if (user && firestore) {
@@ -172,6 +204,21 @@ export function PomodoroTimer() {
     setIsActive(false);
     setTimeRemaining(getDuration(newMode));
   };
+  
+  const handleWorkDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMinutes = parseInt(e.target.value, 10);
+    if (!isNaN(newMinutes) && newMinutes >= 1 && newMinutes <= 120) {
+      const newDurationInSeconds = newMinutes * 60;
+      setWorkDuration(newDurationInSeconds);
+       if (isClient) {
+        localStorage.setItem(POMODORO_SETTINGS_KEY, JSON.stringify({ workDuration: newDurationInSeconds }));
+      }
+      toast({
+          title: "Duration Updated",
+          description: `Work session set to ${newMinutes} minutes.`
+      })
+    }
+  };
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -183,9 +230,39 @@ export function PomodoroTimer() {
     <div className="space-y-8">
         <Card className="shadow-lg max-w-md mx-auto">
           <CardHeader>
-             <div className="flex items-center gap-2">
-                <Timer className="h-6 w-6 text-primary" />
-                <CardTitle className="font-headline text-2xl">Pomodoro Timer</CardTitle>
+             <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Timer className="h-6 w-6 text-primary" />
+                    <CardTitle className="font-headline text-2xl">Pomodoro Timer</CardTitle>
+                </div>
+                 <Popover>
+                    <PopoverTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <Settings className="h-5 w-5" />
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-60">
+                        <div className="grid gap-4">
+                            <div className="space-y-2">
+                                <h4 className="font-medium leading-none">Settings</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Customize your timer.
+                                </p>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="work-duration">Work (minutes)</Label>
+                                <Input 
+                                    id="work-duration"
+                                    type="number"
+                                    min="1"
+                                    max="120"
+                                    value={workDuration / 60}
+                                    onChange={handleWorkDurationChange}
+                                />
+                            </div>
+                        </div>
+                    </PopoverContent>
+                </Popover>
             </div>
             <CardDescription>
                 Focus on your studies with the Pomodoro technique.

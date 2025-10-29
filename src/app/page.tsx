@@ -17,7 +17,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen, Shield } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -31,8 +31,10 @@ import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
 import { cn } from '@/lib/utils';
 import { AboutUs } from '@/components/AboutUs';
+import { StudyZone } from '@/components/StudyZone';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
+const ADMIN_UID = "REPLACE_WITH_YOUR_ADMIN_UID"; // Important: Replace with your actual Firebase User ID
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -42,6 +44,8 @@ export default function HomePage() {
   const router = useRouter();
   const auth = useAuth();
   
+  const isAdmin = user?.uid === ADMIN_UID;
+
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
@@ -106,6 +110,9 @@ export default function HomePage() {
           <PomodoroTimer />
         );
         break;
+      case 'study-zone':
+        content = <StudyZone />;
+        break;
       case 'about':
         content = <AboutUs />;
         break;
@@ -153,6 +160,12 @@ export default function HomePage() {
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
+                      <SidebarMenuButton onClick={() => setActivePage('study-zone')} isActive={activePage === 'study-zone'} tooltip="Study Zone">
+                          <BookOpen />
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Study Zone</span>
+                      </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
                       <SidebarMenuButton onClick={() => setActivePage('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
                           <ClipboardList />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Mock Tests</span>
@@ -170,6 +183,16 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
+                  {isAdmin && (
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip="Admin Panel">
+                          <Link href="/admin">
+                            <Shield />
+                            <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
+                          </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>
@@ -204,7 +227,7 @@ export default function HomePage() {
           <header className="flex items-center justify-between p-2 border-b md:hidden">
               <SidebarTrigger />
               <div className="mx-auto">
-                <Header />
+                {/* Mobile header can be simpler */}
               </div>
           </header>
           <main className={cn("container mx-auto px-4 py-8 flex-grow", ['dashboard', 'syllabus', 'pomodoro', 'about'].includes(activePage) && 'dashboard-bg')}>

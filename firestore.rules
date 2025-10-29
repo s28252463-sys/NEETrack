@@ -1,126 +1,130 @@
 /**
- * @description This ruleset enforces a strict user-ownership model, ensuring that users can only access their own data.
- * @dataStructure
- * - User profiles are stored under `/users/{userId}`.
- * - Syllabus progress is stored under `/users/{userId}/progress/syllabus`.
- * - Mock test results are stored under `/users/{userId}/mockTests/{testId}`.
- * @keySecurityDecisions
- * - Users can only read and write their own profile data.
- * - Users can only read and write their own syllabus progress data.
- * - Users can only read and write their own mock test data.
- * - Listing of users is disallowed.
- * @denormalizationForAuthorization N/A
- * @structuralSegregation N/A
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for user profiles, syllabus progress, and mock test data.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores public user profile information, accessible only to the user themselves.
+ * - /users/{userId}/progress/syllabus: Stores syllabus progress, accessible only to the user themselves.
+ * - /users/{userId}/mockTests/{testId}: Stores mock test records, accessible only to the user themselves.
+ *
+ * Key Security Decisions:
+ * - User profiles can only be created by the authenticated user with a matching UID.
+ * - Users can only read and modify their own profiles, progress, and mock test data.
+ * - Listing of user documents is disallowed for security reasons.
+ * - Data validation is limited to ensuring ownership and relational integrity.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Controls access to user profile documents.
+     * @description Enforces user-ownership for user profiles. Users can only read and modify their own profile data.
      * @path /users/{userId}
-     * @allow (create) - User with UID 'user123' can create their own profile document.
-     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete their own profile document.
-     * @deny (create) - User with UID 'user456' cannot create a profile document for user 'user123'.
-     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete the profile document for user 'user123'.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User with UID 'user123' creates their profile with matching ID.
+     *    request.auth.uid == 'user123'
+     *    request.resource.data.uid == 'user123'
+     * @allow (get) - User with UID 'user123' reads their own profile.
+     *    request.auth.uid == 'user123'
+     * @allow (update) - User with UID 'user123' updates their own profile.
+     *    request.auth.uid == 'user123'
+     * @allow (delete) - User with UID 'user123' deletes their own profile.
+     *    request.auth.uid == 'user123'
+     * @deny (create) - User with UID 'user123' tries to create a profile with a different ID 'user456'.
+     *    request.auth.uid == 'user123'
+     *    request.resource.data.uid == 'user456'
+     * @deny (get) - User with UID 'user123' tries to read profile of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (update) - User with UID 'user123' tries to update profile of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (delete) - User with UID 'user123' tries to delete profile of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @principle Enforces document ownership for writes and restricts access to a user's own data.
      */
     match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
-
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.uid == userId;
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.uid == resource.data.uid;
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to syllabus progress documents.
+     * @description Enforces user-ownership for syllabus progress documents. Users can only read and modify their own progress data.
      * @path /users/{userId}/progress/syllabus
-     * @allow (create) - User with UID 'user123' can create their own syllabus progress document.
-     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete their own syllabus progress document.
-     * @deny (create) - User with UID 'user456' cannot create a syllabus progress document for user 'user123'.
-     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete the syllabus progress document for user 'user123'.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User with UID 'user123' creates their syllabus progress document.
+     *    request.auth.uid == 'user123'
+     * @allow (get) - User with UID 'user123' reads their own syllabus progress document.
+     *    request.auth.uid == 'user123'
+     * @allow (update) - User with UID 'user123' updates their own syllabus progress document.
+     *    request.auth.uid == 'user123'
+     * @allow (delete) - User with UID 'user123' deletes their own syllabus progress document.
+     *    request.auth.uid == 'user123'
+     * @deny (create) - User with UID 'user123' tries to create syllabus progress for 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (get) - User with UID 'user123' tries to read syllabus progress of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (update) - User with UID 'user123' tries to update syllabus progress of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (delete) - User with UID 'user123' tries to delete syllabus progress of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId}/progress/syllabus {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
-      function isExistingOwner(userId) {
+       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
+      allow create: if isOwner(userId);
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Controls access to mock test documents.
+     * @description Enforces user-ownership for mock test documents. Users can only read and modify their own mock test data.
      * @path /users/{userId}/mockTests/{testId}
-     * @allow (create) - User with UID 'user123' can create their own mock test document.
-     * @allow (get, update, delete) - User with UID 'user123' can read, update, and delete their own mock test document.
-     * @deny (create) - User with UID 'user456' cannot create a mock test document for user 'user123'.
-     * @deny (get, update, delete) - User with UID 'user456' cannot read, update, or delete the mock test document for user 'user123'.
-     * @principle Enforces document ownership for all operations.
+     * @allow (create) - User with UID 'user123' creates their mock test record.
+     *    request.auth.uid == 'user123'
+     * @allow (get) - User with UID 'user123' reads their own mock test record.
+     *    request.auth.uid == 'user123'
+     * @allow (update) - User with UID 'user123' updates their own mock test record.
+     *    request.auth.uid == 'user123'
+     * @allow (delete) - User with UID 'user123' deletes their own mock test record.
+     *    request.auth.uid == 'user123'
+     * @deny (create) - User with UID 'user123' tries to create mock test for 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (get) - User with UID 'user123' tries to read mock test of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (update) - User with UID 'user123' tries to update mock test of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @deny (delete) - User with UID 'user123' tries to delete mock test of 'user456'.
+     *    request.auth.uid == 'user123'
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId}/mockTests/{testId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
       function isOwner(userId) {
         return request.auth.uid == userId;
       }
       function isExistingOwner(userId) {
         return isOwner(userId) && resource != null;
       }
+
       allow get: if isOwner(userId);
       allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
+      allow create: if isOwner(userId);
       allow update: if isExistingOwner(userId);
       allow delete: if isExistingOwner(userId);
     }
-
-        /**
-     * @description Controls access to syllabus progress documents.
-     * @path /users/{userId}/progress/pomodoro
-     * @allow (get) - User with UID 'user123' can read their own pomodoro progress document.
-     * @deny (get) - User with UID 'user456' cannot read the pomodoro progress document for user 'user123'.
-     * @principle Enforces document ownership for read operations.
-     */
-        match /users/{userId}/progress/pomodoro {
-            function isSignedIn() {
-                return request.auth != null;
-            }
-
-            function isOwner(userId) {
-                return request.auth.uid == userId;
-            }
-            function isExistingOwner(userId) {
-                return isOwner(userId) && resource != null;
-            }
-            allow get: if isOwner(userId);
-            allow list: if isOwner(userId);
-            allow create: if isSignedIn() && isOwner(userId);
-            allow update: if isExistingOwner(userId);
-            allow delete: if isExistingOwner(userId);
-        }
   }
 }

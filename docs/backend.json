@@ -64,6 +64,51 @@
             }
         },
         "required": ["name", "syllabus"]
+    },
+    "PomodoroProgress": {
+      "title": "Pomodoro Progress",
+      "description": "Tracks the number of pomodoro sessions completed by a user.",
+      "type": "object",
+      "properties": {
+        "sessions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "date": { "type": "string", "format": "date" },
+              "sessions": { "type": "number" }
+            },
+            "required": ["date", "sessions"]
+          }
+        }
+      }
+    },
+    "StudyMaterial": {
+      "title": "Study Material",
+      "description": "Contains links to study materials for a specific topic.",
+      "type": "object",
+      "properties": {
+        "lectureUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "YouTube video URL for the lecture."
+        },
+        "notesUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Google Drive link for class notes."
+        },
+        "questionBankUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Google Drive link for the question bank."
+        },
+        "shortNoteUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Google Drive link for short notes."
+        }
+      }
     }
   },
   "auth": {
@@ -81,6 +126,14 @@
     "/users/{userId}/mockTests/{testId}": {
         "schema": { "$ref": "#/entities/MockTest"},
         "description": "Stores individual mock test records for a specific user."
+    },
+    "/users/{userId}/progress/pomodoro": {
+        "schema": { "$ref": "#/entities/PomodoroProgress"},
+        "description": "Stores the user's daily pomodoro session counts."
+    },
+    "/studyMaterials/{subjectId}/topics/{topicId}": {
+        "schema": { "$ref": "#/entities/StudyMaterial" },
+        "description": "Stores study material links for a given subject and topic."
     }
   }
 }

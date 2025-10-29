@@ -35,7 +35,7 @@ import { StudyZone } from '@/components/StudyZone';
 import { toast } from '@/hooks/use-toast';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const ADMIN_UID = "PASTE_YOUR_UID_HERE"; // Important: Replace with your actual Firebase User ID
+const ADMIN_UID = "6sZhacZybZRnrTh95QdQWYS7RVB2"; // Important: Replace with your actual Firebase User ID
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');

@@ -24,7 +24,7 @@ const LONG_BREAK_DURATION = 15 * 60; // 15 minutes
 const FOCUS_DATA_KEY = 'pomodoroFocusData';
 const POMODORO_SETTINGS_KEY = 'pomodoroSettings';
 
-type TimerMode = 'work' | 'shortBreak' | 'longBreak';
+export type TimerMode = 'work' | 'shortBreak' | 'longBreak';
 
 interface PomodoroSettings {
   workDuration: number;
@@ -276,7 +276,7 @@ export function PomodoroTimer() {
           <CardContent className="flex flex-col items-center justify-center space-y-8 pt-8">
             
              <div className="relative w-64 h-64">
-                <CircularProgress progress={progress} />
+                <CircularProgress progress={progress} mode={mode} />
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <p className="text-primary-foreground/70 tracking-widest text-sm">{modeText}</p>
                     <p className="text-6xl font-semibold font-mono text-primary-foreground tabular-nums">

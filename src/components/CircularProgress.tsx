@@ -1,25 +1,28 @@
 'use client';
 
+import { type TimerMode } from './PomodoroTimer';
+
 interface CircularProgressProps {
     progress: number;
+    mode: TimerMode;
 }
 
-export function CircularProgress({ progress }: CircularProgressProps) {
+export function CircularProgress({ progress, mode }: CircularProgressProps) {
     const strokeWidth = 10;
     const radius = 80;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (progress / 100) * circumference;
 
+    const color = {
+        work: 'hsl(var(--primary))',
+        shortBreak: 'hsl(var(--chart-2))', // Using a chart color for green
+        longBreak: 'hsl(var(--accent))',
+    }[mode];
+
     return (
         <svg className="w-full h-full" viewBox="0 0 200 200">
-            <defs>
-                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#4fd1c5" />
-                    <stop offset="100%" stopColor="#3b82f6" />
-                </linearGradient>
-            </defs>
             <circle
-                className="text-gray-200 dark:text-gray-700"
+                className="text-gray-200 dark:text-gray-700/50"
                 stroke="currentColor"
                 strokeWidth={strokeWidth}
                 fill="transparent"
@@ -28,7 +31,7 @@ export function CircularProgress({ progress }: CircularProgressProps) {
                 cy={100}
             />
             <circle
-                stroke="url(#progressGradient)"
+                stroke={color}
                 strokeWidth={strokeWidth}
                 strokeDasharray={circumference}
                 strokeDashoffset={offset}
@@ -40,7 +43,7 @@ export function CircularProgress({ progress }: CircularProgressProps) {
                 style={{
                     transform: 'rotate(-90deg)',
                     transformOrigin: '50% 50%',
-                    transition: 'stroke-dashoffset 0.3s ease-out'
+                    transition: 'stroke-dashoffset 0.3s ease-out, stroke 0.3s ease-out'
                 }}
             />
         </svg>

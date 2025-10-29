@@ -35,7 +35,7 @@ import { StudyZone } from '@/components/StudyZone';
 import { toast } from '@/hooks/use-toast';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const ADMIN_UID = "REPLACE_WITH_YOUR_ADMIN_UID"; // Important: Replace with your actual Firebase User ID
+const ADMIN_UID = "PASTE_YOUR_UID_HERE"; // Important: Replace with your actual Firebase User ID
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -140,14 +140,6 @@ export default function HomePage() {
     return null;
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text).then(() => {
-      toast({ title: 'UID Copied!', description: 'Your User ID has been copied to the clipboard.' });
-    }, () => {
-      toast({ variant: 'destructive', title: 'Copy Failed', description: 'Could not copy UID.' });
-    });
-  };
-
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <Sidebar>
@@ -218,12 +210,6 @@ export default function HomePage() {
                     </div>
                     <Button onClick={handleSignOut} variant="ghost" size="icon" className="ml-auto group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
                       <LogOut className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline mt-2">
-                    <p className="text-xs text-muted-foreground">Your UID:</p>
-                    <Button variant="outline" size="sm" className="w-full justify-start text-left h-auto py-1 px-2 mt-1" onClick={() => copyToClipboard(user.uid)}>
-                      <span className="truncate text-xs font-mono">{user.uid}</span>
                     </Button>
                   </div>
               </div>

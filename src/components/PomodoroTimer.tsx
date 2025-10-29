@@ -194,7 +194,7 @@ export function PomodoroTimer() {
       interval = setInterval(() => {
         setTimeRemaining(prevTime => prevTime - 1);
       }, 1000);
-    } else if (timeRemaining === 0) {
+    } else if (isActive && timeRemaining === 0) {
       setIsActive(false);
       let notificationTitle = '';
       let notificationBody = '';
@@ -209,14 +209,14 @@ export function PomodoroTimer() {
         
         notificationTitle = "Time for a break!";
         notificationBody = `Great work! Starting your ${newSessionCount % 4 === 0 ? 'long' : 'short'} break.`;
-        if (isClient) new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play();
+        if (typeof Audio !== 'undefined') new Audio('https://www.soundjay.com/buttons/sounds/button-1.mp3').play();
 
       } else {
         setMode('work');
         setTimeRemaining(getDuration('work'));
         notificationTitle = "Back to work!";
         notificationBody = "Your break is over. Let's get back to focusing.";
-        if (isClient) new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play();
+        if (typeof Audio !== 'undefined') new Audio('https://www.soundjay.com/buttons/sounds/button-2.mp3').play();
       }
 
       if (isClient && Notification.permission === 'granted') {

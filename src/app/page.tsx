@@ -81,14 +81,6 @@ export default function HomePage() {
     }
   };
 
-  const handleNavigation = (page: string) => {
-    if (page === 'admin') {
-      router.push('/admin');
-    } else {
-      setActivePage(page);
-    }
-  };
-
   const renderContent = useCallback(() => {
     let content;
     switch (activePage) {
@@ -155,46 +147,48 @@ export default function HomePage() {
           <SidebarContent>
               <SidebarMenu>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => handleNavigation('dashboard')} isActive={activePage === 'dashboard'} tooltip="Dashboard">
+                      <SidebarMenuButton onClick={() => setActivePage('dashboard')} isActive={activePage === 'dashboard'} tooltip="Dashboard">
                           <HomeIcon />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Dashboard</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => handleNavigation('syllabus')} isActive={activePage === 'syllabus'} tooltip="Syllabus Tracker">
+                      <SidebarMenuButton onClick={() => setActivePage('syllabus')} isActive={activePage === 'syllabus'} tooltip="Syllabus Tracker">
                           <ListChecks />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Syllabus Tracker</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => handleNavigation('study-zone')} isActive={activePage === 'study-zone'} tooltip="Study Zone">
+                      <SidebarMenuButton onClick={() => setActivePage('study-zone')} isActive={activePage === 'study-zone'} tooltip="Study Zone">
                           <BookOpen />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Study Zone</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => handleNavigation('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
+                      <SidebarMenuButton onClick={() => setActivePage('tests')} isActive={activePage === 'tests'} tooltip="Mock Tests">
                           <ClipboardList />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Mock Tests</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => handleNavigation('pomodoro')} isActive={activePage === 'pomodoro'} tooltip="Pomodoro Timer">
+                      <SidebarMenuButton onClick={() => setActivePage('pomodoro')} isActive={activePage === 'pomodoro'} tooltip="Pomodoro Timer">
                           <Timer />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Pomodoro Timer</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                    <SidebarMenuItem>
-                      <SidebarMenuButton onClick={() => handleNavigation('about')} isActive={activePage === 'about'} tooltip="About Us">
+                      <SidebarMenuButton onClick={() => setActivePage('about')} isActive={activePage === 'about'} tooltip="About Us">
                           <Info />
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
                   {user && user.uid === ADMIN_UID && (
                     <SidebarMenuItem>
-                        <SidebarMenuButton onClick={() => handleNavigation('admin')} tooltip="Admin Panel">
+                        <SidebarMenuButton asChild tooltip="Admin Panel">
+                           <Link href="/admin">
                             <ShieldCheck />
                             <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
+                           </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                   )}

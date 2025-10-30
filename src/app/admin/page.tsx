@@ -14,6 +14,7 @@ import { Loader2, ShieldCheck, Link, Youtube, FileText, FileQuestion, StickyNote
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 import { useRouter } from 'next/navigation';
+import { Loader } from '@/components/Loader';
 
 const ADMIN_UID = "E6cRkM6s6PbhW8T3b0L4VpmoeB32";
 
@@ -172,11 +173,7 @@ export default function AdminPage() {
     }, [user, loading, router]);
 
     if (loading || !user || user.uid !== ADMIN_UID) {
-        return (
-            <div className="flex h-screen w-full items-center justify-center">
-               <p>Loading or redirecting...</p>
-            </div>
-        )
+        return <Loader />;
     }
 
     return (

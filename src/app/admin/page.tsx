@@ -167,12 +167,19 @@ export default function AdminPage() {
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading && (!user || user.uid !== ADMIN_UID)) {
-            router.push('/');
+        if (!loading) {
+            if (!user || user.uid !== ADMIN_UID) {
+                router.push('/');
+            }
         }
     }, [user, loading, router]);
 
-    if (loading || !user || user.uid !== ADMIN_UID) {
+    if (loading || !user) {
+        return <Loader />;
+    }
+
+    if (user.uid !== ADMIN_UID) {
+        // This case is mainly for the brief moment before the redirect happens.
         return <Loader />;
     }
 

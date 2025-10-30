@@ -17,7 +17,7 @@ import { Loader } from '@/components/Loader';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
-const ADMIN_UID = "E6cRkM6s6PbhW8T3b0L4VpmoeB32";
+const ADMIN_EMAIL = "s28252463@gmail.com";
 
 interface StudyMaterial {
   lectureUrl?: string;
@@ -169,24 +169,16 @@ export default function AdminPage() {
     const router = useRouter();
 
     useEffect(() => {
-        // Don't do anything until loading is finished
         if (loading) {
-            return;
+            return; // Wait until user status is determined.
         }
-        // If not logged in, redirect to login
-        if (!user) {
-            router.push('/login');
-            return;
-        }
-        // If logged in user is not the admin, redirect to home
-        if (user.uid !== ADMIN_UID) {
-            router.push('/');
-            return;
+        if (!user || user.email !== ADMIN_EMAIL) {
+            router.push('/'); // If not admin, redirect to home.
         }
     }, [user, loading, router]);
 
-    // Show loader while we are determining user status and redirecting
-    if (loading || !user || user.uid !== ADMIN_UID) {
+    // Show loader while we are determining user status
+    if (loading || !user || user.email !== ADMIN_EMAIL) {
         return <Loader />;
     }
     

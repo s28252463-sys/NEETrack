@@ -168,21 +168,28 @@ export default function AdminPage() {
 
     useEffect(() => {
         if (!loading) {
-            if (!user || user.uid !== ADMIN_UID) {
+            if (!user) {
+                // If not logged in, redirect to login
+                router.push('/login');
+            } else if (user.uid !== ADMIN_UID) {
+                // If logged in but not admin, redirect to home
                 router.push('/');
             }
         }
     }, [user, loading, router]);
 
-    if (loading || !user) {
+    // While loading, show a loader to prevent premature redirect
+    if (loading) {
         return <Loader />;
     }
 
-    if (user.uid !== ADMIN_UID) {
-        // This case is mainly for the brief moment before the redirect happens.
+    // If the user is loaded and is not the admin, they will be redirected.
+    // This check handles the brief moment before the redirect occurs.
+    if (user?.uid !== ADMIN_UID) {
         return <Loader />;
     }
-
+    
+    // Only render the admin panel if the user is the admin
     return (
         <div className="container mx-auto px-4 py-8">
             <Card className="shadow-lg">

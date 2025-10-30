@@ -1,7 +1,6 @@
 'use client';
 
 import { LoginForm } from '@/components/auth/LoginForm';
-import { SocialButtons } from '@/components/auth/SocialButtons';
 import { useUser } from '@/firebase/auth/use-user';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -70,17 +69,6 @@ export default function LoginPage() {
               LOGIN
             </h1>
             <LoginForm />
-             <div className="relative my-2">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-white/50" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-[#00fff085] px-2 text-white/80">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-            <SocialButtons />
           </div>
         </div>
       </div>

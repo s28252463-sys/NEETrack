@@ -1,20 +1,21 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { syllabus, Subject, Topic } from '@/lib/syllabus';
-import { useFirestore, useUser } from '@/firebase';
+import { useFirestore } from '@/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, ShieldCheck, Link, Youtube, FileText, FileQuestion, StickyNote } from 'lucide-react';
+import { Loader } from '@/components/Loader';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
-import { useRouter } from 'next/navigation';
-import { Loader } from '@/components/Loader';
 
 const ADMIN_UID = "E6cRkM6s6PbhW8T3b0L4VpmoeB32";
 
@@ -162,28 +163,34 @@ const AdminSubjectAccordion = ({ subject }: { subject: Subject }) => {
     );
 };
 
+
 export default function AdminPage() {
     const { user, loading } = useUser();
     const router = useRouter();
 
     useEffect(() => {
-        if (!loading) {
-            if (!user) {
-                router.push('/login');
-            } else if (user.uid !== ADMIN_UID) {
-                router.push('/');
-            }
+        // Don't do anything until loading is finished
+        if (loading) {
+            return;
+        }
+        // If not logged in, redirect to login
+        if (!user) {
+            router.push('/login');
+            return;
+        }
+        // If logged in user is not the admin, redirect to home
+        if (user.uid !== ADMIN_UID) {
+            router.push('/');
+            return;
         }
     }, [user, loading, router]);
 
-
-    // While loading, or if the user is not the admin, show a loader.
-    // This prevents the admin panel from flashing before the redirect happens.
+    // Show loader while we are determining user status and redirecting
     if (loading || !user || user.uid !== ADMIN_UID) {
         return <Loader />;
     }
     
-    // Only render the admin panel if loading is complete and the user is the admin
+    // If all checks pass, render the admin panel
     return (
         <div className="container mx-auto px-4 py-8">
             <Card className="shadow-lg">

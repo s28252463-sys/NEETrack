@@ -23,19 +23,16 @@ import { useRouter } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { signOut } from 'firebase/auth';
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth } from '@/firebase';
 import Link from 'next/link';
 import Ad from '@/components/Ad';
 import { Loader } from '@/components/Loader';
 import { cn } from '@/lib/utils';
 import { AboutUs } from '@/components/AboutUs';
 import { StudyZone } from '@/components/StudyZone';
-import { toast } from '@/hooks/use-toast';
 import { MotivationalQuote } from '@/components/MotivationalQuote';
-import { doc, getDoc } from 'firebase/firestore';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const ADMIN_UID = "E6cRkM6s6PbhW8T3b0L4VpmoeB32";
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');
@@ -127,7 +124,7 @@ export default function HomePage() {
       </div>
     )
 
-  }, [activePage, daysLeft]);
+  }, [activePage]);
 
   if (loading) {
     return <Loader />;
@@ -182,14 +179,16 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
-                  <SidebarMenuItem>
-                      <SidebarMenuButton asChild tooltip="Admin Panel">
-                         <Link href="/admin">
-                          <ShieldCheck />
-                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
-                         </Link>
-                      </SidebarMenuButton>
-                  </SidebarMenuItem>
+                  {user.email === "s28252463@gmail.com" && (
+                    <SidebarMenuItem>
+                        <SidebarMenuButton asChild tooltip="Admin Panel">
+                           <Link href="/admin">
+                            <ShieldCheck />
+                            <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
+                           </Link>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )}
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

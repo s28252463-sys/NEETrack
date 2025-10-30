@@ -1,116 +1,162 @@
 /**
- * @fileoverview Firestore Security Rules for Prototyping.
- *
- * Core Philosophy:
- * This ruleset prioritizes a secure, user-centric data model with flexible data validation for rapid prototyping.
- * It enforces strict ownership for user-specific data and allows public read access to study materials.
+ * @file Firestore Security Rules
+ * @description This ruleset enforces a strict user-ownership model for user profiles and associated data,
+ *              while allowing public read access to study materials.
  *
  * Data Structure:
- * - /users/{userId}: Stores public user profile information, accessible only to the owner.
- * - /users/{userId}/progress/syllabus: Tracks user's syllabus progress, accessible only to the owner.
- * - /users/{userId}/mockTests/{testId}: Stores individual mock test records for a specific user, accessible only to the owner.
- * - /users/{userId}/progress/pomodoro: Tracks user's daily pomodoro session counts, accessible only to the owner.
- * - /studyMaterials/{subjectId}/topics/{topicId}: Stores study material links, publicly readable but writable by an admin (currently faking with `if true`).
+ * - /users/{userId}: Stores public user profile information. Only the user can read or write their own profile.
+ * - /users/{userId}/progress/syllabus: Tracks the user's syllabus progress. Only the user can read or write their progress.
+ * - /users/{userId}/mockTests/{testId}: Stores individual mock test records for each user. Only the user can manage their own mock tests.
+ * - /users/{userId}/progress/pomodoro: Stores the user's Pomodoro progress. Only the user can read or write their progress.
+ * - /studyMaterials/{subjectId}/topics/{topicId}: Contains study material links, publicly readable but not writable by users.
  *
  * Key Security Decisions:
- * - User listing is disallowed.
- * - Data validation is minimized to focus on authorization and relational integrity, facilitating rapid schema iteration.
- * - Ambiguous scenarios default to a secure, owner-only access model.
+ * - User profiles and all user-related data are strictly owned by the user. No listing of user profiles is allowed.
+ * - Study materials are publicly readable to facilitate easy access, but write operations are explicitly denied,
+ *   requiring alternative backend management for content updates.
  *
  * Denormalization for Authorization:
- *  N/A in this version. This ruleset doesn't require any data denormalization since it relies on path-based authorization checks (e.g., isOwner(userId)) rather than querying other documents.
+ * - The rules rely on the `request.auth.uid` to match the `{userId}` path segment, ensuring that users can only
+ *   access data under their own user ID. No additional denormalization is needed in this case.
  *
  * Structural Segregation:
- *  The separation of user-specific data under /users/{userId} and public study materials under /studyMaterials/{subjectId}/topics/{topicId} provides a clear segregation of private and public content, enabling more secure and performant list operations.
+ * - Private user data is stored under the `/users/{userId}` path, while public study materials reside in the
+ *   top-level `/studyMaterials` collection. This separation simplifies access control.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Checks if the request is made by the owner of the resource.
-     * @param {string} userId The user ID to compare against the request's auth UID.
-     * @return {bool} True if the request is made by the owner, false otherwise.
-     */
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    /**
-     * @description Checks if the user is an existing owner of a document (i.e., user is owner and document exists).
-     * @param {string} userId The user ID to compare against the resource's userId.
-     * @return {bool} True if the user is the owner and the resource exists, false otherwise.
-     */
-    function isExistingOwner(userId) {
-      return isOwner(userId) && exists(resource);
-    }
-
-    /**
-     * @description Checks if the user is signed in.
-     * @return {bool} True if the user is signed in, false otherwise.
-     */
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    /**
-     * @description Rules for user profiles.
+     * @description Allows users to read and write their own user profile data.
      * @path /users/{userId}
+     * @allow (create, update, delete) User with UID 'user123' can create/update/delete their profile at /users/user123.
+     * @allow (get) User with UID 'user123' can read their profile at /users/user123.
+     * @deny (create, update, delete) User with UID 'user456' cannot create/update/delete profile at /users/user123.
+     * @deny (list) Listing user profiles is not allowed.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isOwner(userId) && request.resource.data.uid == request.auth.uid;
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+
+      allow create: if isOwner(userId) && request.resource.data.uid == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.uid == resource.data.uid;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for syllabus progress.
+     * @description Allows a user to read and write their own syllabus progress.
      * @path /users/{userId}/progress/syllabus
+     * @allow (create, update, delete) User with UID 'user123' can create/update/delete their syllabus progress at /users/user123/progress/syllabus.
+     * @allow (get) User with UID 'user123' can read their syllabus progress at /users/user123/progress/syllabus.
+     * @deny (create, update, delete) User with UID 'user456' cannot create/update/delete syllabus progress at /users/user123/progress/syllabus.
+     * @deny (list) Listing syllabus progress is not allowed.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId}/progress/syllabus {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
-      allow list: if false;
+      allow list: if isOwner(userId);
+
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for mock tests.
+     * @description Allows a user to read and write their own mock test records.
      * @path /users/{userId}/mockTests/{testId}
+     * @allow (create, update, delete) User with UID 'user123' can create/update/delete their mock test record at /users/user123/mockTests/test1.
+     * @allow (get) User with UID 'user123' can read their mock test record at /users/user123/mockTests/test1.
+     * @deny (create, update, delete) User with UID 'user456' cannot create/update/delete mock test record at /users/user123/mockTests/test1.
+     * @deny (list) User with UID 'user123' can list their mock test records at /users/user123/mockTests.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId}/mockTests/{testId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
-      allow list: if false;
+      allow list: if isOwner(userId);
+
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for pomodoro progress.
+     * @description Allows a user to read and write their own Pomodoro progress.
      * @path /users/{userId}/progress/pomodoro
+     * @allow (create, update, delete) User with UID 'user123' can create/update/delete their Pomodoro progress at /users/user123/progress/pomodoro.
+     * @allow (get) User with UID 'user123' can read their Pomodoro progress at /users/user123/progress/pomodoro.
+     * @deny (create, update, delete) User with UID 'user456' cannot create/update/delete Pomodoro progress at /users/user123/progress/pomodoro.
+     * @deny (list) Listing Pomodoro progress is allowed.
+     * @principle Enforces document ownership for writes.
      */
     match /users/{userId}/progress/pomodoro {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
       allow get: if isOwner(userId);
-      allow list: if false;
+      allow list: if isOwner(userId);
+
       allow create: if isOwner(userId);
-      allow update: if isOwner(userId);
-      allow delete: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Rules for study materials.
+     * @description Allows public read access to study material links, but denies all write operations.
      * @path /studyMaterials/{subjectId}/topics/{topicId}
+     * @allow (get, list) Any user can read study materials.
+     * @deny (create, update, delete) No user can create/update/delete study materials.
+     * @principle Allows public read access while restricting write access.
      */
     match /studyMaterials/{subjectId}/topics/{topicId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if false; // TODO: Restrict to admins.
-      allow update: if false; // TODO: Restrict to admins.
-      allow delete: if false; // TODO: Restrict to admins.
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
   }
 }

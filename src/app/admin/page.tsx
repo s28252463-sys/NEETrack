@@ -34,27 +34,45 @@ const AdminTopicEditor = ({ subject, topic }: { subject: Subject | {id: string},
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  const docRef = doc(firestore, `studyMaterials/${subject.id}/topics/${topic.id}`);
-
   useEffect(() => {
     const fetchMaterials = async () => {
+      if (!firestore) {
+          setIsLoading(false);
+          return;
+      }
       setIsLoading(true);
+      const docRef = doc(firestore, `studyMaterials/${subject.id}/topics/${topic.id}`);
       try {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setMaterials(docSnap.data() as StudyMaterial);
         }
-      } catch (error) {
-        console.error("Error fetching materials:", error);
+      } catch (error: any) {
+        if (error.code === 'permission-denied') {
+            const permissionError = new FirestorePermissionError({
+                path: docRef.path,
+                operation: 'get',
+            } satisfies SecurityRuleContext);
+            errorEmitter.emit('permission-error', permissionError);
+        } else {
+            console.error("Error fetching materials:", error);
+            toast({
+                variant: 'destructive',
+                title: 'Error',
+                description: 'Could not load study materials.'
+            });
+        }
       } finally {
         setIsLoading(false);
       }
     };
     fetchMaterials();
-  }, [docRef]);
+  }, [firestore, subject.id, topic.id, toast]);
 
   const handleSave = async () => {
+    if (!firestore) return;
     setIsSaving(true);
+    const docRef = doc(firestore, `studyMaterials/${subject.id}/topics/${topic.id}`);
     setDoc(docRef, materials, { merge: true })
       .then(() => {
         toast({

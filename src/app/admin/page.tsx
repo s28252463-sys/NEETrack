@@ -185,7 +185,7 @@ export default function AdminPage() {
 
     // If the user is loaded and is not the admin, they will be redirected.
     // This check handles the brief moment before the redirect occurs.
-    if (user?.uid !== ADMIN_UID) {
+    if (!user || user.uid !== ADMIN_UID) {
         return <Loader />;
     }
     

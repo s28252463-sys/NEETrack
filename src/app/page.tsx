@@ -182,16 +182,14 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {user && user.uid === ADMIN_UID && (
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Admin Panel">
-                           <Link href="/admin">
-                            <ShieldCheck />
-                            <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
-                           </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
+                  <SidebarMenuItem>
+                      <SidebarMenuButton asChild tooltip="Admin Panel">
+                         <Link href="/admin">
+                          <ShieldCheck />
+                          <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
+                         </Link>
+                      </SidebarMenuButton>
+                  </SidebarMenuItem>
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

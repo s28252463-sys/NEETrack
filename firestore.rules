@@ -18,7 +18,10 @@ service cloud.firestore {
       
       // Allow a user to list the mock tests that belong to them.
       // This rule is separate because 'list' applies to the collection, not individual documents.
-      allow list: if isOwner(userId) on /databases/$(database)/documents/users/$(userId)/mockTests;
+      allow list: if isOwner(userId)
+        // This 'on' keyword is the crucial part that was missing.
+        // It specifies that the 'list' permission applies to the mockTests subcollection of the user's document.
+        on /databases/$(database)/documents/users/$(userId)/mockTests;
     }
   }
 }

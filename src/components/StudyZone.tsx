@@ -23,17 +23,20 @@ const TopicMaterials = ({ topic }: { topic: Topic }) => {
   const extractVideoId = (url: string | undefined): string | null => {
     if (!url) return null;
     try {
-        const urlObj = new URL(url);
-        if (urlObj.hostname === 'youtu.be') {
-            return urlObj.pathname.slice(1).split('/')[0];
-        }
-        if (urlObj.hostname.includes('youtube.com')) {
-            const params = new URLSearchParams(urlObj.search);
-            return params.get('v');
-        }
+      const urlObj = new URL(url);
+      if (urlObj.hostname === 'youtu.be') {
+        return urlObj.pathname.slice(1).split('/')[0];
+      }
+      if (urlObj.pathname.startsWith('/embed/')) {
+        return urlObj.pathname.split('/')[2].split('?')[0];
+      }
+      if (urlObj.hostname.includes('youtube.com')) {
+        const params = new URLSearchParams(urlObj.search);
+        return params.get('v');
+      }
     } catch (e) {
-        console.error('Invalid URL:', e);
-        return null;
+      console.error('Invalid URL:', e);
+      return null;
     }
     return null;
   };

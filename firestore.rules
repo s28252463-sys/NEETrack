@@ -13,6 +13,7 @@ service cloud.firestore {
     
     match /users/{userId}/mockTests/{testId} {
       allow read, write: if isOwner(userId);
+      allow list: if isOwner(userId);
     }
   }
 }

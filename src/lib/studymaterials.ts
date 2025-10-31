@@ -9,7 +9,7 @@ export interface StudyMaterial {
 export const studyMaterialsData: { [topicId: string]: StudyMaterial } = {
   // --- PHYSICS ---
   'p_bm': {
-    lectureUrl: "",
+    lectureUrl: "https://www.youtube.com/embed/WDjcpSCI-uU",
   },
   'p_v': {
     lectureUrl: "",
@@ -107,7 +107,7 @@ export const studyMaterialsData: { [topicId: string]: StudyMaterial } = {
 
   // --- CHEMISTRY ---
   'c1': {
-    lectureUrl: "https://www.youtube.com/watch?v=your-video-id",
+    lectureUrl: "",
     notesUrl: "",
     questionBankUrl: "",
     shortNoteUrl: "",
@@ -117,7 +117,7 @@ export const studyMaterialsData: { [topicId: string]: StudyMaterial } = {
 
   // --- BOTANY ---
   'b1': {
-    lectureUrl: "https://www.youtube.com/watch?v=your-video-id",
+    lectureUrl: "",
     notesUrl: "",
     questionBankUrl: "",
     shortNoteUrl: "",
@@ -127,7 +127,7 @@ export const studyMaterialsData: { [topicId: string]: StudyMaterial } = {
 
   // --- ZOOLOGY ---
   'z1': {
-    lectureUrl: "https://www.youtube.com/watch?v=your-video-id",
+    lectureUrl: "",
     notesUrl: "",
     questionBankUrl: "",
     shortNoteUrl: "",

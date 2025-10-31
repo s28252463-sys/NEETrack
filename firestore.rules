@@ -6,14 +6,9 @@ service cloud.firestore {
       // Allow a user to read and write their own user profile document.
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
-      // THIS IS THE CRITICAL FIX:
-      // This rule allows a user to QUERY their own mockTests collection.
-      // The 'list' permission is required for collection queries (like onSnapshot or getDocs on a collection).
-      match /mockTests {
-        allow list: if request.auth != null && request.auth.uid == userId;
-      }
-      
-      // This rule allows a user to read, write, or delete INDIVIDUAL mock test documents.
+      // This rule allows a user to query (list) their own mock tests
+      // and read, write, or delete individual test documents.
+      // The 'read' permission on a collection path covers both 'get' (single doc) and 'list' (query).
       match /mockTests/{testId} {
         allow read, write, delete: if request.auth != null && request.auth.uid == userId;
       }

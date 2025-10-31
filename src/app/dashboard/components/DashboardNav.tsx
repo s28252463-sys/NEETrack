@@ -7,7 +7,6 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarHeader,
-  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/Logo';
 import {
@@ -17,11 +16,7 @@ import {
   Library,
   Timer,
   Info,
-  ShieldCheck,
 } from 'lucide-react';
-import { useUser } from '@/firebase';
-
-const ADMIN_EMAIL = 's28252463@gmail.com';
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -32,13 +27,8 @@ const menuItems = [
   { href: '/dashboard/about', label: 'About Us', icon: Info },
 ];
 
-const adminItem = { href: '/dashboard/admin', label: 'Admin', icon: ShieldCheck };
-
 export function DashboardNav() {
   const pathname = usePathname();
-  const { user } = useUser();
-
-  const isUserAdmin = user?.email === ADMIN_EMAIL;
 
   return (
     <>
@@ -60,21 +50,6 @@ export function DashboardNav() {
           </SidebarMenuItem>
         ))}
       </SidebarMenu>
-
-      <SidebarFooter className="p-2">
-        {isUserAdmin && (
-           <SidebarMenu>
-             <SidebarMenuItem>
-                <SidebarMenuButton asChild isActive={pathname === adminItem.href} tooltip={adminItem.label}>
-                    <Link href={adminItem.href}>
-                        <adminItem.icon />
-                        <span>{adminItem.label}</span>
-                    </Link>
-                </SidebarMenuButton>
-             </SidebarMenuItem>
-           </SidebarMenu>
-        )}
-      </SidebarFooter>
     </>
   );
 }

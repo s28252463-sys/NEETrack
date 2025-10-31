@@ -30,8 +30,14 @@ export function Header() {
 
   return (
     <div className="flex items-center justify-between py-2 w-full">
-      <div className="flex items-center">
-        <Image src="https://i.ibb.co/L8DR3gS/logo.png" alt="NEETrack Logo" width={150} height={50} />
+       <div className="flex items-center" style={{ width: '150px', height: '50px' }}>
+        <Image
+          src="https://i.ibb.co/VtMD9x3/Screenshot-2024-07-26-at-12-32-47-PM.png"
+          alt="NEETrack Logo"
+          width={150}
+          height={50}
+          priority
+        />
       </div>
 
       <div className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">

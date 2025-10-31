@@ -27,8 +27,9 @@ const TopicMaterials = ({ topic }: { topic: Topic }) => {
       if (urlObj.hostname === 'youtu.be') {
         return urlObj.pathname.slice(1);
       }
-      if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
-        return urlObj.searchParams.get('v');
+      if (urlObj.hostname.includes('youtube.com')) {
+        const params = new URLSearchParams(urlObj.search);
+        return params.get('v');
       }
     } catch (e) {
       console.error('Invalid URL:', e);

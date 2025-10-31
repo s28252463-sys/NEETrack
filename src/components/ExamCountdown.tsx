@@ -66,7 +66,7 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
 
   }, [examDate, isClient, initialTotalDays]);
   
-  const dayProgress = timeLeft && timeLeft.totalDays > 0 ? ((timeLeft.totalDays - timeLeft.days) / timeLeft.totalDays) * 100 : 0;
+  const dayProgress = timeLeft && timeLeft.totalDays > 0 ? (timeLeft.days / timeLeft.totalDays) * 100 : 0;
 
 
   return (

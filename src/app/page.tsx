@@ -85,7 +85,7 @@ export default function HomePage() {
         content = (
           <div className="space-y-8">
             <MotivationalQuote />
-            <div className="grid gap-8 md:grid-cols-2">
+            <div className="flex flex-col items-center">
               <ExamCountdown examDate={EXAM_DATE} />
             </div>
           </div>

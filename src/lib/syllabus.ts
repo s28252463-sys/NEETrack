@@ -54,17 +54,13 @@ const chemistryTopics: Topic[] = [
     { id: 'c2', name: 'Structure of Atom' },
     { id: 'c3', name: 'Classification of Elements and Periodicity in Properties' },
     { id: 'c4', name: 'Chemical Bonding and Molecular Structure' },
-    { id: 'c5', name: 'States of Matter: Gases and Liquids' },
     { id: 'c6', name: 'Thermodynamics' },
     { id: 'c7', name: 'Equilibrium' },
     { id: 'c8', name: 'Redox Reactions' },
-    { id: 'c9', name: 'Hydrogen' },
     { id: 'c10', name: 's-Block Elements (Alkali and Alkaline earth metals)' },
     { id: 'c11', name: 'Some p-Block Elements (Group 13 & 14)' },
     { id: 'c12', name: 'Organic Chemistry- Some Basic Principles and Techniques' },
     { id: 'c13', name: 'Hydrocarbons' },
-    { id: 'c14', name: 'Environmental Chemistry' },
-    { id: 'c15', name: 'Solid State' },
     { id: 'c16', name: 'Solutions' },
     { id: 'c17', name: 'Electrochemistry' },
     { id: 'c18', name: 'Chemical Kinetics' },
@@ -78,8 +74,6 @@ const chemistryTopics: Topic[] = [
     { id: 'c26', name: 'Aldehydes, Ketones and Carboxylic Acids' },
     { id: 'c27', name: 'Organic Compounds Containing Nitrogen (Amines)' },
     { id: 'c28', name: 'Biomolecules' },
-    { id: 'c29', name: 'Polymers' },
-    { id: 'c30', name: 'Chemistry in Everyday Life' },
 ];
 
 const botanyTopics: Topic[] = [

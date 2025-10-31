@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
 import { useUser } from '@/firebase/auth/use-user';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, Query } from 'firebase/firestore';
 import { useFirestore } from '@/firebase';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
@@ -27,19 +27,37 @@ export function MockTests() {
   const [newTestName, setNewTestName] = useState('');
   const [newTestSyllabus, setNewTestSyllabus] = useState('');
 
+  const testsColRef = useMemo(() => {
+    if (!user || !firestore) return null;
+    return collection(firestore, `users/${user.uid}/mockTests`);
+  }, [user, firestore]);
+
   useEffect(() => {
-    if (userLoading) {
-      return; // Wait until user status is determined
+    // If the user is logged out or the query ref isn't ready, load from localStorage.
+    if (!user || !testsColRef) {
+      if (typeof window !== 'undefined') {
+        const savedTests = localStorage.getItem('mockTests');
+        if (savedTests) {
+          try {
+            const parsedTests = JSON.parse(savedTests);
+            if (Array.isArray(parsedTests)) {
+              setTests(parsedTests);
+            }
+          } catch (e) {
+            setTests([]);
+          }
+        }
+      }
+      return;
     }
 
-    if (user && firestore) {
-      // User is logged in, use Firestore
-      const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
-      const unsubscribe = onSnapshot(testsColRef, (snapshot) => {
-        const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Test));
-        setTests(userTests);
-        
-        // One-time migration from localStorage if Firestore is empty
+    // User is logged in, set up Firestore listener.
+    const unsubscribe = onSnapshot(testsColRef as Query<Test>, (snapshot) => {
+      const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setTests(userTests);
+
+      // One-time migration from localStorage if Firestore is empty
+      if (typeof window !== 'undefined') {
         const localDataRaw = localStorage.getItem('mockTests');
         if (localDataRaw && userTests.length === 0) {
             const localTests: Omit<Test, 'id'>[] = JSON.parse(localDataRaw);
@@ -50,30 +68,18 @@ export function MockTests() {
                 localStorage.removeItem('mockTests'); // Clear after migration
             }
         }
-
-      }, (error) => {
-        const permissionError = new FirestorePermissionError({
-            path: testsColRef.path,
-            operation: 'list',
-        } satisfies SecurityRuleContext);
-        errorEmitter.emit('permission-error', permissionError);
-      });
-      return () => unsubscribe();
-    } else {
-      // User is logged out, use localStorage
-      const savedTests = localStorage.getItem('mockTests');
-      if (savedTests) {
-        try {
-            const parsedTests = JSON.parse(savedTests);
-            if (Array.isArray(parsedTests)) {
-                setTests(parsedTests);
-            }
-        } catch (e) {
-            setTests([]);
-        }
       }
-    }
-  }, [user, firestore, userLoading]);
+
+    }, (error) => {
+      const permissionError = new FirestorePermissionError({
+          path: (testsColRef as Query<Test>).path,
+          operation: 'list',
+      } satisfies SecurityRuleContext);
+      errorEmitter.emit('permission-error', permissionError);
+    });
+
+    return () => unsubscribe();
+  }, [user, testsColRef]);
 
   // Persist to localStorage only for logged-out users
   useEffect(() => {
@@ -92,11 +98,10 @@ export function MockTests() {
       score: '',
     };
     
-    if (user && firestore) {
-      const testsColRef = collection(firestore, `users/${user.uid}/mockTests`);
+    if (user && testsColRef) {
       addDoc(testsColRef, newTest).catch(serverError => {
           const permissionError = new FirestorePermissionError({
-              path: `${testsColRef.path}/<new_document>`,
+              path: `${(testsColRef as Query<Test>).path}/<new_document>`,
               operation: 'create',
               requestResourceData: newTest,
           } satisfies SecurityRuleContext);

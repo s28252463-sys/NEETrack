@@ -8,35 +8,40 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { syllabus, Subject, Topic } from '@/lib/syllabus';
+import { syllabus, type Subject, type Topic } from '@/lib/syllabus';
 import { BookOpen, Youtube, FileText, FileQuestion, StickyNote, Link as LinkIcon } from 'lucide-react';
 import { YouTubePlayer } from './YouTubePlayer';
 import Link from 'next/link';
 import { Button } from './ui/button';
-import { studyMaterialsData, type StudyMaterial } from '@/lib/studymaterials';
+import { studyMaterialsData } from '@/lib/studymaterials';
 
 
 const TopicMaterials = ({ topic }: { topic: Topic }) => {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
   const materials = studyMaterialsData[topic.id];
 
-  const extractVideoId = (url: string) => {
+  const extractVideoId = (url: string | undefined): string | null => {
+    if (!url) return null;
     try {
       const urlObj = new URL(url);
       if (urlObj.hostname === 'youtu.be') {
         return urlObj.pathname.slice(1);
       }
-      return urlObj.searchParams.get('v');
-    } catch {
+      if (urlObj.hostname === 'www.youtube.com' || urlObj.hostname === 'youtube.com') {
+        return urlObj.searchParams.get('v');
+      }
+    } catch (e) {
+      console.error('Invalid URL:', e);
       return null;
     }
+    return null;
   };
   
   if (!materials || Object.values(materials).every(v => !v)) {
       return <div className="p-4 text-sm text-center text-muted-foreground">No materials available for this topic yet. Check back soon!</div>
   }
     
-  const videoId = materials.lectureUrl ? extractVideoId(materials.lectureUrl) : null;
+  const videoId = extractVideoId(materials.lectureUrl);
 
   return (
     <div className="py-4 px-2 space-y-4">

@@ -3,7 +3,7 @@ export function Logo() {
     <svg
       width="100%"
       height="100%"
-      viewBox="0 0 100 100"
+      viewBox="0 0 100 125" // Adjusted viewBox for the text
       preserveAspectRatio="xMidYMid meet"
       xmlns="http://www.w3.org/2000/svg"
     >
@@ -14,16 +14,28 @@ export function Logo() {
         </linearGradient>
       </defs>
       <g>
-        {/* Stylized Letter N using three bars */}
-        <path 
-          d="M 20,90 L 20,10 L 40,10 L 80,90 L 60,90 L 40,50 L 40,90 Z" 
-          fill="url(#logo-gradient)" 
+        {/* Stylized Letter N */}
+        <path
+          d="M 20,80 L 20,0 L 40,0 L 80,80 L 60,80 L 40,40 L 40,80 Z"
+          fill="url(#logo-gradient)"
         />
-        <path 
-          d="M 60,10 L 80,10 L 80,90 L 60,90 Z" 
+        <path
+          d="M 60,0 L 80,0 L 80,80 L 60,80 Z"
           fill="hsl(var(--primary))"
         />
       </g>
+       {/* App Name Text */}
+      <text 
+        x="50" 
+        y="110" 
+        fontFamily="Poppins, sans-serif"
+        fontSize="24" 
+        fontWeight="600"
+        fill="hsl(var(--foreground))"
+        textAnchor="middle"
+      >
+        NEETrack
+      </text>
     </svg>
   );
 }

@@ -9,10 +9,11 @@ service cloud.firestore {
     }
 
     // Subcollection: mockTests
-    // This rule allows a user to query their own mock tests, and read/write/delete individual ones.
-    // The 'read' permission on a collection path covers both 'get' (single doc) and 'list' (query).
     match /users/{userId}/mockTests/{testId} {
-      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+      // Allow reading single documents and listing the collection
+      allow get, list: if request.auth != null && request.auth.uid == userId;
+      // Allow creating, updating, and deleting single documents
+      allow create, update, delete: if request.auth != null && request.auth.uid == userId;
     }
 
     // Subcollection: progress/syllabus

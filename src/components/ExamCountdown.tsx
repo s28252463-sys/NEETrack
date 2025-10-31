@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { CalendarDays } from 'lucide-react';
 import { CountdownCircle } from './CountdownCircle';
+import { cn } from '@/lib/utils';
 
 interface ExamCountdownProps {
   examDate: Date;
@@ -69,7 +70,7 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
 
 
   return (
-    <Card className="shadow-lg w-full">
+    <Card className={cn("shadow-lg w-full", "countdown-background")}>
       <CardContent className="p-6 text-center">
         <div className="relative w-48 h-48 mx-auto mb-6">
             <CountdownCircle progress={dayProgress} />

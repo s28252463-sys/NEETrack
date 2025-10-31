@@ -15,23 +15,14 @@ interface TimeLeft {
   hours: number;
   minutes: number;
   seconds: number;
-  totalDays: number;
 }
 
-const calculateTotalDays = (startDate: Date, endDate: Date) => {
-    const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(endDate);
-    end.setHours(0, 0, 0, 0);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-};
-
+const PROGRESS_START_DATE = new Date('2025-05-05T00:00:00');
 
 export function ExamCountdown({ examDate }: ExamCountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
+  const [dayProgress, setDayProgress] = useState(100);
   const [isClient, setIsClient] = useState(false);
-  const [initialTotalDays, setInitialTotalDays] = useState(0);
 
   useEffect(() => {
     setIsClient(true);
@@ -39,10 +30,6 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
 
   useEffect(() => {
     if (!isClient) return;
-
-    const today = new Date();
-    const totalDays = calculateTotalDays(today, examDate);
-    setInitialTotalDays(totalDays > 0 ? totalDays : 0);
 
     const calculateCountdown = () => {
         const now = new Date();
@@ -53,10 +40,24 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
             const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((difference / 1000 / 60) % 60);
             const seconds = Math.floor((difference / 1000) % 60);
-            setTimeLeft({ days, hours, minutes, seconds, totalDays: initialTotalDays });
+            setTimeLeft({ days, hours, minutes, seconds });
         } else {
-            setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0, totalDays: initialTotalDays });
+            setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
         }
+        
+        // Calculate progress for the circle
+        const totalDuration = examDate.getTime() - PROGRESS_START_DATE.getTime();
+        const timeElapsed = now.getTime() - PROGRESS_START_DATE.getTime();
+
+        if (totalDuration > 0 && timeElapsed >= 0) {
+            const progress = 100 - (timeElapsed / totalDuration) * 100;
+            setDayProgress(progress < 0 ? 0 : progress > 100 ? 100 : progress);
+        } else if (timeElapsed < 0) {
+            setDayProgress(100);
+        } else {
+            setDayProgress(0);
+        }
+
     };
     
     calculateCountdown();
@@ -64,10 +65,7 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
     
     return () => clearInterval(intervalId);
 
-  }, [examDate, isClient, initialTotalDays]);
-  
-  const dayProgress = timeLeft && timeLeft.totalDays > 0 ? (timeLeft.days / timeLeft.totalDays) * 100 : 0;
-
+  }, [examDate, isClient]);
 
   return (
     <Card className={cn("shadow-lg w-full", "countdown-background")}>

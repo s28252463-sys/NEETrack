@@ -18,7 +18,6 @@ import {
   LayoutDashboard,
   Settings,
   Target,
-  ClipboardList,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 

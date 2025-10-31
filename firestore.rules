@@ -10,12 +10,14 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if isOwner(userId);
 
-      // This rule allows a user to query the collection of their own mock tests.
+      // This block allows a user to query their own mockTests collection.
+      // This is necessary for the `onSnapshot` listener in MockTests.tsx.
       match /mockTests {
         allow list: if isOwner(userId);
       }
       
-      // This rule allows a user to read, write, and delete their own individual mock test documents.
+      // This block allows a user to read, create, update, and delete
+      // their own individual mock test documents.
       match /mockTests/{testId} {
         allow read, write, delete: if isOwner(userId);
       }

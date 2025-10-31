@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Accordion,
@@ -9,47 +9,17 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { syllabus, Subject, Topic } from '@/lib/syllabus';
-import { useFirestore } from '@/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { studyMaterialsData, StudyMaterial } from '@/lib/studymaterials';
 import { BookOpen, Youtube, FileText, FileQuestion, StickyNote } from 'lucide-react';
 import { YouTubePlayer } from './YouTubePlayer';
 import Link from 'next/link';
 import { Button } from './ui/button';
 
-interface StudyMaterial {
-  lectureUrl?: string;
-  notesUrl?: string;
-  questionBankUrl?: string;
-  shortNoteUrl?: string;
-  annotatedNcertUrl?: string;
-}
-
-const TopicMaterials = ({ subject, topic }: { subject: Subject | {id: string}, topic: Topic }) => {
-  const firestore = useFirestore();
-  const [materials, setMaterials] = useState<StudyMaterial | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+const TopicMaterials = ({ topic }: { topic: Topic }) => {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchMaterials = async () => {
-      const docRef = doc(firestore, `studyMaterials/${subject.id}/topics/${topic.id}`);
-      try {
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setMaterials(docSnap.data() as StudyMaterial);
-        } else {
-          setMaterials(null);
-        }
-      } catch (error) {
-        console.error("Error fetching materials:", error);
-        setMaterials(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchMaterials();
-  }, [firestore, subject.id, topic.id]);
   
+  const materials = studyMaterialsData[topic.id];
+
   const extractVideoId = (url: string) => {
     try {
       const urlObj = new URL(url);
@@ -64,12 +34,8 @@ const TopicMaterials = ({ subject, topic }: { subject: Subject | {id: string}, t
   
   const videoId = materials?.lectureUrl ? extractVideoId(materials.lectureUrl) : null;
 
-  if (isLoading) {
-    return <div className="p-2 text-sm text-muted-foreground">Loading materials...</div>;
-  }
-  
   if (!materials || Object.values(materials).every(v => !v)) {
-      return <div className="p-2 text-sm text-muted-foreground">No materials available for this topic yet.</div>
+      return <div className="p-4 text-sm text-center text-muted-foreground">No materials available for this topic yet. Check back soon!</div>
   }
 
   return (
@@ -130,7 +96,7 @@ const SubjectZone = ({ subject }: { subject: Subject }) => {
                         <AccordionItem key={topic.id} value={topic.id}>
                             <AccordionTrigger>{topic.name}</AccordionTrigger>
                             <AccordionContent>
-                                <TopicMaterials subject={subject} topic={topic} />
+                                <TopicMaterials topic={topic} />
                             </AccordionContent>
                         </AccordionItem>
                     ))}
@@ -148,7 +114,7 @@ const SubjectZone = ({ subject }: { subject: Subject }) => {
                                         <AccordionItem key={topic.id} value={topic.id}>
                                             <AccordionTrigger>{topic.name}</AccordionTrigger>
                                             <AccordionContent>
-                                                <TopicMaterials subject={subSubject} topic={topic} />
+                                                <TopicMaterials topic={topic} />
                                             </AccordionContent>
                                         </AccordionItem>
                                     ))}

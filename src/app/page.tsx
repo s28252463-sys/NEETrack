@@ -15,7 +15,7 @@ import {
   SidebarInset,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen, ShieldCheck } from 'lucide-react';
+import { ListChecks, ClipboardList, Timer, HomeIcon, User, LogOut, Info, BookOpen } from 'lucide-react';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { MockTests } from '@/components/MockTests';
 import { useUser } from '@/firebase/auth/use-user';
@@ -179,16 +179,6 @@ export default function HomePage() {
                           <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">About Us</span>
                       </SidebarMenuButton>
                   </SidebarMenuItem>
-                  {user.email === "s28252463@gmail.com" && (
-                    <SidebarMenuItem>
-                        <SidebarMenuButton asChild tooltip="Admin Panel">
-                           <Link href="/admin">
-                            <ShieldCheck />
-                            <span className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">Admin Panel</span>
-                           </Link>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
               </SidebarMenu>
           </SidebarContent>
           <SidebarFooter>

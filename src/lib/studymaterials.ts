@@ -21,7 +21,7 @@ export const studyMaterialsData: { [topicId: string]: StudyMaterial } = {
     lectureUrl: "https://www.youtube.com/live/ec1CLG1jU0I?si=iFMqjBh12r6zp2Ny",
   },
   'p1': {
-    lectureUrl: "https://www.youtube.com/watch?v=J1Z2p4csb-w",
+    lectureUrl: "https://youtu.be/J1Z2p4csb-w?si=t5y6m7d9M4Jb3K2L",
     notesUrl: "",
     questionBankUrl: "",
     shortNoteUrl: "",

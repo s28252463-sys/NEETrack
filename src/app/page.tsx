@@ -32,7 +32,7 @@ import { AboutUs } from '@/components/AboutUs';
 import { StudyZone } from '@/components/StudyZone';
 import { MotivationalQuote } from '@/components/MotivationalQuote';
 
-const EXAM_DATE = new Date('2026-05-03T00:00:00');
+const EXAM_DATE = new Date('2025-05-05T00:00:00');
 
 export default function HomePage() {
   const [activePage, setActivePage] = useState('dashboard');

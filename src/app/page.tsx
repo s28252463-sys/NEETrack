@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
-import { StudyPlanner } from '@/components/StudyPlanner';
+import { StudyPlanner } from '@/components/Studyplanner';
 import { MockTests } from '@/components/MockTests';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');

@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { CalendarDays } from 'lucide-react';
 import { CountdownCircle } from './CountdownCircle';
-import { cn } from '@/lib/utils';
 
 interface ExamCountdownProps {
   examDate: Date;
@@ -17,11 +16,9 @@ interface TimeLeft {
   seconds: number;
 }
 
-const PROGRESS_START_DATE = new Date('2025-05-05T00:00:00');
-
 export function ExamCountdown({ examDate }: ExamCountdownProps) {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
-  const [dayProgress, setDayProgress] = useState(100);
+  const [dayProgress, setDayProgress] = useState(0);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -46,18 +43,13 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
         }
         
         // Calculate progress for the circle
-        const totalDuration = examDate.getTime() - PROGRESS_START_DATE.getTime();
-        const timeElapsed = now.getTime() - PROGRESS_START_DATE.getTime();
-
-        if (totalDuration > 0 && timeElapsed >= 0) {
-            const progress = 100 - (timeElapsed / totalDuration) * 100;
-            setDayProgress(progress < 0 ? 0 : progress > 100 ? 100 : progress);
-        } else if (timeElapsed < 0) {
-            setDayProgress(100);
-        } else {
-            setDayProgress(0);
-        }
-
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+        const totalDay = endOfDay.getTime() - startOfDay.getTime();
+        const timePassed = now.getTime() - startOfDay.getTime();
+        setDayProgress((timePassed / totalDay) * 100);
     };
     
     calculateCountdown();
@@ -68,7 +60,7 @@ export function ExamCountdown({ examDate }: ExamCountdownProps) {
   }, [examDate, isClient]);
 
   return (
-    <Card className={cn("shadow-lg w-full", "countdown-background")}>
+    <Card className="shadow-lg w-full">
       <CardContent className="p-6 text-center">
         <div className="relative w-48 h-48 mx-auto mb-6">
             <CountdownCircle progress={dayProgress} />

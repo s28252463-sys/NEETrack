@@ -11,14 +11,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { signOut } from 'firebase/auth';
-import { useAuth } from '@/firebase';
+import { useAuth, useSidebar } from '@/firebase';
 import { LogIn } from 'lucide-react';
 import Link from 'next/link';
 import { Logo } from './Logo';
+import { SidebarTrigger } from './ui/sidebar';
 
 export function Header() {
   const { user } = useUser();
   const auth = useAuth();
+  const { isMobile } = useSidebar();
+
 
   const getInitials = (name: string | null | undefined) => {
     if (!name) return 'U';
@@ -29,12 +32,15 @@ export function Header() {
   };
 
   return (
-    <div className="flex items-center justify-between py-2 w-full">
-      <div className="flex items-center" style={{ width: '150px', height: '50px' }}>
-        <Logo />
-      </div>
+    <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-4 border-b bg-background/80 px-4 backdrop-blur-lg">
+        <div className="flex items-center gap-2">
+            {isMobile && <SidebarTrigger />}
+            <div className="hidden md:flex items-center" style={{ width: '150px', height: '50px' }}>
+                <Logo />
+            </div>
+        </div>
 
-      <div className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
+      <div className="flex items-center gap-4">
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -69,6 +75,6 @@ export function Header() {
           </Button>
         )}
       </div>
-    </div>
+    </header>
   );
 }

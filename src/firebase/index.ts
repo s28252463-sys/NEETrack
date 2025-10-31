@@ -13,6 +13,7 @@ import {
   useFirestore,
   useAuth,
 } from './provider';
+import { useSidebar } from '@/components/ui/sidebar';
 
 let firebaseApp: FirebaseApp;
 
@@ -50,4 +51,5 @@ export {
   useFirebaseApp,
   useFirestore,
   useAuth,
+  useSidebar,
 };

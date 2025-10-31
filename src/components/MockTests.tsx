@@ -1,17 +1,12 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
-import { useUser } from '@/firebase/auth/use-user';
-import { collection, addDoc, onSnapshot, deleteDoc, doc, updateDoc, Query } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
 
 interface Test {
   id: string;
@@ -21,132 +16,60 @@ interface Test {
 }
 
 export function MockTests() {
-  const { user, loading: userLoading } = useUser();
-  const firestore = useFirestore();
   const [tests, setTests] = useState<Test[]>([]);
   const [newTestName, setNewTestName] = useState('');
   const [newTestSyllabus, setNewTestSyllabus] = useState('');
-
-  const testsColRef = useMemo(() => {
-    if (!user || !firestore) return null;
-    return collection(firestore, `users/${user.uid}/mockTests`);
-  }, [user, firestore]);
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    // If the user is logged out or the query ref isn't ready, load from localStorage.
-    if (!user || !testsColRef) {
-      if (typeof window !== 'undefined') {
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (isClient) {
+      try {
         const savedTests = localStorage.getItem('mockTests');
         if (savedTests) {
-          try {
-            const parsedTests = JSON.parse(savedTests);
-            if (Array.isArray(parsedTests)) {
-              setTests(parsedTests);
-            }
-          } catch (e) {
-            setTests([]);
-          }
+          setTests(JSON.parse(savedTests));
         }
+      } catch (e) {
+        console.error("Failed to parse mock tests from localStorage", e);
+        setTests([]);
       }
-      return;
     }
+  }, [isClient]);
 
-    // User is logged in, set up Firestore listener.
-    const unsubscribe = onSnapshot(testsColRef as Query<Test>, (snapshot) => {
-      const userTests = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setTests(userTests);
-
-      // One-time migration from localStorage if Firestore is empty
-      if (typeof window !== 'undefined') {
-        const localDataRaw = localStorage.getItem('mockTests');
-        if (localDataRaw && userTests.length === 0) {
-            const localTests: Omit<Test, 'id'>[] = JSON.parse(localDataRaw);
-            if (Array.isArray(localTests) && localTests.length > 0) {
-                localTests.forEach(test => {
-                    addDoc(testsColRef, test);
-                });
-                localStorage.removeItem('mockTests'); // Clear after migration
-            }
-        }
-      }
-
-    }, (error) => {
-      const permissionError = new FirestorePermissionError({
-          path: (testsColRef as Query<Test>).path,
-          operation: 'list',
-      } satisfies SecurityRuleContext);
-      errorEmitter.emit('permission-error', permissionError);
-    });
-
-    return () => unsubscribe();
-  }, [user, testsColRef]);
-
-  // Persist to localStorage only for logged-out users
   useEffect(() => {
-    if (!user && !userLoading) {
+    if (isClient) {
       localStorage.setItem('mockTests', JSON.stringify(tests));
     }
-  }, [tests, user, userLoading]);
+  }, [tests, isClient]);
 
   const handleAddTest = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTestName.trim() || !newTestSyllabus.trim()) return;
-
-    const newTest: Omit<Test, 'id'> = {
+    
+    const newTest: Test = {
+      id: crypto.randomUUID(),
       name: newTestName,
       syllabus: newTestSyllabus,
       score: '',
     };
-    
-    if (user && testsColRef) {
-      addDoc(testsColRef, newTest).catch(serverError => {
-          const permissionError = new FirestorePermissionError({
-              path: `${(testsColRef as Query<Test>).path}/<new_document>`,
-              operation: 'create',
-              requestResourceData: newTest,
-          } satisfies SecurityRuleContext);
-          errorEmitter.emit('permission-error', permissionError);
-      });
-    } else {
-      setTests(prev => [...prev, { ...newTest, id: crypto.randomUUID() }]);
-    }
+    setTests(prev => [...prev, newTest]);
     setNewTestName('');
     setNewTestSyllabus('');
   };
 
   const handleScoreChange = (id: string, score: string) => {
-    const updatedTests = tests.map(test => (test.id === id ? { ...test, score } : test));
-    setTests(updatedTests);
-
-    if (user && firestore) {
-        const testToUpdate = updatedTests.find(t => t.id === id);
-        if (testToUpdate) {
-            const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
-            updateDoc(testDocRef, { score }).catch(serverError => {
-                const permissionError = new FirestorePermissionError({
-                    path: testDocRef.path,
-                    operation: 'update',
-                    requestResourceData: { score },
-                } satisfies SecurityRuleContext);
-                errorEmitter.emit('permission-error', permissionError);
-            });
-        }
-    }
+    setTests(prev =>
+      prev.map(test =>
+        test.id === id ? { ...test, score } : test
+      )
+    );
   };
   
   const handleDeleteTest = (id: string) => {
-    if (user && firestore) {
-      const testDocRef = doc(firestore, `users/${user.uid}/mockTests`, id);
-      deleteDoc(testDocRef).catch(serverError => {
-        const permissionError = new FirestorePermissionError({
-            path: testDocRef.path,
-            operation: 'delete',
-        } satisfies SecurityRuleContext);
-        errorEmitter.emit('permission-error', permissionError);
-      });
-    } else {
-      setTests(prev => prev.filter(test => test.id !== id));
-    }
+    setTests(prev => prev.filter(test => test.id !== id));
   }
 
   return (
@@ -157,7 +80,7 @@ export function MockTests() {
             <CardTitle className="font-headline text-2xl">Mock Tests</CardTitle>
         </div>
         <CardDescription>
-          Add your upcoming mock tests and track your scores.
+          Add your upcoming mock tests and track your scores. (Saved locally)
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -190,8 +113,8 @@ export function MockTests() {
         
         <div className="space-y-4">
             <h3 className="font-semibold font-headline text-lg">Your Tests</h3>
-            {userLoading ? (
-              <p>Loading tests...</p>
+            {!isClient ? (
+                <p className="text-muted-foreground text-sm">Loading tests...</p>
             ) : tests.length === 0 ? (
                 <p className="text-muted-foreground text-sm">You haven't added any tests yet.</p>
             ) : (

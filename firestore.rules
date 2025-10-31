@@ -9,10 +9,16 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read, write: if isOwner(userId);
-    }
-    
-    match /users/{userId}/mockTests/{testId} {
-      allow read, write, delete: if isOwner(userId);
+
+      // This rule allows the owner to list their own mock tests.
+      match /mockTests {
+        allow list: if isOwner(userId);
+      }
+      
+      // This rule allows the owner to read, write, and delete individual mock tests.
+      match /mockTests/{testId} {
+        allow read, write, delete: if isOwner(userId);
+      }
     }
   }
 }

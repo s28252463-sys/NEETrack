@@ -9,100 +9,100 @@ export interface StudyMaterial {
 export const studyMaterialsData: { [topicId: string]: StudyMaterial } = {
   // --- PHYSICS ---
   'p_bm': {
-    lectureUrl: "https://www.youtube.com/watch?v=R4wP2c-AxwE",
+    lectureUrl: "",
   },
   'p_v': {
-    lectureUrl: "https://www.youtube.com/watch?v=kdoJqNsoWac",
+    lectureUrl: "",
   },
   'p_cm': {
-    lectureUrl: "https://www.youtube.com/watch?v=hX82J2d5CgY",
+    lectureUrl: "",
   },
   'p_rm': {
-    lectureUrl: "https://www.youtube.com/watch?v=syOMYhI1ePA",
+    lectureUrl: "",
   },
   'p1': {
-    lectureUrl: "https://www.youtube.com/watch?v=J1Z2p4csb-w",
+    lectureUrl: "",
   },
   'p2': {
-    lectureUrl: "https://www.youtube.com/watch?v=-tlkepyF8aY",
+    lectureUrl: "",
   },
   'p3': {
-    lectureUrl: "https://www.youtube.com/watch?v=YKLZpAjK-M8",
+    lectureUrl: "",
   },
   'p4': {
-    lectureUrl: "https://www.youtube.com/watch?v=2cdRXbYeCqo",
+    lectureUrl: "",
   },
   'p5': {
-    lectureUrl: "https://www.youtube.com/watch?v=Ce-1sfILTj8",
+    lectureUrl: "",
   },
   'p6': {
-    lectureUrl: "https://www.youtube.com/watch?v=wG4uHKZkJRI",
+    lectureUrl: "",
   },
   'p7': {
-    lectureUrl: "https://www.youtube.com/watch?v=eHIFpPdGuY0",
+    lectureUrl: "",
   },
   'p8': {
-    lectureUrl: "https://www.youtube.com/watch?v=a2T84FeLIdY",
+    lectureUrl: "",
   },
   'p9': {
-    lectureUrl: "https://www.youtube.com/watch?v=Ele4sqz0cUI",
+    lectureUrl: "",
   },
   'p10': {
-    lectureUrl: "https://www.youtube.com/watch?v=CGS6eP-yZec",
+    lectureUrl: "",
   },
   'p11': {
-    lectureUrl: "https://www.youtube.com/watch?v=A8W90UdFyHM",
+    lectureUrl: "",
   },
   'p12': {
-    lectureUrl: "https://www.youtube.com/watch?v=A8W90UdFyHM",
+    lectureUrl: "",
   },
   'p13': {
-    lectureUrl: "https://www.youtube.com/watch?v=wOIRp8B8I-U",
+    lectureUrl: "",
   },
   'p14': {
-      lectureUrl: "https://www.youtube.com/watch?v=QOYEiy1AUTI",
+      lectureUrl: "",
   },
   'p15': {
-    lectureUrl: 'https://www.youtube.com/watch?v=1K6gIeI8c1A',
+    lectureUrl: '',
   },
   'p16': {
-    lectureUrl: 'https://www.youtube.com/watch?v=A-3y8gLz4n0',
+    lectureUrl: '',
   },
   'p17': {
-    lectureUrl: 'https://www.youtube.com/watch?v=6LzuQeQpCjM',
+    lectureUrl: '',
   },
   'p18': {
-    lectureUrl: 'https://www.youtube.com/watch?v=rJg36XF5S3w',
+    lectureUrl: '',
   },
   'p19': {
-    lectureUrl: 'https://www.youtube.com/watch?v=kpx3h-QO02g',
+    lectureUrl: '',
   },
   'p20': {
-    lectureUrl: 'https://www.youtube.com/watch?v=z2yXp4A9o-A',
+    lectureUrl: '',
   },
   'p21': {
-    lectureUrl: 'https://www.youtube.com/watch?v=J3LgL5y2-L8',
+    lectureUrl: '',
   },
   'p22': {
-    lectureUrl: 'https://www.youtube.com/watch?v=L2L2I-4lW4M',
+    lectureUrl: '',
   },
   'p23': {
-    lectureUrl: 'https://www.youtube.com/watch?v=psoiHejT3jU',
+    lectureUrl: '',
   },
   'p24': {
-    lectureUrl: 'https://www.youtube.com/watch?v=qf6aV3pWk8c',
+    lectureUrl: '',
   },
   'p25': {
-    lectureUrl: 'https://www.youtube.com/watch?v=jW24cIt0Vgo',
+    lectureUrl: '',
   },
   'p26': {
-    lectureUrl: 'https://www.youtube.com/watch?v=S4G39jRTW9M',
+    lectureUrl: '',
   },
   'p27': {
-    lectureUrl: 'https://www.youtube.com/watch?v=wBHB5x9f4b0',
+    lectureUrl: '',
   },
   'p28': {
-    lectureUrl: 'https://www.youtube.com/watch?v=9g2o9y-G75A',
+    lectureUrl: '',
   },
 
   // --- CHEMISTRY ---

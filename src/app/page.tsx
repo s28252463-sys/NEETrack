@@ -8,6 +8,7 @@ import { StudyPlanner } from '@/components/StudyPlanner';
 import { MockTests } from '@/components/MockTests';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
+const PROGRESS_START_DATE = new Date('2025-05-05T00:00:00');
 
 export default function Home() {
   const [completionPercentage, setCompletionPercentage] = useState(0);
@@ -37,8 +38,8 @@ export default function Home() {
             <SyllabusTracker onProgressChange={setCompletionPercentage} />
             <MockTests />
           </div>
-          <div className="lg:col-span-2 space-y-8">
-            <ExamCountdown examDate={EXAM_DATE} />
+          <div className="lg:col-span-2 space-y-8 flex flex-col items-center">
+            <ExamCountdown examDate={EXAM_DATE} progressStartDate={PROGRESS_START_DATE} />
             <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
           </div>
         </div>

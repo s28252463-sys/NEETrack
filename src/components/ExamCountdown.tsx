@@ -2,50 +2,90 @@
 
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarDays } from 'lucide-react';
+import { CountdownCircle } from './CountdownCircle';
 
 interface ExamCountdownProps {
   examDate: Date;
+  progressStartDate: Date;
 }
 
-export function ExamCountdown({ examDate }: ExamCountdownProps) {
-  const [daysLeft, setDaysLeft] = useState<number | null>(null);
+const TimeCard = ({ value, unit }: { value: number; unit: string }) => (
+  <div className="flex flex-col items-center">
+    <div className="text-2xl font-bold text-gray-800 dark:text-gray-200 bg-white/30 backdrop-blur-sm rounded-lg p-2 w-16 text-center">
+      {String(value).padStart(2, '0')}
+    </div>
+    <span className="text-xs text-muted-foreground mt-1">{unit}</span>
+  </div>
+);
+
+export function ExamCountdown({ examDate, progressStartDate }: ExamCountdownProps) {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  const [dayProgress, setDayProgress] = useState(100);
 
   useEffect(() => {
-    const calculateDaysLeft = () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const examDay = new Date(examDate);
-      examDay.setHours(0, 0, 0, 0);
+    const calculateTimeLeft = () => {
+      const now = new Date();
+      const difference = examDate.getTime() - now.getTime();
+      
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / 1000 / 60) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+        setTimeLeft({ days, hours, minutes, seconds });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
 
-      const diffTime = examDay.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      setDaysLeft(diffDays > 0 ? diffDays : 0);
+      // Calculate day progress
+      const totalDuration = examDate.getTime() - progressStartDate.getTime();
+      const elapsedDuration = now.getTime() - progressStartDate.getTime();
+      const progress = 100 - (elapsedDuration / totalDuration) * 100;
+      setDayProgress(Math.max(0, progress));
     };
 
-    calculateDaysLeft();
-    const intervalId = setInterval(calculateDaysLeft, 1000 * 60 * 60); // Update every hour
+    calculateTimeLeft();
+    const intervalId = setInterval(calculateTimeLeft, 1000);
     
     return () => clearInterval(intervalId);
-  }, [examDate]);
+  }, [examDate, progressStartDate]);
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium font-headline">
+    <Card className="w-full max-w-sm shadow-lg countdown-background">
+      <CardHeader className="items-center pb-2">
+        <CardTitle className="text-lg font-medium font-headline text-center text-foreground/80">
           Countdown to NEET UG
         </CardTitle>
-        <CalendarDays className="h-5 w-5 text-primary" />
       </CardHeader>
-      <CardContent>
-        {daysLeft !== null ? (
-          <div className="text-4xl font-bold text-primary">{daysLeft}</div>
-        ) : (
-          <div className="text-4xl font-bold text-primary">-</div>
-        )}
-        <p className="text-xs text-muted-foreground pt-1">
-          days remaining until {examDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
+      <CardContent className="flex flex-col items-center justify-center p-4">
+        <div className="relative w-48 h-48">
+          <CountdownCircle progress={dayProgress} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="text-5xl font-bold text-gray-800 dark:text-gray-200">
+              {timeLeft.days}
+            </div>
+            <div className="text-sm text-muted-foreground">Days</div>
+          </div>
+        </div>
+        <div className="flex justify-center gap-4 mt-4">
+          <TimeCard value={timeLeft.hours} unit="Hours" />
+          <TimeCard value={timeLeft.minutes} unit="Minutes" />
+          <TimeCard value={timeLeft.seconds} unit="Seconds" />
+        </div>
+        <div className="text-center mt-4 text-xs text-muted-foreground">
+          {examDate.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          })}
+        </div>
       </CardContent>
     </Card>
   );

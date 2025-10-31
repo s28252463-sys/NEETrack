@@ -11,12 +11,6 @@ service cloud.firestore {
       allow read, write: if isOwner(userId);
     }
     
-    // This rule allows a user to list the documents in their own mockTests subcollection.
-    match /users/{userId}/mockTests {
-      allow list: if isOwner(userId);
-    }
-
-    // These rules apply to individual mock test documents.
     match /users/{userId}/mockTests/{testId} {
       allow read, write, delete: if isOwner(userId);
     }

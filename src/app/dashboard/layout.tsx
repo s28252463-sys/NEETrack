@@ -53,7 +53,7 @@ export default function DashboardLayout({
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
+             <SidebarMenuItem>
               <SidebarMenuButton asChild isActive={pathname.startsWith('/dashboard/mock-tests')} tooltip="Mock Tests">
                 <Link href="/dashboard/mock-tests">
                   <ClipboardList />

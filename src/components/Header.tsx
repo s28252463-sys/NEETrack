@@ -14,7 +14,7 @@ import { signOut } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { LogIn } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import { Logo } from './Logo';
 
 export function Header() {
   const { user } = useUser();
@@ -30,14 +30,8 @@ export function Header() {
 
   return (
     <div className="flex items-center justify-between py-2 w-full">
-       <div className="flex items-center" style={{ width: '150px', height: '50px' }}>
-        <Image
-          src="https://i.ibb.co/VtMD9x3/Screenshot-2024-07-26-at-12-32-47-PM.png"
-          alt="NEETrack Logo"
-          width={150}
-          height={50}
-          priority
-        />
+      <div className="flex items-center" style={{ width: '150px', height: '50px' }}>
+        <Logo />
       </div>
 
       <div className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">

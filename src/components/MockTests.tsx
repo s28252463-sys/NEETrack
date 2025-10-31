@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -19,31 +19,21 @@ export function MockTests() {
   const [tests, setTests] = useState<Test[]>([]);
   const [newTestName, setNewTestName] = useState('');
   const [newTestSyllabus, setNewTestSyllabus] = useState('');
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    if (typeof window !== 'undefined') {
+      const savedTests = localStorage.getItem('mockTests');
+      if (savedTests) {
+        setTests(JSON.parse(savedTests));
+      }
+    }
   }, []);
 
   useEffect(() => {
-    if (isClient) {
-      try {
-        const savedTests = localStorage.getItem('mockTests');
-        if (savedTests) {
-          setTests(JSON.parse(savedTests));
-        }
-      } catch (e) {
-        console.error("Failed to parse mock tests from localStorage", e);
-        setTests([]);
-      }
-    }
-  }, [isClient]);
-
-  useEffect(() => {
-    if (isClient) {
+    if (typeof window !== 'undefined') {
       localStorage.setItem('mockTests', JSON.stringify(tests));
     }
-  }, [tests, isClient]);
+  }, [tests]);
 
   const handleAddTest = (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,7 +70,7 @@ export function MockTests() {
             <CardTitle className="font-headline text-2xl">Mock Tests</CardTitle>
         </div>
         <CardDescription>
-          Add your upcoming mock tests and track your scores. (Saved locally)
+          Add your upcoming mock tests and track your scores.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -113,9 +103,7 @@ export function MockTests() {
         
         <div className="space-y-4">
             <h3 className="font-semibold font-headline text-lg">Your Tests</h3>
-            {!isClient ? (
-                <p className="text-muted-foreground text-sm">Loading tests...</p>
-            ) : tests.length === 0 ? (
+            {tests.length === 0 ? (
                 <p className="text-muted-foreground text-sm">You haven't added any tests yet.</p>
             ) : (
                 <ul className="space-y-4">

@@ -1,10 +1,10 @@
-'use client';
+
 import { MockTests } from '@/components/MockTests';
 
 export default function MockTestsPage() {
   return (
-    <main className="p-4 sm:p-6">
-      <MockTests />
-    </main>
+    <div className="flex flex-col flex-grow p-4 md:p-8">
+        <MockTests />
+    </div>
   );
 }

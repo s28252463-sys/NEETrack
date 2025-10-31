@@ -1,4 +1,3 @@
-
 import type { LucideIcon } from 'lucide-react';
 import { Lightbulb, FlaskConical, Dna, Leaf, Bug } from 'lucide-react';
 
@@ -16,10 +15,6 @@ export type Subject = {
 };
 
 const physicsTopics: Topic[] = [
-    { id: 'p_bm', name: 'Basic Math' },
-    { id: 'p_v', name: 'Vectors' },
-    { id: 'p_cm', name: 'Circular Motion' },
-    { id: 'p_rm', name: 'Rotational Motion' },
     { id: 'p1', name: 'Physical World, Units and Measurements' },
     { id: 'p2', name: 'Motion in a Straight Line' },
     { id: 'p3', name: 'Motion in a Plane' },
@@ -55,13 +50,17 @@ const chemistryTopics: Topic[] = [
     { id: 'c2', name: 'Structure of Atom' },
     { id: 'c3', name: 'Classification of Elements and Periodicity in Properties' },
     { id: 'c4', name: 'Chemical Bonding and Molecular Structure' },
+    { id: 'c5', name: 'States of Matter: Gases and Liquids' },
     { id: 'c6', name: 'Thermodynamics' },
     { id: 'c7', name: 'Equilibrium' },
     { id: 'c8', name: 'Redox Reactions' },
+    { id: 'c9', name: 'Hydrogen' },
     { id: 'c10', name: 's-Block Elements (Alkali and Alkaline earth metals)' },
     { id: 'c11', name: 'Some p-Block Elements (Group 13 & 14)' },
     { id: 'c12', name: 'Organic Chemistry- Some Basic Principles and Techniques' },
     { id: 'c13', name: 'Hydrocarbons' },
+    { id: 'c14', name: 'Environmental Chemistry' },
+    { id: 'c15', name: 'Solid State' },
     { id: 'c16', name: 'Solutions' },
     { id: 'c17', name: 'Electrochemistry' },
     { id: 'c18', name: 'Chemical Kinetics' },
@@ -75,6 +74,8 @@ const chemistryTopics: Topic[] = [
     { id: 'c26', name: 'Aldehydes, Ketones and Carboxylic Acids' },
     { id: 'c27', name: 'Organic Compounds Containing Nitrogen (Amines)' },
     { id: 'c28', name: 'Biomolecules' },
+    { id: 'c29', name: 'Polymers' },
+    { id: 'c30', name: 'Chemistry in Everyday Life' },
 ];
 
 const botanyTopics: Topic[] = [
@@ -87,6 +88,8 @@ const botanyTopics: Topic[] = [
     { id: 'b7', name: 'Cell: The Unit of Life' },
     { id: 'b8', name: 'Biomolecules (as related to plants)' },
     { id: 'b9', name: 'Cell Cycle and Cell Division' },
+    { id: 'b10', name: 'Transport in Plants' },
+    { id: 'b11', name: 'Mineral Nutrition' },
     { id: 'b12', name: 'Photosynthesis in Higher Plants' },
     { id: 'b13', name: 'Respiration in Plants' },
     { id: 'b14', name: 'Plant Growth and Development' },

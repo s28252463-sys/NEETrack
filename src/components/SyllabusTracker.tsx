@@ -7,12 +7,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Label } from '@/components/ui/label';
-import { useUser } from '@/firebase/auth/use-user';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
-import { errorEmitter } from '@/firebase/error-emitter';
-import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
-
 
 interface SyllabusTrackerProps {
   onProgressChange: (progress: number) => void;
@@ -75,80 +69,23 @@ const SubjectAccordion = ({
 
 export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
   const totalTopics = useMemo(() => allTopics.length, []);
-  const { user, loading: userLoading } = useUser();
-  const firestore = useFirestore();
   
-  const [completedTopics, setCompletedTopics] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadProgress() {
-      if (userLoading) return; 
-      setIsLoading(true);
-
-      try {
-        if (user && firestore) {
-          const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-          const docSnap = await getDoc(userProgressRef);
-          if (docSnap.exists()) {
-            setCompletedTopics(new Set(docSnap.data().completedTopics || []));
-          } else {
-            // If no Firestore data, check localStorage for migration
-            const saved = localStorage.getItem('completedTopics');
-            const localTopics = saved ? new Set<string>(JSON.parse(saved)) : new Set<string>();
-            setCompletedTopics(localTopics);
-            // If there's local data, save it to Firestore for the newly logged-in user
-            if (localTopics.size > 0) {
-              await setDoc(userProgressRef, { completedTopics: Array.from(localTopics) }, { merge: true });
-            }
-          }
-        } else {
-          // User is logged out, use localStorage
-          const saved = localStorage.getItem('completedTopics');
-          if (saved) {
-            setCompletedTopics(new Set(JSON.parse(saved)));
-          }
-        }
-      } catch (e: any) {
-         if (e.code === 'permission-denied' && user) {
-            const permissionError = new FirestorePermissionError({
-                path: `users/${user.uid}/progress/syllabus`,
-                operation: 'get',
-            } satisfies SecurityRuleContext);
-            errorEmitter.emit('permission-error', permissionError);
-        } else {
-            console.error("An unexpected error occurred while loading progress:", e);
-        }
-      } finally {
-        setIsLoading(false);
-      }
+  const [completedTopics, setCompletedTopics] = useState<Set<string>>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('completedTopics');
+      return saved ? new Set(JSON.parse(saved)) : new Set();
     }
-    loadProgress();
-  }, [user, firestore, userLoading]);
-  
-  const progress = useMemo(() => (totalTopics > 0 ? (completedTopics.size / totalTopics) * 100 : 0), [completedTopics.size, totalTopics]);
+    return new Set();
+  });
+
+  const progress = useMemo(() => (completedTopics.size / totalTopics) * 100, [completedTopics.size, totalTopics]);
 
   useEffect(() => {
-    if (isLoading) return; 
-
     onProgressChange(progress);
-    const dataToSave = { completedTopics: Array.from(completedTopics) };
-    
-    if (user && firestore) {
-      const userProgressRef = doc(firestore, `users/${user.uid}/progress/syllabus`);
-      setDoc(userProgressRef, dataToSave, { merge: true })
-        .catch(serverError => {
-            const permissionError = new FirestorePermissionError({
-                path: userProgressRef.path,
-                operation: 'update',
-                requestResourceData: dataToSave,
-            } satisfies SecurityRuleContext);
-            errorEmitter.emit('permission-error', permissionError);
-        });
-    } else {
-      localStorage.setItem('completedTopics', JSON.stringify(dataToSave.completedTopics));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('completedTopics', JSON.stringify(Array.from(completedTopics)));
     }
-  }, [completedTopics, progress, onProgressChange, user, firestore, isLoading]);
+  }, [completedTopics, progress, onProgressChange]);
 
   const handleToggleTopic = useCallback((topicId: string, isCompleted: boolean) => {
     setCompletedTopics(prev => {
@@ -176,20 +113,16 @@ export function SyllabusTracker({ onProgressChange }: SyllabusTrackerProps) {
         </div>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <p>Loading your progress...</p>
-        ) : (
-          <Accordion type="multiple" className="w-full">
-            {syllabus.map(subject => (
-              <SubjectAccordion 
-                key={subject.id} 
-                subject={subject} 
-                completedTopics={completedTopics} 
-                handleToggleTopic={handleToggleTopic}
-              />
-            ))}
-          </Accordion>
-        )}
+        <Accordion type="multiple" className="w-full">
+          {syllabus.map(subject => (
+             <SubjectAccordion 
+              key={subject.id} 
+              subject={subject} 
+              completedTopics={completedTopics} 
+              handleToggleTopic={handleToggleTopic}
+            />
+          ))}
+        </Accordion>
       </CardContent>
     </Card>
   );

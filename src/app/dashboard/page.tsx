@@ -1,16 +1,12 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { StudyPlanner } from '@/components/StudyPlanner';
-import { MockTests } from '@/components/MockTests';
-import { SmartStudySuggester } from '@/components/SmartStudySuggester';
-import { MotivationalQuote } from '@/components/MotivationalQuote';
-import Ad from '@/components/Ad';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
-const PROGRESS_START_DATE = new Date('2025-05-05T00:00:00');
 
 export default function DashboardPage() {
   const [completionPercentage, setCompletionPercentage] = useState(0);
@@ -32,20 +28,16 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <main className="container mx-auto px-4 py-8 flex-grow">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          <ExamCountdown examDate={EXAM_DATE} progressStartDate={PROGRESS_START_DATE} />
-          <SyllabusTracker onProgressChange={setCompletionPercentage} />
-          <MockTests />
+    <div className="flex flex-col flex-grow p-4 md:p-8 space-y-8">
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="lg:col-span-3 space-y-8">
+            <SyllabusTracker onProgressChange={setCompletionPercentage} />
+          </div>
+          <div className="lg:col-span-2 space-y-8">
+            <ExamCountdown examDate={EXAM_DATE} />
+            <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+          </div>
         </div>
-        <div className="lg:col-span-1 space-y-6">
-          <Ad />
-          <SmartStudySuggester progress={completionPercentage} daysLeft={daysLeft} />
-          <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
-          <MotivationalQuote />
-        </div>
-      </div>
-    </main>
+    </div>
   );
 }

@@ -81,7 +81,7 @@ export default function DashboardLayout({
             <div className="flex-grow" />
             {/* Other header content */}
         </header>
-        {children}
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
         <footer className="text-center py-4 text-muted-foreground text-sm">
             <p>Built for NEET UG Aspirants with ❤️</p>
         </footer>

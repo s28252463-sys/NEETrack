@@ -28,16 +28,14 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="flex flex-col flex-grow p-4 md:p-8 space-y-8">
-        <div className="grid gap-8 lg:grid-cols-5">
-          <div className="lg:col-span-3 space-y-8">
-            <SyllabusTracker onProgressChange={setCompletionPercentage} />
-          </div>
-          <div className="lg:col-span-2 space-y-8">
-            <ExamCountdown examDate={EXAM_DATE} />
-            <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
-          </div>
-        </div>
+    <div className="grid gap-8 lg:grid-cols-5">
+      <div className="lg:col-span-3 space-y-8">
+        <SyllabusTracker onProgressChange={setCompletionPercentage} />
+      </div>
+      <div className="lg:col-span-2 space-y-8">
+        <ExamCountdown examDate={EXAM_DATE} />
+        <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+      </div>
     </div>
   );
 }

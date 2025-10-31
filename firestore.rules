@@ -15,8 +15,11 @@ service cloud.firestore {
         // This rule allows a user to read, write, and delete their own mock test documents.
         allow read, write, delete: if isOwner(userId);
       }
+      
       // This rule allows a user to query the collection of their own mock tests.
-      allow list: if isOwner(userId);
+      match /mockTests {
+        allow list: if isOwner(userId);
+      }
 
       // Rules for syllabus progress
       match /progress/syllabus {

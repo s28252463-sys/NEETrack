@@ -8,9 +8,12 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Subcollection: mockTests
-    // This rule allows a user to query their own mock tests collection
-    // and also read, create, update, and delete individual documents within it.
+    // Grant read-only access (querying) to the entire mockTests collection
+    match /users/{userId}/mockTests {
+      allow list: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Grant full access to individual mock test documents
     match /users/{userId}/mockTests/{testId} {
       allow read, write, delete: if request.auth != null && request.auth.uid == userId;
     }

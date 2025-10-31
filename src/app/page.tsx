@@ -1,56 +1,49 @@
+'use client';
 
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { Header } from '@/components/Header';
+import { ExamCountdown } from '@/components/ExamCountdown';
+import { SyllabusTracker } from '@/components/SyllabusTracker';
+import { StudyPlanner } from '@/components/StudyPlanner';
+import { MockTests } from '@/components/MockTests';
 
-export default function LandingPage() {
+const EXAM_DATE = new Date('2026-05-03T00:00:00');
+
+export default function Home() {
+  const [completionPercentage, setCompletionPercentage] = useState(0);
+  const [daysLeft, setDaysLeft] = useState<number>(0);
+
+  useEffect(() => {
+    const calculateDaysLeft = () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const examDay = new Date(EXAM_DATE);
+      examDay.setHours(0, 0, 0, 0);
+      const diffTime = examDay.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setDaysLeft(diffDays > 0 ? diffDays : 0);
+    };
+    calculateDaysLeft();
+    const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24); // Recalculate every day
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <header className="flex items-center justify-between p-4 sm:p-6 container mx-auto">
-        <div className="flex items-center gap-2">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 256 256"
-            className="h-8 w-8 text-primary"
-          >
-            <rect width="256" height="256" fill="none" />
-            <path
-              d="M88,112a48,48,0,1,1,48,48A48.05,48.05,0,0,1,88,112Z"
-              opacity="0.2"
-            />
-            <path
-              d="M128,80h80a0,0,0,0,1,0,0v96a0,0,0,0,1,0,0H128a48,48,0,0,1-48-48v0A48,48,0,0,1,128,80Z"
-              opacity="0.2"
-            />
-            <path
-              d="M128,32a96,96,0,1,0,96,96A96.11,96.11,0,0,0,128,32Zm0,176a80,80,0,1,1,80-80A80.09,80.09,0,0,1,128,208Z"
-              fill="currentColor"
-            />
-          </svg>
-          <h1 className="text-2xl font-bold font-headline">NEETrack</h1>
-        </div>
-        <Button asChild>
-          <Link href="/dashboard">
-            Go to Dashboard <ArrowRight className="ml-2" />
-          </Link>
-        </Button>
-      </header>
-      <main className="flex-grow flex items-center justify-center">
-        <div className="container mx-auto px-4 py-16 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold font-headline mb-4">
-            Your Ultimate NEET UG Preparation Companion
-          </h2>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-8">
-            Track your syllabus, manage mock tests, and get AI-powered personalized study plans to ace the exam.
-          </p>
-          <Button size="lg" asChild>
-            <Link href="/dashboard">
-              Get Started Now <ArrowRight className="ml-2" />
-            </Link>
-          </Button>
+      <Header />
+      <main className="container mx-auto px-4 py-8 flex-grow">
+        <div className="grid gap-8 lg:grid-cols-5">
+          <div className="lg:col-span-3 space-y-8">
+            <SyllabusTracker onProgressChange={setCompletionPercentage} />
+            <MockTests />
+          </div>
+          <div className="lg:col-span-2 space-y-8">
+            <ExamCountdown examDate={EXAM_DATE} />
+            <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+          </div>
         </div>
       </main>
-      <footer className="text-center py-6 text-muted-foreground text-sm">
+      <footer className="text-center py-4 text-muted-foreground text-sm">
         <p>Built for NEET UG Aspirants with ❤️</p>
       </footer>
     </div>

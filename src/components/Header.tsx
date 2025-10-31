@@ -14,6 +14,7 @@ import { signOut } from 'firebase/auth';
 import { useAuth } from '@/firebase';
 import { LogIn } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Header() {
   const { user } = useUser();
@@ -30,32 +31,7 @@ export function Header() {
   return (
     <div className="flex items-center justify-between py-2 w-full">
       <div className="flex items-center">
-        <svg
-          className="h-12"
-          viewBox="0 0 200 60"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <defs>
-            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" style={{stopColor: 'hsl(var(--primary))', stopOpacity:1}} />
-              <stop offset="100%" style={{stopColor: 'hsl(var(--accent))', stopOpacity:1}} />
-            </linearGradient>
-          </defs>
-          <path 
-            d="M 10 30 a 20 20 0 1 0 40 0 a 20 20 0 1 0 -40 0" 
-            fill="url(#grad1)" 
-          />
-          <circle cx="30" cy="30" r="8" fill="hsl(var(--background))" />
-          <path 
-            d="M 30 22 a 8 8 0 0 1 0 16"
-            fill="none"
-            stroke="hsl(var(--primary))"
-            strokeWidth="2"
-          />
-        </svg>
-        <span className="text-2xl font-headline font-bold text-gray-800 dark:text-gray-200 ml-2 group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">
-          NEETrack
-        </span>
+        <Image src="https://i.ibb.co/L8DR3gS/logo.png" alt="NEETrack Logo" width={150} height={50} />
       </div>
 
       <div className="group-data-[state=collapsed]/sidebar-wrapper:hidden group-data-[mobile=true]/sidebar:inline">

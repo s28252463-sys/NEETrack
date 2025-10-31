@@ -8,16 +8,10 @@ export function Logo() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <g>
-        {/* Green downward arrow shape */}
-        <path
-          d="M45 10 L45 70 L25 70 L50 95 L75 70 L55 70 L55 10 Z"
-          fill="#8CC63F"
-        />
-        {/* Blue upward arrow shape */}
-        <path
-          d="M55 90 L55 30 L75 30 L50 5 L25 30 L45 30 L45 90 Z"
-          fill="#2C3E50"
-        />
+        {/* Stylized Letter N */}
+        <path d="M20 10 L20 90 L40 90 L70 30 L70 90 L90 90 L90 10 L70 10 L40 70 L40 10 Z" fill="#2C3E50" />
+        <path d="M40 10 L40 70 L20 10 Z" fill="#8CC63F" />
+        <path d="M70 90 L70 30 L90 90 Z" fill="#8CC63F" />
       </g>
     </svg>
   );

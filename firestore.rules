@@ -9,14 +9,15 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read, write: if isOwner(userId);
-      
-      // This block handles the `mockTests` subcollection
-      match /mockTests/{testId} {
-        // This rule allows a user to LIST the mock tests that belong to them.
-        // It is required for the onSnapshot query on the collection.
+
+      // This rule allows a user to LIST the mock tests that belong to them.
+      // It is required for the onSnapshot query on the collection.
+      match /mockTests {
         allow list: if isOwner(userId);
-        
-        // These rules allow a user to read, write, and delete INDIVIDUAL mock tests.
+      }
+      
+      // These rules allow a user to read, write, and delete INDIVIDUAL mock tests.
+      match /mockTests/{testId} {
         allow read, write, delete: if isOwner(userId);
       }
 

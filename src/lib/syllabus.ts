@@ -15,6 +15,10 @@ export type Subject = {
 };
 
 const physicsTopics: Topic[] = [
+    { id: 'p_bm', name: 'Basic Math' },
+    { id: 'p_v', name: 'Vectors' },
+    { id: 'p_cm', name: 'Circular Motion' },
+    { id: 'p_rm', name: 'Rotational Motion' },
     { id: 'p1', name: 'Physical World, Units and Measurements' },
     { id: 'p2', name: 'Motion in a Straight Line' },
     { id: 'p3', name: 'Motion in a Plane' },

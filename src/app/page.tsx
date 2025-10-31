@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { ExamCountdown } from '@/components/ExamCountdown';
 import { SyllabusTracker } from '@/components/SyllabusTracker';
-import { StudyPlanner } from '@/components/Studyplanner';
+import { StudyPlanner } from '@/components/StudyPlanner';
 import { MockTests } from '@/components/MockTests';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
@@ -38,9 +38,7 @@ export default function Home() {
             <MockTests />
           </div>
           <div className="lg:col-span-2 space-y-8">
-            <div className="flex flex-col items-center">
-              <ExamCountdown examDate={EXAM_DATE} />
-            </div>
+            <ExamCountdown examDate={EXAM_DATE} />
             <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
           </div>
         </div>

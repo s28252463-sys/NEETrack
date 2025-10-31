@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { getStudyPlan } from '@/app/actions';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -22,12 +23,11 @@ export function StudyPlanner({ progress, daysLeft }: StudyPlannerProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     startTransition(async () => {
-      // Mocked response for UI development
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const result = {
-        success: true,
-        goals: `Based on ${Math.round(progress)}% completion and ${daysLeft} days left:\n\n- Daily: 3 hours of focused new topic study.\n- Daily: 2 hours of question practice.\n- Weekly: Revise all topics covered in the past week.`
-      };
+      const result = await getStudyPlan({
+        syllabusCompletionPercentage: Math.round(progress),
+        daysRemaining: daysLeft,
+        customizationPreferences: customization,
+      });
 
       if (result.success) {
         setPlan(result.goals);
@@ -35,7 +35,7 @@ export function StudyPlanner({ progress, daysLeft }: StudyPlannerProps) {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Could not generate a plan.",
+          description: result.error,
         });
         setPlan(null);
       }

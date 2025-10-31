@@ -10,15 +10,13 @@ service cloud.firestore {
     match /users/{userId} {
       allow read, write: if isOwner(userId);
 
-      // This block handles individual mock test documents
+      // This rule allows the owner to list the documents in their own mockTests subcollection.
+      // This is what fixes the `operation: "list"` error.
+      allow list on mockTests: if isOwner(userId);
+      
+      // This rule allows the owner to read, write, and delete individual mock test documents.
       match /mockTests/{testId} {
         allow read, write, delete: if isOwner(userId);
-      }
-      
-      // This block handles the mock tests collection as a whole
-      // This is required for querying/listing the collection.
-      match /mockTests {
-        allow list: if isOwner(userId);
       }
 
       // Rules for syllabus progress

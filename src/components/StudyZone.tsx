@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Accordion,
@@ -9,16 +9,53 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { syllabus, Subject, Topic } from '@/lib/syllabus';
-import { studyMaterialsData, StudyMaterial } from '@/lib/studymaterials';
-import { BookOpen, Youtube, FileText, FileQuestion, StickyNote } from 'lucide-react';
+import { BookOpen, Youtube, FileText, FileQuestion, StickyNote, Link as LinkIcon, Loader2 } from 'lucide-react';
 import { YouTubePlayer } from './YouTubePlayer';
 import Link from 'next/link';
 import { Button } from './ui/button';
+import { useUser } from '@/firebase';
+import { useFirestore } from '@/firebase';
+import { doc, getDoc } from 'firebase/firestore';
+
+interface StudyMaterial {
+  lectureUrl?: string;
+  notesUrl?: string;
+  questionBankUrl?: string;
+  shortNoteUrl?: string;
+  annotatedNcertUrl?: string;
+}
+
 
 const TopicMaterials = ({ topic }: { topic: Topic }) => {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
-  
-  const materials = studyMaterialsData[topic.id];
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const [materials, setMaterials] = useState<StudyMaterial | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchMaterials = async () => {
+      if (!user || !firestore) {
+        setIsLoading(false);
+        return;
+      };
+      
+      const docRef = doc(firestore, `studyMaterials/${topic.id.split('_')[0]}/topics/${topic.id}`);
+      try {
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setMaterials(docSnap.data() as StudyMaterial);
+        }
+      } catch (error) {
+        console.error("Failed to fetch study materials:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMaterials();
+  }, [user, firestore, topic.id]);
+
 
   const extractVideoId = (url: string) => {
     try {
@@ -33,6 +70,10 @@ const TopicMaterials = ({ topic }: { topic: Topic }) => {
   };
   
   const videoId = materials?.lectureUrl ? extractVideoId(materials.lectureUrl) : null;
+
+  if (isLoading) {
+    return <div className="p-4 text-sm text-center text-muted-foreground flex items-center justify-center gap-2"><Loader2 className="animate-spin h-4 w-4" /> Loading materials...</div>
+  }
 
   if (!materials || Object.values(materials).every(v => !v)) {
       return <div className="p-4 text-sm text-center text-muted-foreground">No materials available for this topic yet. Check back soon!</div>
@@ -71,7 +112,7 @@ const TopicMaterials = ({ topic }: { topic: Topic }) => {
         )}
         {materials.annotatedNcertUrl && (
             <Link href={materials.annotatedNcertUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-muted hover:bg-muted/80 rounded-md transition-colors">
-                <FileText className="text-primary h-5 w-5"/>
+                <LinkIcon className="text-primary h-5 w-5"/>
                 <span className="font-medium">Annotated NCERT</span>
             </Link>
         )}

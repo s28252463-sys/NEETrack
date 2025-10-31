@@ -16,12 +16,14 @@ import { Loader2, ShieldCheck, Link, Youtube, FileText, FileQuestion, StickyNote
 import { Loader } from '@/components/Loader';
 import { errorEmitter } from '@/firebase/error-emitter';
 import { FirestorePermissionError, type SecurityRuleContext } from '@/firebase/errors';
+import { studyMaterialsData } from '@/lib/studymaterials';
 
 const ADMIN_EMAIL = "s28252463@gmail.com";
 
 interface StudyMaterial {
   lectureUrl?: string;
   notesUrl?: string;
+  questionBankUrl?: string;
   questionBankUrl?: string;
   shortNoteUrl?: string;
   annotatedNcertUrl?: string;
@@ -30,7 +32,7 @@ interface StudyMaterial {
 const AdminTopicEditor = ({ subject, topic }: { subject: Subject | {id: string}, topic: Topic }) => {
   const firestore = useFirestore();
   const { toast } = useToast();
-  const [materials, setMaterials] = useState<StudyMaterial>({});
+  const [materials, setMaterials] = useState<StudyMaterial>(studyMaterialsData[topic.id] || {});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 

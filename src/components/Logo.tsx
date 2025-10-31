@@ -7,11 +7,22 @@ export function Logo() {
       preserveAspectRatio="xMidYMid meet"
       xmlns="http://www.w3.org/2000/svg"
     >
+      <defs>
+        <linearGradient id="logo-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: 'hsl(var(--primary))', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: 'hsl(var(--accent))', stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
       <g>
-        {/* Stylized Letter N */}
-        <path d="M20 10 L20 90 L40 90 L70 30 L70 90 L90 90 L90 10 L70 10 L40 70 L40 10 Z" fill="#2C3E50" />
-        <path d="M40 10 L40 70 L20 10 Z" fill="#8CC63F" />
-        <path d="M70 90 L70 30 L90 90 Z" fill="#8CC63F" />
+        {/* Stylized Letter N using three bars */}
+        <path 
+          d="M 20,90 L 20,10 L 40,10 L 80,90 L 60,90 L 40,50 L 40,90 Z" 
+          fill="url(#logo-gradient)" 
+        />
+        <path 
+          d="M 60,10 L 80,10 L 80,90 L 60,90 Z" 
+          fill="hsl(var(--primary))"
+        />
       </g>
     </svg>
   );

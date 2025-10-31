@@ -1,3 +1,4 @@
+
 import type { LucideIcon } from 'lucide-react';
 import { Lightbulb, FlaskConical, Dna, Leaf, Bug } from 'lucide-react';
 
@@ -86,8 +87,6 @@ const botanyTopics: Topic[] = [
     { id: 'b7', name: 'Cell: The Unit of Life' },
     { id: 'b8', name: 'Biomolecules (as related to plants)' },
     { id: 'b9', name: 'Cell Cycle and Cell Division' },
-    { id: 'b10', name: 'Transport in Plants' },
-    { id: 'b11', name: 'Mineral Nutrition' },
     { id: 'b12', name: 'Photosynthesis in Higher Plants' },
     { id: 'b13', name: 'Respiration in Plants' },
     { id: 'b14', name: 'Plant Growth and Development' },

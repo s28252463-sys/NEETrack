@@ -7,12 +7,12 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
 
       // This rule allows a user to query their own mockTests collection.
-      allow list: if request.auth != null && request.auth.uid == userId;
-      
-      // This rule allows a user to read, write, and delete INDIVIDUAL mock test documents.
       match /mockTests/{testId} {
         allow read, write, delete: if request.auth != null && request.auth.uid == userId;
       }
+      
+      // THIS IS THE CRITICAL FIX: Allow the owner to LIST their mock tests.
+      allow list: if request.auth != null && request.auth.uid == userId;
 
       // Rules for syllabus progress
       match /progress/syllabus {

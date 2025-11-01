@@ -27,7 +27,7 @@ export default function DashboardLayout({
                             <BookOpen className="h-5 w-5" />
                             Mock Tests
                         </SidebarNavLink>
-                        <SidebarNavLink href="/pomodoro-timer" className="bg-white/40 text-gray-900 font-semibold rounded-lg">
+                        <SidebarNavLink href="/pomodoro-timer">
                             <Clock className="h-5 w-5" />
                             Pomodoro Timer
                         </SidebarNavLink>

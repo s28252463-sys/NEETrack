@@ -7,6 +7,9 @@ import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
+import { FloatingParticles } from '@/components/FloatingParticles';
+import { PomodoroTimer } from '@/components/PomodoroTimer';
+
 
 const quotes = [
   "It does not matter how slowly you go as long as you do not stop.",
@@ -149,28 +152,7 @@ export default function Home() {
             </linearGradient>
           </defs>
         </svg>
-
-        {/* Floating particles */}
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute w-2 h-2 bg-blue-400 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.8, 0.2],
-            }}
-            transition={{
-              duration: 5 + Math.random() * 5,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
+        <FloatingParticles />
       </div>
 
       {/* Sidebar */}
@@ -419,9 +401,10 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
+            <div className="lg:col-span-2">
+                <PomodoroTimer />
+            </div>
           </div>
-
-
         </div>
       </main>
     </div>

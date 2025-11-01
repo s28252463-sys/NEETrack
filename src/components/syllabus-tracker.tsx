@@ -110,7 +110,7 @@ const initialSyllabus = [
         { id: 'b7-3', name: 'Evolution', completed: false },
         { id: 'b8-1', name: 'Human Health and Disease', completed: false },
         { id: 'b8-2', name: 'Strategies for Enhancement in Food Production', completed: false },
-        { id: 'b8-3', name: 'Microbes in Human Welfare', completed: false },
+        { id: 'b8-3', 'name': 'Microbes in Human Welfare', completed: false },
         { id: 'b9-1', name: 'Biotechnology: Principles and Processes', completed: false },
         { id: 'b9-2', name: 'Biotechnology and its Applications', completed: false },
         { id: 'b10-1', name: 'Organisms and Populations', completed: false },
@@ -155,30 +155,32 @@ const SyllabusTracker = () => {
   const { data: chapterCompletions, isLoading: isLoadingCompletions } = useCollection<UserChapterCompletion>(chapterCompletionsQuery);
 
   useEffect(() => {
-    if (chapterCompletions) {
+    // Only process Firestore data if it's not loading.
+    if (!isLoadingCompletions) {
       const completionMap = new Map<string, boolean>();
-      chapterCompletions.forEach(comp => {
-        if(comp.isCompleted) {
-          completionMap.set(comp.chapterId, comp.isCompleted);
-        }
-      });
+      // If we have completion data, populate the map
+      if (chapterCompletions) {
+        chapterCompletions.forEach(comp => {
+          if (comp.isCompleted) {
+            completionMap.set(comp.chapterId, comp.isCompleted);
+          }
+        });
+      }
       
+      // Always rebuild the syllabus from the initial template to ensure icons are present
+      // and state is fresh.
       const updatedSyllabus = initialSyllabus.map(subject => ({
         ...subject,
         chapters: subject.chapters.map(chapter => ({
           ...chapter,
+          // Use the completion map to set the completed status.
+          // If a chapter is not in the map, it defaults to false.
           completed: completionMap.has(chapter.id)
         }))
       }));
       setSyllabus(updatedSyllabus);
-    } else {
-      // If there's no data from firestore (e.g. new user), reset to initial state
-      setSyllabus(initialSyllabus.map(subject => ({
-        ...subject,
-        chapters: subject.chapters.map(chapter => ({ ...chapter, completed: false }))
-      })));
     }
-  }, [chapterCompletions]);
+  }, [chapterCompletions, isLoadingCompletions]); // Depend on loading state as well
 
 
   const handleChapterToggle = (subjectId: string, chapterId: string, isChecked: boolean) => {
@@ -307,5 +309,3 @@ const SyllabusTracker = () => {
 };
 
 export default SyllabusTracker;
-
-    

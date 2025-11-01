@@ -132,7 +132,7 @@ const PomodoroTimer = () => {
         </ModeButton>
         <ModeButton targetMode="longBreak" label="Long Break">
           <Coffee className="size-5" />
-        </Button>
+        </ModeButton>
       </div>
       
       <footer className="mt-6 flex items-center justify-center gap-2">

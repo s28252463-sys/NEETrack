@@ -14,52 +14,54 @@ const TimeCard = ({ value, unit }: { value: string; unit: string }) => (
 );
 
 export function CountdownTimer() {
-    const [isClient, setIsClient] = useState(false);
     const [timeLeft, setTimeLeft] = useState<{
         days: string;
         hours: string;
         minutes: string;
         seconds: string;
     } | null>(null);
+    const [progress, setProgress] = useState(0);
 
     const targetDate = useMemo(() => new Date('2026-05-03T00:00:00'), []);
-    const startDate = useMemo(() => new Date('2024-10-25'), []);
-    const totalDays = useMemo(() => differenceInDays(targetDate, startDate), [targetDate, startDate]);
-
+    
     useEffect(() => {
-        setIsClient(true);
-    }, []);
+        const startDate = new Date('2024-10-25');
+        const totalDays = differenceInDays(targetDate, startDate);
 
-    useEffect(() => {
-        if (!isClient) return;
-
-        const calculateTimeLeft = () => {
-            const difference = +targetDate - +new Date();
-            let newTimeLeft = {
-                days: '0',
-                hours: '0',
-                minutes: '0',
-                seconds: '0',
-            };
+        const calculateTime = () => {
+            const now = new Date();
+            const difference = +targetDate - +now;
 
             if (difference > 0) {
-                newTimeLeft = {
-                    days: Math.floor(difference / (1000 * 60 * 60 * 24)).toString(),
-                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24).toString().padStart(2, '0'),
-                    minutes: Math.floor((difference / 1000 / 60) % 60).toString().padStart(2, '0'),
-                    seconds: Math.floor((difference / 1000) % 60).toString().padStart(2, '0'),
-                };
+                const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((difference / 1000 / 60) % 60);
+                const seconds = Math.floor((difference / 1000) % 60);
+                
+                setTimeLeft({
+                    days: days.toString(),
+                    hours: hours.toString().padStart(2, '0'),
+                    minutes: minutes.toString().padStart(2, '0'),
+                    seconds: seconds.toString().padStart(2, '0'),
+                });
+
+                const daysRemaining = days;
+                const progressValue = totalDays > 0 ? Math.max(0, ((totalDays - daysRemaining) / totalDays) * 100) : 0;
+                setProgress(progressValue);
+
+            } else {
+                setTimeLeft({ days: '0', hours: '00', minutes: '00', seconds: '00' });
+                setProgress(100);
             }
-            setTimeLeft(newTimeLeft);
         };
 
-        const timer = setInterval(calculateTimeLeft, 1000);
-        calculateTimeLeft(); // Initial calculation
+        calculateTime(); // Initial calculation
+        const timer = setInterval(calculateTime, 1000);
 
         return () => clearInterval(timer);
-    }, [isClient, targetDate]);
+    }, [targetDate]);
 
-    if (!isClient || !timeLeft) {
+    if (!timeLeft) {
         return (
             <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -70,22 +72,10 @@ export function CountdownTimer() {
                 </CardHeader>
                 <CardContent className="flex flex-col items-center justify-center pt-6">
                     <div className="text-8xl font-bold text-cyan-300 my-4">...</div>
-                    <p className="text-sm text-gray-300 mb-6">
-                        days remaining until May 3, 2026
-                    </p>
-                    <div className="grid grid-cols-3 gap-4 w-full mb-6">
-                        <TimeCard value="--" unit="Hours" />
-                        <TimeCard value="--" unit="Minutes" />
-                        <TimeCard value="--" unit="Seconds" />
-                    </div>
-                    <Progress value={0} className="w-full h-2 bg-white/20 [&>div]:bg-cyan-400" />
                 </CardContent>
             </Card>
         );
     }
-    
-    const daysRemaining = parseInt(timeLeft.days, 10);
-    const progress = totalDays > 0 ? Math.max(0, ((totalDays - daysRemaining) / totalDays) * 100) : 0;
 
     return (
         <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">

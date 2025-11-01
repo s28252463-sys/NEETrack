@@ -83,8 +83,4 @@
   body {
     @apply bg-background text-foreground;
   }
-  .bg-dots {
-    background-image: radial-gradient(circle, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
 }

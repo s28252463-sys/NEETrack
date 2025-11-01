@@ -19,19 +19,19 @@ export default function DashboardLayout({
                             <Home className="h-5 w-5" />
                             Dashboard
                         </SidebarNavLink>
-                        <SidebarNavLink href="/syllabus-tracker">
+                        <SidebarNavLink href="/dashboard/syllabus-tracker">
                              <ClipboardList className="h-5 w-5" />
                              Syllabus Tracker
                         </SidebarNavLink>
-                        <SidebarNavLink href="/mock-tests">
+                        <SidebarNavLink href="/dashboard/mock-tests">
                             <BookOpen className="h-5 w-5" />
                             Mock Tests
                         </SidebarNavLink>
-                        <SidebarNavLink href="/pomodoro-timer">
+                        <SidebarNavLink href="/dashboard/pomodoro-timer">
                             <Clock className="h-5 w-5" />
                             Pomodoro Timer
                         </SidebarNavLink>
-                        <SidebarNavLink href="/about-us">
+                        <SidebarNavLink href="/dashboard/about-us">
                             <Info className="h-5 w-5" />
                             About Us
                         </SidebarNavLink>

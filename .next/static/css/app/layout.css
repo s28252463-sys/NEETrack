@@ -603,6 +603,9 @@ video {
   html, body {
     height: 100%;
   }
+.relative {
+  position: relative;
+}
 .flex {
   display: flex;
 }
@@ -783,7 +786,7 @@ video {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   height: 100%;
 }
 
@@ -876,6 +879,55 @@ video {
   box-shadow: 0px 0px 2px 2px #ffffff;
 }
 
+.signup-button {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  z-index: 10;
+  cursor: pointer;
+  padding: 0.75rem 1.5rem;
+  color: white;
+  font-size: 1rem;
+  letter-spacing: 0.1rem;
+  border: 2px solid white;
+  border-radius: 0.5rem;
+  background: linear-gradient(144deg, #9c11ffce, #2000eeb6 50%, #15efffbb);
+  transition: all 0.2s ease-in-out;
+}
+
+.signup-button:hover {
+  background: linear-gradient(144deg, #9c11ff, #2000ee 50%, #15fff3);
+  box-shadow: 0px 0px 2px 2px #ffffff;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes rays {
+  0% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.6;
+  }
+}
+
 .file\:border-0::file-selector-button {
   border-width: 0px;
 }
@@ -963,4 +1015,3 @@ video {
 .peer:disabled ~ .peer-disabled\:opacity-70 {
   opacity: 0.7;
 }
-

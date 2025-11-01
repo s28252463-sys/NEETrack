@@ -68,9 +68,9 @@ const config = {
           to: { height: "0" },
         },
         float: {
-          '0%': { position: 'relative' },
-          '50%': { top: '50px' },
-          '100%': { position: 'relative' },
+          '0%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+          '100%': { transform: 'translateY(0px)' },
         },
         rays: {
           '0%': { opacity: '0.6' },
@@ -81,7 +81,7 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        float: "float 2s ease-in-out infinite",
+        float: "float 3s ease-in-out infinite",
         rays: "rays 2s ease-in-out infinite",
       },
     },

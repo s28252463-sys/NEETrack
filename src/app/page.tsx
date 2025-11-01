@@ -1,7 +1,8 @@
 
 export default function Home() {
   return (
-    <main id="Container" className="bg-gray-900">
+    <main id="Container" className="bg-gray-900 relative">
+       <button className="signup-button">SIGN UP</button>
       <div id="rays">
         <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
           <defs>

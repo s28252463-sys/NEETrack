@@ -25,6 +25,7 @@ export function CountdownTimer() {
     const targetDate = useMemo(() => new Date('2026-05-03T00:00:00'), []);
     
     useEffect(() => {
+        // All date logic is now inside useEffect to prevent server/client mismatch
         const startDate = new Date('2024-10-25');
         const totalDays = differenceInDays(targetDate, startDate);
 

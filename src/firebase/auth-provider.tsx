@@ -1,26 +1,33 @@
 'use client';
 
-import { useAuth } from '@/firebase';
-import { initiateAnonymousSignIn } from '@/firebase/non-blocking-login';
+import { useUser } from '@/firebase';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
-import { useUser } from './provider';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
+const unauthenticatedRoutes = ['/login'];
+
 export function AuthProvider({ children }: AuthProviderProps) {
-  const auth = useAuth();
   const { user, isUserLoading } = useUser();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
-    // If auth is loaded and there is no user, sign in anonymously.
-    if (!isUserLoading && !user) {
-      initiateAnonymousSignIn(auth);
+    if (!isUserLoading && !user && !unauthenticatedRoutes.includes(pathname)) {
+      router.replace('/login');
     }
-  }, [auth, user, isUserLoading]);
+  }, [user, isUserLoading, router, pathname]);
+
+  if (isUserLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return <>{children}</>;
 }
-
-    

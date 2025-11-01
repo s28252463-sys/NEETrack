@@ -11,6 +11,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Book, Target, TestTube, Atom } from 'lucide-react';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { doc, collection } from 'firebase/firestore';
+import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { Skeleton } from '@/components/ui/skeleton';
+
 
 const initialSyllabus = [
   {
@@ -129,62 +134,57 @@ type Subject = {
   chapters: Chapter[];
 };
 
-type SyllabusProgress = {
-  [subjectId: string]: {
-    [chapterId: string]: boolean;
-  };
-};
-
+type UserChapterCompletion = {
+  id?: string;
+  userId: string;
+  chapterId: string;
+  isCompleted: boolean;
+  completionDate: string;
+}
 
 const SyllabusTracker = () => {
   const [syllabus, setSyllabus] = useState<Subject[]>(initialSyllabus);
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const chapterCompletionsQuery = useMemoFirebase(
+    () => (user ? collection(firestore, 'users', user.uid, 'chapterCompletions') : null),
+    [firestore, user]
+  );
+  
+  const { data: chapterCompletions, isLoading: isLoadingCompletions } = useCollection<UserChapterCompletion>(chapterCompletionsQuery);
 
   useEffect(() => {
-    // This effect runs only once on the client to load data from localStorage.
-    if (typeof window !== 'undefined') {
-      try {
-        const savedProgressJSON = window.localStorage.getItem('syllabusTrackerProgress');
-        if (savedProgressJSON) {
-          const savedProgress: SyllabusProgress = JSON.parse(savedProgressJSON);
-          
-          const loadedSyllabus = initialSyllabus.map(subject => ({
-            ...subject,
-            chapters: subject.chapters.map(chapter => ({
-              ...chapter,
-              completed: savedProgress[subject.id]?.[chapter.id] ?? false,
-            })),
-          }));
-          setSyllabus(loadedSyllabus);
+    if (chapterCompletions) {
+      const completionMap = new Map<string, boolean>();
+      chapterCompletions.forEach(comp => {
+        if(comp.isCompleted) {
+          completionMap.set(comp.chapterId, comp.isCompleted);
         }
-      } catch (error) {
-        console.error('Error reading syllabus progress from localStorage', error);
-      }
+      });
+      
+      const updatedSyllabus = initialSyllabus.map(subject => ({
+        ...subject,
+        chapters: subject.chapters.map(chapter => ({
+          ...chapter,
+          completed: completionMap.has(chapter.id)
+        }))
+      }));
+      setSyllabus(updatedSyllabus);
+    } else {
+      // If there's no data from firestore (e.g. new user), reset to initial state
+      setSyllabus(initialSyllabus.map(subject => ({
+        ...subject,
+        chapters: subject.chapters.map(chapter => ({ ...chapter, completed: false }))
+      })));
     }
-  }, []); // Empty dependency array ensures this runs only once on mount.
-
-
-  useEffect(() => {
-    // This effect runs on the client side whenever the syllabus state changes to save it.
-    if (typeof window !== 'undefined') {
-        try {
-            const progressToSave: SyllabusProgress = {};
-            syllabus.forEach(subject => {
-              progressToSave[subject.id] = {};
-              subject.chapters.forEach(chapter => {
-                if(chapter.completed) { // Only save completed chapters to save space
-                  progressToSave[subject.id][chapter.id] = true;
-                }
-              });
-            });
-            window.localStorage.setItem('syllabusTrackerProgress', JSON.stringify(progressToSave));
-        } catch (error) {
-            console.error('Error saving syllabus to localStorage', error);
-        }
-    }
-  }, [syllabus]);
+  }, [chapterCompletions]);
 
 
   const handleChapterToggle = (subjectId: string, chapterId: string, isChecked: boolean) => {
+    if (!user) return;
+
+    // Update local state immediately for responsive UI
     setSyllabus((prevSyllabus) =>
       prevSyllabus.map((subject) => {
         if (subject.id === subjectId) {
@@ -201,6 +201,16 @@ const SyllabusTracker = () => {
         return subject;
       })
     );
+
+    // Persist to Firestore
+    const completionRef = doc(firestore, 'users', user.uid, 'chapterCompletions', chapterId);
+    const data: UserChapterCompletion = {
+      userId: user.uid,
+      chapterId: chapterId,
+      isCompleted: isChecked,
+      completionDate: new Date().toISOString(),
+    };
+    setDocumentNonBlocking(completionRef, data, { merge: true });
   };
   
   const getSubjectProgress = (chapters: Chapter[]) => {
@@ -214,6 +224,24 @@ const SyllabusTracker = () => {
     if (allChapters.length === 0) return 0;
     const completedChapters = allChapters.filter(c => c.completed).length;
     return (completedChapters / allChapters.length) * 100;
+  }
+  
+  const isLoading = isUserLoading || isLoadingCompletions;
+  
+  if(isLoading) {
+    return (
+        <Card className="w-full max-w-4xl bg-card/50 backdrop-blur-sm">
+            <CardHeader>
+                <Skeleton className="h-8 w-1/2" />
+                <Skeleton className="h-4 w-1/4 mt-2"/>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+                <Skeleton className="h-12 w-full" />
+            </CardContent>
+        </Card>
+    );
   }
 
   const overallProgress = getOverallProgress();
@@ -279,3 +307,5 @@ const SyllabusTracker = () => {
 };
 
 export default SyllabusTracker;
+
+    

@@ -55,6 +55,45 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image: linear-gradient(to bottom right, #1e1b4b, #4c1d95);
   }
+  
+  .dark body {
+     background-image: none;
+  }
+
+  .light body {
+    background-image: none;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 260 100% 60%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 260 100% 65%;
+  }
+
+  .dark .lg\\:grid > div:last-child {
+    background-color: hsl(0 0% 100%);
+    color: hsl(222.2 84% 4.9%);
+    --card-foreground: 222.2 84% 4.9%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+  }
+}
+
+.bg-background.lg\\:flex {
+  background-image: linear-gradient(to bottom right, #1e1b4b, #4c1d95);
 }

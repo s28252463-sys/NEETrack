@@ -1,5 +1,6 @@
+"use client"
 import { Sidebar, SidebarContent, SidebarHeader, SidebarHeaderTitle, SidebarNav, SidebarNavLink } from "@/components/ui/sidebar";
-import { Home, ClipboardList, BookOpen, Clock, Info, Circle } from "lucide-react";
+import { Home, Clock, Circle } from "lucide-react";
 
 export default function DashboardLayout({
     children,
@@ -19,21 +20,9 @@ export default function DashboardLayout({
                             <Home className="h-5 w-5" />
                             Dashboard
                         </SidebarNavLink>
-                        <SidebarNavLink href="/dashboard/syllabus-tracker">
-                             <ClipboardList className="h-5 w-5" />
-                             Syllabus Tracker
-                        </SidebarNavLink>
-                        <SidebarNavLink href="/dashboard/mock-tests">
-                            <BookOpen className="h-5 w-5" />
-                            Mock Tests
-                        </SidebarNavLink>
                         <SidebarNavLink href="/dashboard/pomodoro-timer">
                             <Clock className="h-5 w-5" />
                             Pomodoro Timer
-                        </SidebarNavLink>
-                        <SidebarNavLink href="/dashboard/about-us">
-                            <Info className="h-5 w-5" />
-                            About Us
                         </SidebarNavLink>
                     </SidebarNav>
                 </SidebarContent>

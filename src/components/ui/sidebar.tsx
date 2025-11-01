@@ -47,22 +47,42 @@ function useSidebar() {
   return context
 }
 
-function Sidebar({
-  className,
-  collapsed: initialCollapsed = false,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement> & { collapsed?: boolean }) {
-  const [collapsed, setCollapsed] = React.useState(initialCollapsed)
+const SidebarProvider = ({
+  initialCollapsed = false,
+  children
+}: {
+  initialCollapsed?: boolean
+  children: React.ReactNode
+}) => {
+  const [collapsed, setCollapsed] = React.useState(initialCollapsed);
 
   return (
     <SidebarContext.Provider value={{ collapsed, setCollapsed }}>
       <TooltipProvider>
-        <div
-          className={cn(sidebarVariants({ collapsed }), "bg-black/10 backdrop-blur-sm text-white", className)}
-          {...props}
-        />
+        {children}
       </TooltipProvider>
     </SidebarContext.Provider>
+  )
+}
+
+
+function Sidebar({
+  className,
+  collapsed: initialCollapsed = false,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & { collapsed?: boolean, children: React.ReactNode }) {
+  const [collapsed, setCollapsed] = React.useState(initialCollapsed)
+
+  return (
+    <SidebarProvider initialCollapsed={initialCollapsed}>
+      <div
+        className={cn(sidebarVariants({ collapsed }), "bg-black/10 backdrop-blur-sm text-white", className)}
+        {...props}
+      >
+        {children}
+      </div>
+    </SidebarProvider>
   )
 }
 

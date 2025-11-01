@@ -46,14 +46,14 @@ export function CountdownTimer() {
         };
 
         const timer = setInterval(calculateTimeLeft, 1000);
-        calculateTimeLeft(); // Initial calculation
+        calculateTimeLeft();
 
         return () => clearInterval(timer);
     }, [targetDate]);
 
     if (!timeLeft) {
         return (
-            <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
+            <Card className="bg-gray-800/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                         Countdown to NEET UG
@@ -80,7 +80,7 @@ export function CountdownTimer() {
     const progress = totalDays > 0 ? ((totalDays - daysRemaining) / totalDays) * 100 : 0;
 
     return (
-        <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
+        <Card className="bg-gray-800/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                     Countdown to NEET UG

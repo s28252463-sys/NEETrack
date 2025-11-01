@@ -19,7 +19,8 @@ const initialSyllabus = [
     icon: <Atom className="h-5 w-5" />,
     chapters: [
       { id: 'p1', name: 'Physics and Measurement', completed: false },
-      { id: 'p2', name: 'Kinematics', completed: false },
+      { id: 'p2_1', name: 'Motion in 1D', completed: false },
+      { id: 'p2_2', name: 'Motion in 2D', completed: false },
       { id: 'p3', name: 'Laws of Motion', completed: false },
       { id: 'p4', name: 'Work, Energy, and Power', completed: false },
       { id: 'p5', name: 'Rotational Motion', completed: false },

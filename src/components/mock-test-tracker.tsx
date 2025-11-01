@@ -26,15 +26,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Input } from '@/components/ui/input';
-import { ClipboardList, PlusCircle } from 'lucide-react';
+import { ClipboardList, PlusCircle, Trash2 } from 'lucide-react';
 import {
   useUser,
   useFirestore,
   useCollection,
   useMemoFirebase,
 } from '@/firebase';
-import { collection, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, serverTimestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -54,7 +65,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
-import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { format } from 'date-fns';
 
 const testSchema = z.object({
@@ -76,6 +87,7 @@ type MockTest = {
   createdAt: {
     toDate: () => Date;
   } | null;
+  date?: Date; // Added for sorted tests
 };
 
 const chartConfig = {
@@ -135,6 +147,12 @@ export default function MockTestTracker() {
     setIsDialogOpen(false);
   };
   
+  const handleDeleteTest = (testId: string) => {
+    if (!user) return;
+    const testRef = doc(firestore, 'users', user.uid, 'mockTests', testId);
+    deleteDocumentNonBlocking(testRef);
+  }
+
   const sortedTests = useMemo(() => {
     if (!mockTests) return [];
     // Firestore returns a different Timestamp object than the client
@@ -303,6 +321,7 @@ export default function MockTestTracker() {
               <TableHead className="text-right">Chemistry</TableHead>
               <TableHead className="text-right">Biology</TableHead>
               <TableHead className="text-right font-bold">Total</TableHead>
+              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -323,11 +342,34 @@ export default function MockTestTracker() {
                   <TableCell className="text-right font-bold">
                     {test.totalScore}
                   </TableCell>
+                  <TableCell className="text-right">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete this mock test score.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => handleDeleteTest(test.id)}>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center h-24">
+                <TableCell colSpan={7} className="text-center h-24">
                   No mock tests logged yet.
                 </TableCell>
               </TableRow>

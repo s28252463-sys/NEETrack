@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Stethoscope, BookOpen, Brain, Target, Zap, Award, Clock, Menu, X } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
 const quotes = [
@@ -46,7 +47,6 @@ const studySuggestions = [
   }
 ];
 
-
 function TimeCard({ value, label }: { value: number; label: string }) {
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -67,7 +67,8 @@ function TimeCard({ value, label }: { value: number; label: string }) {
   );
 }
 
-export default function ExamCounter() {
+
+export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [examDate, setExamDate] = useState<Date | undefined>(() => {
     if (typeof window !== 'undefined') {

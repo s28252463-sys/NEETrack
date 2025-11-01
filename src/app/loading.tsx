@@ -2,7 +2,17 @@ import './loader.css';
 
 export default function Loading() {
   return (
-    <div className="main">
+    <>
+      <style>{`
+        body {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          height: 100vh;
+          background-color: hsl(var(--background));
+        }
+      `}</style>
+      <div className="main">
         <div className="loaders">
             <div className="loader"></div>
             <div className="loader"></div>
@@ -26,6 +36,7 @@ export default function Loading() {
             <div className="loaderA"><div className="ball8"></div></div>
             <div className="loaderA"><div className="ball9"></div></div>
         </div>
-    </div>
+      </div>
+    </>
   );
 }

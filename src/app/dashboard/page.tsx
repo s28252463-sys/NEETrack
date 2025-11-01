@@ -8,7 +8,7 @@ export default function DashboardPage() {
         <div className="flex flex-col items-center justify-center h-full p-4">
             <div className="w-full max-w-4xl mx-auto">
                 <CountdownTimer />
-                <Card className="mt-8 bg-gray-800/80 backdrop-blur-sm border-white/20 text-white">
+                <Card className="mt-8 bg-card/80 backdrop-blur-sm border-white/20 text-white">
                     <CardHeader>
                         <CardTitle>Quote of the Day</CardTitle>
                     </CardHeader>

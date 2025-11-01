@@ -2,18 +2,16 @@
 
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ChevronLeft, ChevronsLeft, ChevronsRight, MoreVertical } from "lucide-react"
+import { ChevronsLeft, ChevronsRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const sidebarVariants = cva(
   "flex h-dvh shrink-0 flex-col gap-4 transition-[width]",
@@ -65,24 +63,35 @@ const SidebarProvider = ({
   )
 }
 
-
 function Sidebar({
   className,
-  collapsed: initialCollapsed = false,
   children,
+  initialCollapsed = false,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { collapsed?: boolean, children: React.ReactNode }) {
-  const [collapsed, setCollapsed] = React.useState(initialCollapsed)
-
+}: React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode, initialCollapsed?: boolean }) {
+  
   return (
     <SidebarProvider initialCollapsed={initialCollapsed}>
-      <div
-        className={cn(sidebarVariants({ collapsed }), "bg-black/10 backdrop-blur-sm text-white", className)}
-        {...props}
-      >
+      <SidebarInternal className={className} {...props}>
         {children}
-      </div>
+      </SidebarInternal>
     </SidebarProvider>
+  )
+}
+
+function SidebarInternal({
+  className,
+  children,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  const { collapsed } = useSidebar()
+  return (
+    <div
+      className={cn(sidebarVariants({ collapsed }), "bg-black/10 backdrop-blur-sm text-white", className)}
+      {...props}
+    >
+      {children}
+    </div>
   )
 }
 

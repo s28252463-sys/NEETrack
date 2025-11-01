@@ -14,6 +14,7 @@ const TimeCard = ({ value, unit }: { value: string; unit: string }) => (
 );
 
 export function CountdownTimer() {
+    const [isClient, setIsClient] = useState(false);
     const [timeLeft, setTimeLeft] = useState<{
         days: string;
         hours: string;
@@ -22,9 +23,16 @@ export function CountdownTimer() {
     } | null>(null);
 
     const targetDate = useMemo(() => new Date('2026-05-03T00:00:00'), []);
-    const totalDays = useMemo(() => differenceInDays(targetDate, new Date('2024-10-25')), [targetDate]);
+    const startDate = useMemo(() => new Date('2024-10-25'), []);
+    const totalDays = useMemo(() => differenceInDays(targetDate, startDate), [targetDate, startDate]);
 
     useEffect(() => {
+        setIsClient(true);
+    }, []);
+
+    useEffect(() => {
+        if (!isClient) return;
+
         const calculateTimeLeft = () => {
             const difference = +targetDate - +new Date();
             let newTimeLeft = {
@@ -46,21 +54,21 @@ export function CountdownTimer() {
         };
 
         const timer = setInterval(calculateTimeLeft, 1000);
-        calculateTimeLeft();
+        calculateTimeLeft(); // Initial calculation
 
         return () => clearInterval(timer);
-    }, [targetDate]);
+    }, [isClient, targetDate]);
 
-    if (!timeLeft) {
+    if (!isClient || !timeLeft) {
         return (
-            <Card className="bg-gray-800/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
+            <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">
                         Countdown to NEET UG
                     </CardTitle>
                     <CalendarIcon className="h-4 w-4 text-gray-300" />
                 </CardHeader>
-                <CardContent className="flex flex-col items-center justify-center">
+                <CardContent className="flex flex-col items-center justify-center pt-6">
                     <div className="text-8xl font-bold text-cyan-300 my-4">...</div>
                     <p className="text-sm text-gray-300 mb-6">
                         days remaining until May 3, 2026
@@ -77,17 +85,17 @@ export function CountdownTimer() {
     }
     
     const daysRemaining = parseInt(timeLeft.days, 10);
-    const progress = totalDays > 0 ? ((totalDays - daysRemaining) / totalDays) * 100 : 0;
+    const progress = totalDays > 0 ? Math.max(0, ((totalDays - daysRemaining) / totalDays) * 100) : 0;
 
     return (
-        <Card className="bg-gray-800/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
+        <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                     Countdown to NEET UG
                 </CardTitle>
                 <CalendarIcon className="h-4 w-4 text-gray-300" />
             </CardHeader>
-            <CardContent className="flex flex-col items-center justify-center">
+            <CardContent className="flex flex-col items-center justify-center pt-6">
                 <div className="text-8xl font-bold text-cyan-300 my-4">{timeLeft.days}</div>
                 <p className="text-sm text-gray-300 mb-6">
                     days remaining until May 3, 2026

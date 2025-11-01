@@ -8,10 +8,10 @@ export default function DashboardLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="flex h-screen bg-gradient-to-br from-[#8ec5fc] to-[#e0c3fc]">
+        <div className="flex h-screen bg-gray-900 text-white">
             <Sidebar>
                 <SidebarHeader>
-                    <Circle className="h-6 w-6 text-white" />
+                    <Circle className="h-6 w-6" />
                     <SidebarHeaderTitle>NEATrack</SidebarHeaderTitle>
                 </SidebarHeader>
                 <SidebarContent>
@@ -27,7 +27,7 @@ export default function DashboardLayout({
                     </SidebarNav>
                 </SidebarContent>
             </Sidebar>
-            <main className="flex-1 overflow-y-auto p-4">
+            <main className="flex-1 overflow-y-auto p-4 bg-dots">
                 {children}
             </main>
         </div>

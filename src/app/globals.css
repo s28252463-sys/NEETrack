@@ -6,7 +6,7 @@
   :root {
     --background: 253 14% 14%;
     --foreground: 0 0% 98%;
-    --card: 253 14% 20% / 0.8;
+    --card: 253 14% 20%;
     --card-foreground: 0 0% 98%;
     --popover: 253 14% 14%;
     --popover-foreground: 0 0% 98%;
@@ -42,7 +42,7 @@
   .dark {
     --background: 253 14% 14%;
     --foreground: 0 0% 98%;
-    --card: 253 14% 20% / 0.8;
+    --card: 253 14% 20%;
     --card-foreground: 0 0% 98%;
     --popover: 253 14% 14%;
     --popover-foreground: 0 0% 98%;
@@ -83,5 +83,9 @@
   body {
     @apply bg-background text-foreground;
     font-family: Arial, Helvetica, sans-serif;
+  }
+  .bg-dots {
+    background-image: radial-gradient(circle, hsl(var(--foreground) / 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
   }
 }

@@ -1,0 +1,320 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a NEET UG aspirant using the app.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "User's full name."
+        },
+        "email": {
+          "type": "string",
+          "description": "User's email address.",
+          "format": "email"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp indicating when the user account was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "createdAt"
+      ]
+    },
+    "Syllabus": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Syllabus",
+      "type": "object",
+      "description": "Represents the NEET UG syllabus.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the syllabus."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the syllabus (e.g., NEET UG 2024)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the syllabus."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description"
+      ]
+    },
+    "Subject": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Subject",
+      "type": "object",
+      "description": "Represents a subject within the NEET UG syllabus (e.g., Physics, Chemistry, Biology).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the subject."
+        },
+        "syllabusId": {
+          "type": "string",
+          "description": "Reference to Syllabus. (Relationship: Syllabus 1:N Subject)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the subject (e.g., Physics)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the subject."
+        }
+      },
+      "required": [
+        "id",
+        "syllabusId",
+        "name",
+        "description"
+      ]
+    },
+    "Topic": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Topic",
+      "type": "object",
+      "description": "Represents a topic within a subject (e.g., Kinematics in Physics).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the topic."
+        },
+        "subjectId": {
+          "type": "string",
+          "description": "Reference to Subject. (Relationship: Subject 1:N Topic)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the topic (e.g., Kinematics)."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the topic."
+        }
+      },
+      "required": [
+        "id",
+        "subjectId",
+        "name",
+        "description"
+      ]
+    },
+    "UserTopicCompletion": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "UserTopicCompletion",
+      "type": "object",
+      "description": "Represents a user's completion status for a specific topic.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user topic completion status."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N UserTopicCompletion)"
+        },
+        "topicId": {
+          "type": "string",
+          "description": "Reference to Topic. (Relationship: Topic 1:N UserTopicCompletion)"
+        },
+        "isCompleted": {
+          "type": "boolean",
+          "description": "Indicates whether the user has completed the topic."
+        },
+        "completionDate": {
+          "type": "string",
+          "description": "The date when the topic was marked as completed.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "topicId",
+        "isCompleted",
+        "completionDate"
+      ]
+    },
+    "StudyGoal": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StudyGoal",
+      "type": "object",
+      "description": "Represents a daily study goal for a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the study goal."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N StudyGoal)"
+        },
+        "topicId": {
+          "type": "string",
+          "description": "Reference to Topic. (Relationship: Topic 1:N StudyGoal)"
+        },
+        "goalDate": {
+          "type": "string",
+          "description": "The date for which the study goal is set.",
+          "format": "date-time"
+        },
+        "estimatedTime": {
+          "type": "number",
+          "description": "Estimated time (in minutes) required to complete the goal."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "topicId",
+        "goalDate",
+        "estimatedTime"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Each document represents a user identified by their unique user ID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/syllabi/{syllabusId}",
+        "definition": {
+          "entityName": "Syllabus",
+          "schema": {
+            "$ref": "#/backend/entities/Syllabus"
+          },
+          "description": "Stores the syllabi for different NEET UG exams.",
+          "params": [
+            {
+              "name": "syllabusId",
+              "description": "The unique identifier for the syllabus."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/syllabi/{syllabusId}/subjects/{subjectId}",
+        "definition": {
+          "entityName": "Subject",
+          "schema": {
+            "$ref": "#/backend/entities/Subject"
+          },
+          "description": "Stores subjects within a specific syllabus. Includes denormalized 'syllabusId'.",
+          "params": [
+            {
+              "name": "syllabusId",
+              "description": "The unique identifier for the syllabus."
+            },
+            {
+              "name": "subjectId",
+              "description": "The unique identifier for the subject."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/syllabi/{syllabusId}/subjects/{subjectId}/topics/{topicId}",
+        "definition": {
+          "entityName": "Topic",
+          "schema": {
+            "$ref": "#/backend/entities/Topic"
+          },
+          "description": "Stores topics within a specific subject. Includes denormalized 'subjectId'.",
+          "params": [
+            {
+              "name": "syllabusId",
+              "description": "The unique identifier for the syllabus."
+            },
+            {
+              "name": "subjectId",
+              "description": "The unique identifier for the subject."
+            },
+            {
+              "name": "topicId",
+              "description": "The unique identifier for the topic."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/topicCompletions/{topicCompletionId}",
+        "definition": {
+          "entityName": "UserTopicCompletion",
+          "schema": {
+            "$ref": "#/backend/entities/UserTopicCompletion"
+          },
+          "description": "Stores user's completion status for each topic. This path enforces ownership by the user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "topicCompletionId",
+              "description": "The unique identifier for the user topic completion status."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/studyGoals/{studyGoalId}",
+        "definition": {
+          "entityName": "StudyGoal",
+          "schema": {
+            "$ref": "#/backend/entities/StudyGoal"
+          },
+          "description": "Stores daily study goals for each user. This path enforces ownership by the user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "studyGoalId",
+              "description": "The unique identifier for the study goal."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the NEETrack app, focusing on efficient data retrieval, clear ownership, and robust security rules. The structure is optimized for tracking syllabus completion and providing personalized study plans for NEET UG aspirants.\n\n**Authorization Independence:**\n\n*   `UserTopicCompletion`: This collection is structured under the `/users/{userId}/topicCompletions/{topicCompletionId}` path. This provides path-based ownership, which is the most secure approach, meaning that `get()` calls are unnecessary in security rules.\n*   `StudyGoal`: This collection is structured under the `/users/{userId}/studyGoals/{studyGoalId}` path. The parent user ID is embedded in the path itself, providing implicit ownership and removing the need for `get()` calls to verify ownership.\n\n**Structural Segregation:**\n\n*   The data structure separates user-specific data (UserTopicCompletion, StudyGoal) under the `/users/{userId}` collection group. This segregation simplifies security rules and ensures that users can only access their own data.\n*   Syllabus, Subject, and Topic are stored in separate collections at the root level. This segregation is based on the assumption that all syllabus/subject/topic data is public. If access control requirements are different (e.g., draft syllabi visible only to admins), these should be segregated into separate collections (e.g., `/admin/draft_syllabi`).\n\n**Access Modeling:**\n\n*   **Path-Based Ownership:** The `/users/{userId}/topicCompletions/{topicCompletionId}` and `/users/{userId}/studyGoals/{studyGoalId}` paths ensure that only the authenticated user (`request.auth.uid`) can read and write data to these collections.\n\n**QAPs (Rules are not Filters):**\n\n*   The path-based ownership model for `UserTopicCompletion` and `StudyGoal` ensures that listing operations are secure. Rules can easily enforce that a user can only list topic completions and study goals under their own user ID. This eliminates the need for filtering on the client-side and prevents unauthorized access to other users' data.\n*   Syllabus, Subject, and Topic are designed to be publicly accessible. If access restrictions are needed for these collections in the future (e.g., admin-only access or role-based access), they can be secured using dedicated roles collections (e.g., `/roles_admin/{uid}`) or a membership map within each document."
+  }
+}

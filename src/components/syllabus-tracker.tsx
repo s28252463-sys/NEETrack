@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Accordion,
   AccordionContent,
@@ -130,7 +130,32 @@ type Subject = {
 };
 
 const SyllabusTracker = () => {
-  const [syllabus, setSyllabus] = useState(initialSyllabus);
+  const [syllabus, setSyllabus] = useState<Subject[]>(() => {
+    // This function now only runs on the client.
+    // We check for window to avoid server-side rendering errors.
+    if (typeof window === 'undefined') {
+      return initialSyllabus;
+    }
+    try {
+      const savedSyllabus = window.localStorage.getItem('syllabusTrackerData');
+      return savedSyllabus ? JSON.parse(savedSyllabus) : initialSyllabus;
+    } catch (error) {
+      console.error('Error reading syllabus from localStorage', error);
+      return initialSyllabus;
+    }
+  });
+
+  useEffect(() => {
+    // This effect runs only on the client side whenever the syllabus state changes.
+    if (typeof window !== 'undefined') {
+        try {
+            window.localStorage.setItem('syllabusTrackerData', JSON.stringify(syllabus));
+        } catch (error) {
+            console.error('Error saving syllabus to localStorage', error);
+        }
+    }
+  }, [syllabus]);
+
 
   const handleChapterToggle = (subjectId: string, chapterId: string, isChecked: boolean) => {
     setSyllabus((prevSyllabus) =>

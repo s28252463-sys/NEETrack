@@ -17,7 +17,7 @@ export default function Home() {
           <rect x="0" y="0" width="100%" height="100%" fill="url(#grad1)" />
         </svg>
       </div>
-      <form className="form w-full max-w-md">
+      <div className="form w-full max-w-md">
         <label id="login-lable">LOGIN</label>
         <input
           id="email"
@@ -33,8 +33,10 @@ export default function Home() {
           placeholder="PASSWORD"
           required
         />
-        <button type="submit">LOGIN</button>
-      </form>
+        <Link href="/dashboard" className="w-full">
+            <button className="w-full">LOGIN</button>
+        </Link>
+      </div>
     </main>
   );
 }

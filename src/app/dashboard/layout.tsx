@@ -33,6 +33,12 @@ export default function DashboardLayout({
           >
             Pomodoro Timer
           </Link>
+          <Link
+            href="/dashboard/syllabus-tracker"
+            className="text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Syllabus Tracker
+          </Link>
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -62,6 +68,12 @@ export default function DashboardLayout({
                 className="text-muted-foreground hover:text-foreground"
               >
                 Pomodoro Timer
+              </Link>
+              <Link
+                href="/dashboard/syllabus-tracker"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                Syllabus Tracker
               </Link>
             </nav>
           </SheetContent>

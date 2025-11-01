@@ -129,27 +129,54 @@ type Subject = {
   chapters: Chapter[];
 };
 
+type SyllabusProgress = {
+  [subjectId: string]: {
+    [chapterId: string]: boolean;
+  };
+};
+
+
 const SyllabusTracker = () => {
-  const [syllabus, setSyllabus] = useState<Subject[]>(() => {
-    // This function now only runs on the client.
-    // We check for window to avoid server-side rendering errors.
-    if (typeof window === 'undefined') {
-      return initialSyllabus;
-    }
-    try {
-      const savedSyllabus = window.localStorage.getItem('syllabusTrackerData');
-      return savedSyllabus ? JSON.parse(savedSyllabus) : initialSyllabus;
-    } catch (error) {
-      console.error('Error reading syllabus from localStorage', error);
-      return initialSyllabus;
-    }
-  });
+  const [syllabus, setSyllabus] = useState<Subject[]>(initialSyllabus);
 
   useEffect(() => {
-    // This effect runs only on the client side whenever the syllabus state changes.
+    // This effect runs only once on the client to load data from localStorage.
+    if (typeof window !== 'undefined') {
+      try {
+        const savedProgressJSON = window.localStorage.getItem('syllabusTrackerProgress');
+        if (savedProgressJSON) {
+          const savedProgress: SyllabusProgress = JSON.parse(savedProgressJSON);
+          
+          const loadedSyllabus = initialSyllabus.map(subject => ({
+            ...subject,
+            chapters: subject.chapters.map(chapter => ({
+              ...chapter,
+              completed: savedProgress[subject.id]?.[chapter.id] ?? false,
+            })),
+          }));
+          setSyllabus(loadedSyllabus);
+        }
+      } catch (error) {
+        console.error('Error reading syllabus progress from localStorage', error);
+      }
+    }
+  }, []); // Empty dependency array ensures this runs only once on mount.
+
+
+  useEffect(() => {
+    // This effect runs on the client side whenever the syllabus state changes to save it.
     if (typeof window !== 'undefined') {
         try {
-            window.localStorage.setItem('syllabusTrackerData', JSON.stringify(syllabus));
+            const progressToSave: SyllabusProgress = {};
+            syllabus.forEach(subject => {
+              progressToSave[subject.id] = {};
+              subject.chapters.forEach(chapter => {
+                if(chapter.completed) { // Only save completed chapters to save space
+                  progressToSave[subject.id][chapter.id] = true;
+                }
+              });
+            });
+            window.localStorage.setItem('syllabusTrackerProgress', JSON.stringify(progressToSave));
         } catch (error) {
             console.error('Error saving syllabus to localStorage', error);
         }

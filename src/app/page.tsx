@@ -1,8 +1,11 @@
+import Link from "next/link";
 
 export default function Home() {
   return (
     <main id="Container" className="bg-gray-900 relative">
-       <button className="signup-button">SIGN UP</button>
+      <Link href="/signup" className="signup-button">
+        SIGN UP
+      </Link>
       <div id="rays">
         <svg width="100%" height="100%" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
           <defs>

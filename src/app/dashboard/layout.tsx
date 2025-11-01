@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Menu, BookOpen, LogOut, User as UserIcon } from 'lucide-react';
+import { Menu, BookOpen, LogOut, Timer, ListChecks } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import {
   DropdownMenu,
@@ -15,6 +15,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useRouter } from 'next/navigation';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 export default function DashboardLayout({
   children,
@@ -39,13 +45,14 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background/50 px-4 backdrop-blur-sm md:px-6 z-10">
+      <TooltipProvider>
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link
             href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <BookOpen className="h-6 w-6" />
-            <span className="">NEATrack</span>
+            <span className="">NEETrack</span>
           </Link>
           <Link
             href="/dashboard"
@@ -53,19 +60,36 @@ export default function DashboardLayout({
           >
             Dashboard
           </Link>
-          <Link
-            href="/dashboard/pomodoro-timer"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Pomodoro Timer
-          </Link>
-          <Link
-            href="/dashboard/syllabus-tracker"
-            className="text-muted-foreground transition-colors hover:text-foreground"
-          >
-            Syllabus Tracker
-          </Link>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/dashboard/pomodoro-timer"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Timer className="h-5 w-5" />
+                <span className="sr-only">Pomodoro Timer</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Pomodoro Timer</p>
+            </TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/dashboard/syllabus-tracker"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <ListChecks className="h-5 w-5" />
+                <span className="sr-only">Syllabus Tracker</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Syllabus Tracker</p>
+            </TooltipContent>
+          </Tooltip>
         </nav>
+        </TooltipProvider>
         <Sheet>
           <SheetTrigger asChild>
             <Button
@@ -84,21 +108,23 @@ export default function DashboardLayout({
                 className="flex items-center gap-2 text-lg font-semibold"
               >
                 <BookOpen className="h-6 w-6" />
-                <span className="sr-only">NEATrack</span>
+                <span className="">NEETrack</span>
               </Link>
               <Link href="/dashboard" className="hover:text-foreground">
                 Dashboard
               </Link>
               <Link
                 href="/dashboard/pomodoro-timer"
-                className="text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
               >
+                <Timer className="h-5 w-5" />
                 Pomodoro Timer
               </Link>
               <Link
                 href="/dashboard/syllabus-tracker"
-                className="text-muted-foreground hover:text-foreground"
+                className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
               >
+                <ListChecks className="h-5 w-5" />
                 Syllabus Tracker
               </Link>
             </nav>

@@ -16,8 +16,10 @@ import {
 } from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
+import { FloatingParticles } from '@/components/FloatingParticles';
+import { PomodoroTimer } from '@/components/PomodoroTimer';
+
 
 const quotes = [
   'It does not matter how slowly you go as long as you do not stop.',
@@ -57,44 +59,6 @@ const studySuggestions = [
     color: 'from-green-500 to-teal-500',
   },
 ];
-
-function FloatingParticles() {
-  const [particles, setParticles] = useState<Array<{ id: number; left: string; top: string }>>([]);
-
-  useEffect(() => {
-    const newParticles = Array.from({ length: 15 }).map((_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-    }));
-    setParticles(newParticles);
-  }, []);
-
-  return (
-    <>
-      {particles.map((particle) => (
-        <motion.div
-          key={`particle-${particle.id}`}
-          className="absolute w-2 h-2 bg-blue-400 rounded-full"
-          style={{
-            left: particle.left,
-            top: particle.top,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
-            opacity: [0.2, 0.8, 0.2],
-          }}
-          transition={{
-            duration: 5 + Math.random() * 5,
-            repeat: Infinity,
-            delay: Math.random() * 5,
-          }}
-        />
-      ))}
-    </>
-  );
-}
 
 function TimeCard({ value, label }: { value: number; label: string }) {
   return (
@@ -398,67 +362,7 @@ export default function Home() {
               transition={{ delay: 0.4 }}
               className="relative group"
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/30 to-blue-500/30 rounded-3xl blur-xl group-hover:blur-2xl transition-all duration-500" />
-              <div className="relative bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/20 shadow-2xl overflow-hidden">
-                <motion.div
-                  className="absolute inset-0 opacity-20"
-                  animate={{
-                    background: [
-                      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                      'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                      'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
-                      'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    ],
-                  }}
-                  transition={{ duration: 12, repeat: Infinity }}
-                />
-                <div className="relative z-10">
-                  <div className="flex items-center gap-3 mb-6">
-                    <Brain className="w-8 h-8 text-cyan-400" />
-                    <h3 className="text-white">Smart Study Suggester</h3>
-                  </div>
-                  <p className="text-white/70 mb-8">
-                    Your personalized focus area based on your progress and time left.
-                  </p>
-                  <AnimatePresence mode="wait">
-                    <motion.div
-                      key={currentSuggestion}
-                      initial={{ opacity: 0, x: 100 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: -100 }}
-                      transition={{ duration: 0.5 }}
-                      className="space-y-6"
-                    >
-                      <div className={`p-6 bg-gradient-to-br ${suggestion.color} rounded-2xl`}>
-                        <div className="flex items-center gap-3 mb-4">
-                          <div className="p-3 bg-white/20 backdrop-blur-sm rounded-xl">
-                            <SuggestionIcon className="w-6 h-6 text-white" />
-                          </div>
-                          <h4 className="text-white text-xl">{suggestion.phase}</h4>
-                        </div>
-                        <p className="text-white/90 mb-3">{suggestion.description}</p>
-                        <p className="text-white/80 text-sm">{suggestion.detail}</p>
-                      </div>
-                      <div className="flex gap-2 justify-center">
-                        {studySuggestions.map((_, index) => (
-                          <motion.div
-                            key={index}
-                            className={`h-1.5 rounded-full transition-all ${
-                              index === currentSuggestion
-                                ? 'w-8 bg-cyan-400'
-                                : 'w-1.5 bg-white/30'
-                            }`}
-                            animate={{
-                              scale: index === currentSuggestion ? [1, 1.2, 1] : 1,
-                            }}
-                            transition={{ duration: 1, repeat: Infinity }}
-                          />
-                        ))}
-                      </div>
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </div>
+              <PomodoroTimer />
             </motion.div>
           </div>
         </div>

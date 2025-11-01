@@ -44,16 +44,16 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
       return timeLeftData;
     };
     
-    // Set initial values only once on mount
+    // Set initial values only once on mount, inside useEffect
     const initialDifference = +targetDate - +new Date();
-    if(initialDifference > 0) {
-        const seconds = initialDifference/1000;
+    if (initialDifference > 0) {
+        const seconds = initialDifference / 1000;
         setInitialTotalSeconds(seconds);
         setTotalSeconds(seconds);
     }
+    
+    // Set initial time left and then update every second
     setTimeLeft(calculateTimeLeft());
-
-
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
@@ -70,10 +70,10 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
             </div>
             <div className="my-6 text-center">
                 <p className="text-8xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(74,222,222,0.5)]">
-                -
+                  -
                 </p>
                 <p className="text-sm text-white/70">
-                Loading...
+                  Loading...
                 </p>
             </div>
         </div>
@@ -82,7 +82,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
 
   const progressPercentage = initialTotalSeconds > 0 ? (totalSeconds / initialTotalSeconds) * 100 : 0;
   const targetDateFormatted = format(targetDate, 'MMMM d, yyyy');
-
 
   const TimeBox = ({ value, unit }: { value: number; unit: string }) => (
     <div className="flex flex-col items-center justify-center rounded-lg bg-white/10 p-3">

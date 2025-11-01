@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { CalendarIcon } from 'lucide-react';
@@ -21,8 +21,8 @@ export function CountdownTimer() {
         seconds: string;
     } | null>(null);
 
-    const targetDate = new Date('2026-05-03T00:00:00');
-    const totalDays = differenceInDays(targetDate, new Date('2024-10-25'));
+    const targetDate = useMemo(() => new Date('2026-05-03T00:00:00'), []);
+    const totalDays = useMemo(() => differenceInDays(targetDate, new Date('2024-10-25')), [targetDate]);
 
     useEffect(() => {
         const calculateTimeLeft = () => {
@@ -45,14 +45,11 @@ export function CountdownTimer() {
             setTimeLeft(newTimeLeft);
         };
 
-        calculateTimeLeft();
         const timer = setInterval(calculateTimeLeft, 1000);
+        calculateTimeLeft(); // Initial calculation
 
         return () => clearInterval(timer);
     }, [targetDate]);
-
-    const daysRemaining = timeLeft ? parseInt(timeLeft.days, 10) : 0;
-    const progress = totalDays > 0 && timeLeft ? ((totalDays - daysRemaining) / totalDays) * 100 : 0;
 
     if (!timeLeft) {
         return (
@@ -78,6 +75,9 @@ export function CountdownTimer() {
             </Card>
         );
     }
+    
+    const daysRemaining = parseInt(timeLeft.days, 10);
+    const progress = totalDays > 0 ? ((totalDays - daysRemaining) / totalDays) * 100 : 0;
 
     return (
         <Card className="bg-card/80 backdrop-blur-sm border-white/20 text-white w-full max-w-sm mx-auto">

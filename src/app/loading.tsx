@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <>
       <style>{`
-        body {
+        body.light {
           display: flex;
           align-items: center;
           justify-content: center;

@@ -1,51 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Header } from '@/components/Header';
-import { ExamCountdown } from '@/components/ExamCountdown';
-import { SyllabusTracker } from '@/components/SyllabusTracker';
-import { StudyPlanner } from '@/components/StudyPlanner';
-import { MockTests } from '@/components/MockTests';
-
-const EXAM_DATE = new Date('2026-05-03T00:00:00');
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Chrome } from "lucide-react";
 
 export default function Home() {
-  const [completionPercentage, setCompletionPercentage] = useState(0);
-  const [daysLeft, setDaysLeft] = useState<number>(0);
-
-  useEffect(() => {
-    const calculateDaysLeft = () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const examDay = new Date(EXAM_DATE);
-      examDay.setHours(0, 0, 0, 0);
-      const diffTime = examDay.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      setDaysLeft(diffDays > 0 ? diffDays : 0);
-    };
-    calculateDaysLeft();
-    const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24); // Recalculate every day
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <div className="flex flex-col min-h-screen bg-background text-foreground">
-      <Header />
-      <main className="container mx-auto px-4 py-8 flex-grow">
-        <div className="grid gap-8 lg:grid-cols-5">
-          <div className="lg:col-span-3 space-y-8">
-            <SyllabusTracker onProgressChange={setCompletionPercentage} />
-            <MockTests />
+    <main className="flex items-center justify-center min-h-screen bg-background">
+      <Card className="w-full max-w-md">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardDescription>Enter your credentials to access your account</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" placeholder="m@example.com" />
           </div>
-          <div className="lg:col-span-2 space-y-8">
-            <ExamCountdown examDate={EXAM_DATE} />
-            <StudyPlanner progress={completionPercentage} daysLeft={daysLeft} />
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input id="password" type="password" />
           </div>
-        </div>
-      </main>
-      <footer className="text-center py-4 text-muted-foreground text-sm">
-        <p>Built for NEET UG Aspirants with ❤️</p>
-      </footer>
-    </div>
+        </CardContent>
+        <CardFooter className="flex flex-col gap-4">
+          <Button className="w-full">Sign In</Button>
+          <div className="relative w-full">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">
+                Or continue with
+              </span>
+            </div>
+          </div>
+          <Button variant="outline" className="w-full">
+            <Chrome className="mr-2 h-4 w-4" />
+            Sign In with Google
+          </Button>
+        </CardFooter>
+      </Card>
+    </main>
   );
 }

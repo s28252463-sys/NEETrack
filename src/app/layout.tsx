@@ -1,12 +1,13 @@
-import type {Metadata} from 'next';
-import './globals.css';
-import { Toaster } from "@/components/ui/toaster"
-import { FirebaseProvider } from '@/firebase/provider';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { cn } from "@/lib/utils";
 
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'NEETrack',
-  description: 'Track your NEET UG syllabus completion and get personalized study plans.',
+  title: "NEET Preparation App",
+  description: "Your all-in-one tool to ace the NEET exam.",
 };
 
 export default function RootLayout({
@@ -15,17 +16,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
-      </head>
-      <body className="font-body antialiased">
-        <FirebaseProvider>
-          {children}
-        </FirebaseProvider>
-        <Toaster />
+    <html lang="en" className="dark">
+      <body className={cn("min-h-screen font-sans antialiased", inter.className)}>
+        {children}
       </body>
     </html>
   );

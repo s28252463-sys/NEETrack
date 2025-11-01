@@ -2,87 +2,98 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Stethoscope, BookOpen, Brain, Target, Zap, Award, Clock, Menu, X } from 'lucide-react';
+import {
+  Calendar,
+  Stethoscope,
+  BookOpen,
+  Brain,
+  Target,
+  Zap,
+  Award,
+  Clock,
+  Menu,
+  X,
+} from 'lucide-react';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
 
 const quotes = [
-  "It does not matter how slowly you go as long as you do not stop.",
-  "Success is the sum of small efforts repeated day in and day out.",
-  "The expert in anything was once a beginner.",
-  "Your future is created by what you do today, not tomorrow.",
-  "Dream big, work hard, stay focused, and surround yourself with good people."
+  'It does not matter how slowly you go as long as you do not stop.',
+  'Success is the sum of small efforts repeated day in and day out.',
+  'The expert in anything was once a beginner.',
+  'Your future is created by what you do today, not tomorrow.',
+  'Dream big, work hard, stay focused, and surround yourself with good people.',
 ];
 
 const studySuggestions = [
   {
-    phase: "Build Your Foundation",
+    phase: 'Build Your Foundation',
     icon: BookOpen,
     description: "Focus on understanding core concepts thoroughly. Don't rush.",
-    detail: "Aim to cover 1-2% of the syllabus consistently each week.",
-    color: "from-blue-500 to-cyan-500"
+    detail: 'Aim to cover 1-2% of the syllabus consistently each week.',
+    color: 'from-blue-500 to-cyan-500',
   },
   {
-    phase: "Active Recall Practice",
+    phase: 'Active Recall Practice',
     icon: Brain,
-    description: "Test yourself regularly with previous year questions.",
-    detail: "Solve at least 50 MCQs daily across Physics, Chemistry & Biology.",
-    color: "from-purple-500 to-pink-500"
+    description: 'Test yourself regularly with previous year questions.',
+    detail: 'Solve at least 50 MCQs daily across Physics, Chemistry & Biology.',
+    color: 'from-purple-500 to-pink-500',
   },
   {
-    phase: "Master High-Yield Topics",
+    phase: 'Master High-Yield Topics',
     icon: Target,
-    description: "Focus on topics with maximum weightage in NEET.",
-    detail: "Human Physiology, Organic Chemistry, and Mechanics are crucial.",
-    color: "from-orange-500 to-red-500"
+    description: 'Focus on topics with maximum weightage in NEET.',
+    detail: 'Human Physiology, Organic Chemistry, and Mechanics are crucial.',
+    color: 'from-orange-500 to-red-500',
   },
   {
-    phase: "Speed & Accuracy",
+    phase: 'Speed & Accuracy',
     icon: Zap,
-    description: "Take full-length mock tests in exam conditions.",
-    detail: "Aim for 95%+ accuracy with time management mastery.",
-    color: "from-green-500 to-teal-500"
-  }
+    description: 'Take full-length mock tests in exam conditions.',
+    detail: 'Aim for 95%+ accuracy with time management mastery.',
+    color: 'from-green-500 to-teal-500',
+  },
 ];
 
 function FloatingParticles() {
-    const [particles, setParticles] = useState<Array<{ id: number; left: string; top: string; }>>([]);
+  const [particles, setParticles] = useState<Array<{ id: number; left: string; top: string }>>([]);
 
-    useEffect(() => {
-        const newParticles = Array.from({ length: 15 }).map((_, i) => ({
-            id: i,
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-        }));
-        setParticles(newParticles);
-    }, []);
+  useEffect(() => {
+    const newParticles = Array.from({ length: 15 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      top: `${Math.random() * 100}%`,
+    }));
+    setParticles(newParticles);
+  }, []);
 
-    return (
-        <>
-            {particles.map((particle) => (
-                <motion.div
-                    key={`particle-${particle.id}`}
-                    className="absolute w-2 h-2 bg-blue-400 rounded-full"
-                    style={{
-                        left: particle.left,
-                        top: particle.top,
-                    }}
-                    animate={{
-                        y: [0, -30, 0],
-                        x: [0, Math.random() * 20 - 10, 0],
-                        opacity: [0.2, 0.8, 0.2],
-                    }}
-                    transition={{
-                        duration: 5 + Math.random() * 5,
-                        repeat: Infinity,
-                        delay: Math.random() * 5,
-                    }}
-                />
-            ))}
-        </>
-    );
+  return (
+    <>
+      {particles.map((particle) => (
+        <motion.div
+          key={`particle-${particle.id}`}
+          className="absolute w-2 h-2 bg-blue-400 rounded-full"
+          style={{
+            left: particle.left,
+            top: particle.top,
+          }}
+          animate={{
+            y: [0, -30, 0],
+            x: [0, Math.random() * 20 - 10, 0],
+            opacity: [0.2, 0.8, 0.2],
+          }}
+          transition={{
+            duration: 5 + Math.random() * 5,
+            repeat: Infinity,
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
+    </>
+  );
 }
 
 function TimeCard({ value, label }: { value: number; label: string }) {
@@ -105,18 +116,17 @@ function TimeCard({ value, label }: { value: number; label: string }) {
   );
 }
 
-
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [examDate, setExamDate] = useState<Date | undefined>(() => {
     if (typeof window !== 'undefined') {
-        const savedDate = localStorage.getItem('examDate');
-        if (savedDate) {
-            const date = new Date(savedDate);
-            if (!isNaN(date.getTime())) {
-                return date;
-            }
+      const savedDate = localStorage.getItem('examDate');
+      if (savedDate) {
+        const date = new Date(savedDate);
+        if (!isNaN(date.getTime())) {
+          return date;
         }
+      }
     }
     const defaultDate = new Date();
     defaultDate.setDate(defaultDate.getDate() + 183);
@@ -131,12 +141,12 @@ export default function Home() {
   const [currentSuggestion, setCurrentSuggestion] = useState(0);
 
   useEffect(() => {
-    if(examDate) {
+    if (examDate) {
       localStorage.setItem('examDate', examDate.toISOString());
     }
-    
+
     const calculateTimeLeft = () => {
-      if(!examDate) return;
+      if (!examDate) return;
       const now = new Date();
       const difference = examDate.getTime() - now.getTime();
 
@@ -167,24 +177,24 @@ export default function Home() {
   useEffect(() => {
     setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
     const quoteInterval = setInterval(() => {
-        setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
+      setCurrentQuote(quotes[Math.floor(Math.random() * quotes.length)]);
     }, 10000);
-    
+
     const suggestionInterval = setInterval(() => {
       setCurrentSuggestion((prev) => (prev + 1) % studySuggestions.length);
     }, 8000);
 
     return () => {
-        clearInterval(quoteInterval);
-        clearInterval(suggestionInterval);
-    }
+      clearInterval(quoteInterval);
+      clearInterval(suggestionInterval);
+    };
   }, []);
 
   const suggestion = studySuggestions[currentSuggestion];
   const SuggestionIcon = suggestion.icon;
 
   if (!examDate) {
-    return null; 
+    return null;
   }
 
   return (
@@ -212,11 +222,7 @@ export default function Home() {
               }}
             >
               <svg viewBox="0 0 100 100" className="w-full h-full">
-                <polygon
-                  points="50,10 90,90 10,90"
-                  fill="url(#grad1)"
-                  opacity="0.6"
-                />
+                <polygon points="50,10 90,90 10,90" fill="url(#grad1)" opacity="0.6" />
               </svg>
             </motion.div>
           ))}
@@ -241,7 +247,7 @@ export default function Home() {
           <div className="flex items-center gap-3 mb-12">
             <motion.div
               animate={{ rotate: [0, 360] }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
             >
               <Stethoscope className="w-8 h-8 text-cyan-400" />
             </motion.div>
@@ -358,7 +364,7 @@ export default function Home() {
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
                         exit={{ scale: 1.2, opacity: 0 }}
-                        transition={{ type: "spring", stiffness: 200 }}
+                        transition={{ type: 'spring', stiffness: 200 }}
                         className="text-8xl md:text-9xl bg-gradient-to-r from-white via-cyan-200 to-blue-200 bg-clip-text text-transparent mb-4"
                       >
                         {daysLeft}
@@ -451,13 +457,6 @@ export default function Home() {
                       </div>
                     </motion.div>
                   </AnimatePresence>
-                  <div className="grid grid-cols-2 gap-4 mt-8">
-                    <div className="p-4 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
-                      <Award className="w-5 h-5 text-yellow-400 mb-2" />
-                      <p className="text-2xl text-white mb-1">1,247</p>
-                      <p className="text-white/60 text-sm">Questions Solved</p>
-                    </div>
-                  </div>
                 </div>
               </div>
             </motion.div>

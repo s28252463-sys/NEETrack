@@ -49,11 +49,12 @@ import {
 } from '@/components/ui/form';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
+  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
 import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { format } from 'date-fns';
 
@@ -77,6 +78,25 @@ type MockTest = {
     toDate: () => Date;
   };
 };
+
+const chartConfig = {
+  totalScore: {
+    label: 'Total',
+    color: 'hsl(var(--primary))',
+  },
+  physics: {
+    label: 'Physics',
+    color: 'hsl(var(--chart-1))',
+  },
+  chemistry: {
+    label: 'Chemistry',
+    color: 'hsl(var(--chart-2))',
+  },
+  biology: {
+    label: 'Biology',
+    color: 'hsl(var(--chart-3))',
+  },
+} satisfies ChartConfig;
 
 export default function MockTestTracker() {
   const { user, isUserLoading } = useUser();
@@ -248,25 +268,25 @@ export default function MockTestTracker() {
         <div className="mb-8">
             <h3 className="text-lg font-semibold mb-4">Performance Over Time</h3>
             <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <Tooltip
-                  content={
-                    <ChartTooltipContent
-                      labelClassName="font-bold"
-                      className="bg-card/80 backdrop-blur-sm"
-                    />
-                  }
-                />
-                <Line type="monotone" dataKey="totalScore" name="Total" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, fill: "hsl(var(--primary))" }} />
-                <Line type="monotone" dataKey="physics" name="Physics" stroke="hsl(var(--chart-1))" strokeWidth={1.5} strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="chemistry" name="Chemistry" stroke="hsl(var(--chart-2))" strokeWidth={1.5} strokeDasharray="5 5"/>
-                <Line type="monotone" dataKey="biology" name="Biology" stroke="hsl(var(--chart-3))" strokeWidth={1.5} strokeDasharray="5 5"/>
-            </LineChart>
-            </ResponsiveContainer>
+            <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+              <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
+                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelClassName="font-bold"
+                        className="bg-card/80 backdrop-blur-sm"
+                      />
+                    }
+                  />
+                  <Line type="monotone" dataKey="totalScore" stroke="var(--color-totalScore)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-totalScore)" }} />
+                  <Line type="monotone" dataKey="physics" stroke="var(--color-physics)" strokeWidth={1.5} strokeDasharray="5 5"/>
+                  <Line type="monotone" dataKey="chemistry" stroke="var(--color-chemistry)" strokeWidth={1.5} strokeDasharray="5 5"/>
+                  <Line type="monotone" dataKey="biology" stroke="var(--color-biology)" strokeWidth={1.5} strokeDasharray="5 5"/>
+              </LineChart>
+            </ChartContainer>
             </div>
         </div>
         <Table>

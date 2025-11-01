@@ -186,6 +186,56 @@
         "goalDate",
         "estimatedTime"
       ]
+    },
+    "MockTest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MockTest",
+      "type": "object",
+      "description": "Represents a user's mock test result.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the mock test entry."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N MockTest)"
+        },
+        "testName": {
+          "type": "string",
+          "description": "Name or identifier for the mock test."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the test result was logged."
+        },
+        "physicsScore": {
+          "type": "number",
+          "description": "Score obtained in the Physics section."
+        },
+        "chemistryScore": {
+          "type": "number",
+          "description": "Score obtained in the Chemistry section."
+        },
+        "biologyScore": {
+          "type": "number",
+          "description": "Score obtained in the Biology section."
+        },
+        "totalScore": {
+          "type": "number",
+          "description": "Total score for the test (sum of all sections)."
+        }
+      },
+      "required": [
+        "userId",
+        "testName",
+        "createdAt",
+        "physicsScore",
+        "chemistryScore",
+        "biologyScore",
+        "totalScore"
+      ]
     }
   },
   "auth": {
@@ -308,6 +358,26 @@
             {
               "name": "studyGoalId",
               "description": "The unique identifier for the study goal."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/mockTests/{mockTestId}",
+        "definition": {
+          "entityName": "MockTest",
+          "schema": {
+            "$ref": "#/backend/entities/MockTest"
+          },
+          "description": "Stores a user's individual mock test results. This path enforces ownership by the user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "mockTestId",
+              "description": "The unique identifier for the mock test entry."
             }
           ]
         }

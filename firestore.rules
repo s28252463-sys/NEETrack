@@ -11,15 +11,15 @@
  * - /syllabi/{syllabusId}/subjects/{subjectId}/chapters/{chapterId}: Stores chapters within a subject, publicly readable.
  * - /users/{userId}/chapterCompletions/{chapterId}: Stores chapter completion statuses, accessible only by the user.
  * - /users/{userId}/studyGoals/{studyGoalId}: Stores study goals, accessible only by the user.
+ * - /users/{userId}/mockTests/{mockTestId}: Stores mock test results, accessible only by the user.
  *
  * @keySecurityDecisions
- * - Users can only access their own profile and associated data (chapter completions, study goals).
+ * - Users can only access their own profile and associated data (chapter completions, study goals, mock tests).
  * - Syllabus, Subject and Chapter data is publicly readable.
- * - Listing other user's study goals or chapter completions is forbidden.
- * - No validation is performed on the content of the documents, focusing on ownership and access control.
+ * - Listing other user's data is forbidden.
  *
  * @denormalizationForAuthorization
- * - User-specific data (chapterCompletions, studyGoals) are stored under the /users/{userId} collection group,
+ * - User-specific data is stored under the /users/{userId} collection group,
  *   allowing easy path-based ownership checks without additional `get()` calls.
  *
  * @structuralSegregation
@@ -123,6 +123,15 @@ service cloud.firestore {
       allow create: if isOwner(userId) && request.resource.data.userId == userId;
       allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
       allow delete: if isExistingOwner(userId);
+    }
+    
+    /**
+     * @description Controls access to user mock test results. Only the authenticated user can manage their own test results.
+     * @path /users/{userId}/mockTests/{mockTestId}
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/mockTests/{mockTestId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }

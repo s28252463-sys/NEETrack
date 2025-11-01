@@ -17,7 +17,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (value / 100) * circumference;
+  // Ensure offset doesn't go below 0
+  const offset = Math.max(0, circumference - (value / 100) * circumference);
 
   return (
     <svg

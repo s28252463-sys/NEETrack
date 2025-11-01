@@ -33,8 +33,8 @@ export default function Home() {
           placeholder="PASSWORD"
           required
         />
-        <Link href="/dashboard" className="w-full">
-            <button className="w-full">LOGIN</button>
+        <Link href="/dashboard" className="login-button">
+            LOGIN
         </Link>
       </div>
     </main>

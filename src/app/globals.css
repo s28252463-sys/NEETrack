@@ -110,7 +110,7 @@
   letter-spacing: 0.1rem;
 }
 
-.form button {
+.form .login-button {
   cursor: pointer;
   height: 3.5rem;
   padding: 0%;
@@ -119,9 +119,14 @@
   letter-spacing: 0.3rem;
   border: 2px solid white;
   background: linear-gradient(144deg, #9c11ffce, #2000eeb6 50%, #15efffbb);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  border-radius: 6px;
 }
 
-.form button:hover {
+.form .login-button:hover {
   position: relative;
   bottom: 4px;
   background: linear-gradient(144deg, #9c11ff, #2000ee 50%, #15fff3);
@@ -142,6 +147,7 @@
   border-radius: 0.5rem;
   background: linear-gradient(144deg, #9c11ffce, #2000eeb6 50%, #15efffbb);
   transition: all 0.2s ease-in-out;
+  text-decoration: none;
 }
 
 .signup-button:hover {

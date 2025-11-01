@@ -32,19 +32,19 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
       };
 
       if (difference > 0) {
-        const totalSeconds = difference / 1000;
+        const currentTotalSeconds = difference / 1000;
         timeLeftData = {
-          days: Math.floor(totalSeconds / (60 * 60 * 24)),
-          hours: Math.floor((totalSeconds / (60 * 60)) % 24),
-          minutes: Math.floor((totalSeconds / 60) % 60),
-          seconds: Math.floor(totalSeconds % 60),
+          days: Math.floor(currentTotalSeconds / (60 * 60 * 24)),
+          hours: Math.floor((currentTotalSeconds / (60 * 60)) % 24),
+          minutes: Math.floor((currentTotalSeconds / 60) % 60),
+          seconds: Math.floor(currentTotalSeconds % 60),
         };
-        setTotalSeconds(totalSeconds);
+        setTotalSeconds(currentTotalSeconds);
       }
       return timeLeftData;
     };
     
-    // Set initial values on mount
+    // Set initial values only once on mount
     const initialDifference = +targetDate - +new Date();
     if(initialDifference > 0) {
         const seconds = initialDifference/1000;
@@ -62,7 +62,22 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   }, [targetDate]);
 
   if (!timeLeft) {
-    return <div>Loading...</div>;
+    return (
+        <div className="w-full max-w-sm rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
+            <div className="flex items-center justify-between text-white/80">
+                <h2 className="font-semibold">Countdown to NEET UG</h2>
+                <Calendar className="h-5 w-5" />
+            </div>
+            <div className="my-6 text-center">
+                <p className="text-8xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(74,222,222,0.5)]">
+                -
+                </p>
+                <p className="text-sm text-white/70">
+                Loading...
+                </p>
+            </div>
+        </div>
+    );
   }
 
   const progressPercentage = initialTotalSeconds > 0 ? (totalSeconds / initialTotalSeconds) * 100 : 0;

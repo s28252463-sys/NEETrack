@@ -11,7 +11,7 @@ export default function DashboardPage() {
         <blockquote className="text-2xl font-semibold italic text-white">
           &quot;The expert in anything was once a beginner.&quot;
         </blockquote>
-        <p className="mt-2 text-sm text-muted-foreground">— Continue</p>
+        <p className="mt-2 text-sm text-muted-foreground">— Helen Hayes</p>
       </div>
       <div className="flex justify-center">
         <CountdownTimer targetDate={examDate} />

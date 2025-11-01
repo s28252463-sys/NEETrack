@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
-import { Menu, Clock, Home, BookOpen } from 'lucide-react';
+import { Menu, BookOpen } from 'lucide-react';
 
 export default function DashboardLayout({
   children,

@@ -22,6 +22,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   const [initialTotalSeconds, setInitialTotalSeconds] = useState<number>(0);
 
   useEffect(() => {
+    // This function will only run on the client
     const calculateTimeLeft = () => {
       const difference = +targetDate - +new Date();
       let timeLeftData: TimeLeft = {
@@ -45,11 +46,13 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     };
     
     // Set initial values only once on mount, inside useEffect
-    const initialDifference = +targetDate - +new Date();
-    if (initialDifference > 0) {
-        const seconds = initialDifference / 1000;
-        setInitialTotalSeconds(seconds);
-        setTotalSeconds(seconds);
+    if (initialTotalSeconds === 0) {
+        const initialDifference = +targetDate - +new Date();
+        if (initialDifference > 0) {
+            const seconds = initialDifference / 1000;
+            setInitialTotalSeconds(seconds);
+            setTotalSeconds(seconds);
+        }
     }
     
     // Set initial time left and then update every second
@@ -59,7 +62,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [targetDate]);
+  }, [targetDate, initialTotalSeconds]);
 
   if (!timeLeft) {
     return (

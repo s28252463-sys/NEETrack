@@ -7,6 +7,7 @@ import { SyllabusTracker } from '@/components/SyllabusTracker';
 import { StudyPlanner } from '@/components/StudyPlanner';
 import { MockTests } from '@/components/MockTests';
 import { PomodoroTimer } from '@/components/PomodoroTimer';
+import { FloatingParticles } from '@/components/FloatingParticles';
 
 const EXAM_DATE = new Date('2026-05-03T00:00:00');
 
@@ -31,6 +32,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-background text-foreground">
+      <FloatingParticles />
       <Header />
       <main className="container mx-auto px-4 py-8 flex-grow">
         <div className="grid gap-8 lg:grid-cols-5">

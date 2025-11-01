@@ -382,10 +382,10 @@ export function PomodoroTimer() {
                   stroke="url(#timerGradient)"
                   strokeWidth="12"
                   strokeLinecap="round"
-                  strokeDasharray={`${2 * Math.PI * 45}`}
+                  strokeDasharray={`${2 * Math.PI * 45}%`}
                   initial={{ strokeDashoffset: 0 }}
                   animate={{ 
-                    strokeDashoffset: 2 * Math.PI * 45 * (1 - progress / 100)
+                    strokeDashoffset: `${2 * Math.PI * 45 * (1 - progress / 100)}%`
                   }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
                   style={{
@@ -553,7 +553,7 @@ export function PomodoroTimer() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-8 shadow-2xl overflow-hidden relative"
+          className="mt-8 bg-white/5 backdrop-blur-xl rounded-3xl border border-white/10 p-6 md:p-8 shadow-2xl overflow-hidden relative"
         >
           {/* Geometric Background Pattern */}
           <div className="absolute inset-0 opacity-5">
@@ -584,7 +584,7 @@ export function PomodoroTimer() {
             {/* Chart */}
             <div className="h-64 w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={weeklyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <AreaChart data={weeklyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="colorMinutes" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.8}/>
@@ -600,7 +600,8 @@ export function PomodoroTimer() {
                   <YAxis 
                     stroke="rgba(255, 255, 255, 0.5)"
                     style={{ fontSize: '12px' }}
-                    label={{ value: 'Hours', angle: -90, position: 'insideLeft', fill: 'rgba(255, 255, 255, 0.5)' }}
+                    label={{ value: 'Hours', angle: -90, position: 'insideLeft', fill: 'rgba(255, 255, 255, 0.5)', dy: 40 }}
+                    tickFormatter={(value) => `${value}h`}
                   />
                   <Tooltip
                     contentStyle={{
@@ -636,7 +637,7 @@ export function PomodoroTimer() {
               <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">
                 <p className="text-white/60 text-xs mb-1">Best Day</p>
                 <p className="text-white">
-                  {weeklyData.reduce((max, day) => day.hours > max.hours ? day : max, weeklyData[0]).day}
+                  {weeklyData.reduce((max, day) => day.hours > max.hours ? day : max, {day: '-', hours: 0}).day}
                 </p>
               </div>
               <div className="bg-white/5 backdrop-blur-sm rounded-xl p-4 border border-white/10">

@@ -848,17 +848,15 @@ video {
 }
 
 ::-moz-placeholder {
-  font-weight: 300;
+  font-weight: bold;
   color: white;
   letter-spacing: 0.1rem;
-  text-shadow: 0px 1px 5px rgb(66, 66, 66);
 }
 
 ::placeholder {
-  font-weight: 300;
+  font-weight: bold;
   color: white;
   letter-spacing: 0.1rem;
-  text-shadow: 0px 1px 5px rgb(66, 66, 66);
 }
 
 .form button {
@@ -1015,3 +1013,4 @@ video {
 .peer:disabled ~ .peer-disabled\:opacity-70 {
   opacity: 0.7;
 }
+

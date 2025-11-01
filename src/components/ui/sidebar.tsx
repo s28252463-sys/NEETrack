@@ -1,11 +1,10 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { cva, type VariantProps } from "class-variance-authority"
-import { ChevronsLeft, ChevronsRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
@@ -14,7 +13,7 @@ import {
 } from "@/components/ui/tooltip"
 
 const sidebarVariants = cva(
-  "flex h-dvh shrink-0 flex-col gap-4 transition-[width]",
+  "flex h-full shrink-0 flex-col gap-4 transition-[width] border-r",
   {
     variants: {
       collapsed: {
@@ -110,10 +109,10 @@ function SidebarHeader({
 function SidebarHeaderTitle({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLHeadingElement>) {
   const { collapsed } = useSidebar()
   return (
-    <div
+    <h2
       className={cn(
         "text-lg font-semibold",
         collapsed && "hidden",
@@ -142,7 +141,7 @@ function SidebarNav({
 
 const SidebarNavLink = React.forwardRef<
   HTMLAnchorElement,
-  React.ComponentProps<"a">
+  React.ComponentProps<typeof Link>
 >(({ href, children, className, ...props }, ref) => {
   const { collapsed } = useSidebar();
   
@@ -150,18 +149,18 @@ const SidebarNavLink = React.forwardRef<
     if (collapsed) {
       return (
         <TooltipTrigger asChild>
-          <a href={href} ref={ref} className={cn("flex items-center justify-center gap-3 rounded-md px-3 py-2 text-sidebar-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", className)} {...props}>
+          <Link href={href} ref={ref} className={cn("flex items-center justify-center gap-3 rounded-md px-3 py-2 text-sidebar-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", className)} {...props}>
             {React.Children.map(children, child =>
               React.isValidElement(child) && child.type !== 'string' ? child : null
             )}
-          </a>
+          </Link>
         </TooltipTrigger>
       );
     }
     return (
-      <a href={href} ref={ref} className={cn("flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", className)} {...props}>
+      <Link href={href} ref={ref} className={cn("flex items-center gap-3 rounded-md px-3 py-2 text-sidebar-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground", className)} {...props}>
         {children}
-      </a>
+      </Link>
     );
   };
 
@@ -184,10 +183,10 @@ SidebarNavLink.displayName = "SidebarNavLink";
 function SidebarNavTitle({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+}: React.HTMLAttributes<HTMLHeadingElement>) {
   const { collapsed } = useSidebar()
   return (
-    <div
+    <h3
       className={cn(
         "px-3 py-2 text-xs font-semibold text-sidebar-muted-foreground",
         collapsed && "hidden",
@@ -205,14 +204,6 @@ function SidebarFooter({
   const { collapsed, setCollapsed } = useSidebar()
   return (
     <div className={cn("mt-auto border-t border-sidebar-border p-2", className)} {...props}>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="size-9 text-sidebar-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-        onClick={() => setCollapsed(!collapsed)}
-      >
-        {collapsed ? <ChevronsRight /> : <ChevronsLeft />}
-      </Button>
     </div>
   )
 }

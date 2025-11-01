@@ -174,17 +174,22 @@ export default function Home() {
 
           <nav className="space-y-2">
             {[
-              { icon: Target, label: 'Dashboard', active: true },
-              { icon: BookOpen, label: 'Syllabus Tracker' },
-              { icon: Brain, label: 'Mock Tests' },
-              { icon: Clock, label: 'Pomodoro Timer' },
-              { icon: Award, label: 'About Us' },
+              { icon: Target, label: 'Dashboard', active: true, href: "/" },
+              { icon: BookOpen, label: 'Syllabus Tracker', active: false },
+              { icon: Brain, label: 'Mock Tests', active: false },
+              { icon: Clock, label: 'Pomodoro Timer', active: false, href: "/pomodoro" },
+              { icon: Award, label: 'About Us', active: false },
             ].map((item, index) => (
               <motion.button
                 key={item.label}
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: index * 0.1 }}
+                onClick={() => {
+                  if (item.href) {
+                    window.location.href = item.href;
+                  }
+                }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                   item.active
                     ? 'bg-white/20 text-white'
@@ -401,9 +406,6 @@ export default function Home() {
                 </div>
               </div>
             </motion.div>
-            <div className="lg:col-span-2">
-                <PomodoroTimer />
-            </div>
           </div>
         </div>
       </main>

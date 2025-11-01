@@ -47,6 +47,44 @@ const studySuggestions = [
   }
 ];
 
+function FloatingParticles() {
+    const [particles, setParticles] = useState<Array<{ id: number; left: string; top: string; }>>([]);
+
+    useEffect(() => {
+        const newParticles = Array.from({ length: 15 }).map((_, i) => ({
+            id: i,
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+        }));
+        setParticles(newParticles);
+    }, []);
+
+    return (
+        <>
+            {particles.map((particle) => (
+                <motion.div
+                    key={`particle-${particle.id}`}
+                    className="absolute w-2 h-2 bg-blue-400 rounded-full"
+                    style={{
+                        left: particle.left,
+                        top: particle.top,
+                    }}
+                    animate={{
+                        y: [0, -30, 0],
+                        x: [0, Math.random() * 20 - 10, 0],
+                        opacity: [0.2, 0.8, 0.2],
+                    }}
+                    transition={{
+                        duration: 5 + Math.random() * 5,
+                        repeat: Infinity,
+                        delay: Math.random() * 5,
+                    }}
+                />
+            ))}
+        </>
+    );
+}
+
 function TimeCard({ value, label }: { value: number; label: string }) {
   return (
     <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
@@ -191,26 +229,7 @@ export default function Home() {
             </linearGradient>
           </defs>
         </svg>
-        {[...Array(15)].map((_, i) => (
-          <motion.div
-            key={`particle-${i}`}
-            className="absolute w-2 h-2 bg-blue-400 rounded-full"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              x: [0, Math.random() * 20 - 10, 0],
-              opacity: [0.2, 0.8, 0.2],
-            }}
-            transition={{
-              duration: 5 + Math.random() * 5,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-            }}
-          />
-        ))}
+        <FloatingParticles />
       </div>
       <motion.aside
         initial={{ x: -300 }}

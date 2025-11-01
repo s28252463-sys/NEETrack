@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Card,
   CardContent,
@@ -27,7 +27,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { ClipboardList, PlusCircle } from 'lucide-react';
 import {
   useUser,
@@ -35,7 +34,7 @@ import {
   useCollection,
   useMemoFirebase,
 } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, serverTimestamp } from 'firebase/firestore';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -76,7 +75,7 @@ type MockTest = {
   totalScore: number;
   createdAt: {
     toDate: () => Date;
-  };
+  } | null;
 };
 
 const chartConfig = {
@@ -136,15 +135,19 @@ export default function MockTestTracker() {
     setIsDialogOpen(false);
   };
   
-  const sortedTests = useMemoFirebase(() => {
+  const sortedTests = useMemo(() => {
     if (!mockTests) return [];
     // Firestore returns a different Timestamp object than the client
-    // so we need to normalize to JS Date
-    const testsWithDate = mockTests.map(t => ({...t, date: t.createdAt.toDate()}))
+    // so we need to normalize to JS Date.
+    // Also, filter out tests where createdAt is still null (pending server timestamp).
+    const testsWithDate = mockTests
+      .filter(t => t.createdAt) // Ensure createdAt is not null
+      .map(t => ({...t, date: t.createdAt!.toDate()}))
+      
     return testsWithDate.sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [mockTests]);
 
-  const chartData = useMemoFirebase(() => {
+  const chartData = useMemo(() => {
     if (!sortedTests) return [];
     return sortedTests.map((test, index) => ({
       name: `Test ${index + 1}`,
@@ -268,25 +271,27 @@ export default function MockTestTracker() {
         <div className="mb-8">
             <h3 className="text-lg font-semibold mb-4">Performance Over Time</h3>
             <div className="h-64 w-full">
-            <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
-              <LineChart data={chartData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
-                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                  <ChartTooltip
-                    content={
-                      <ChartTooltipContent
-                        labelClassName="font-bold"
-                        className="bg-card/80 backdrop-blur-sm"
-                      />
-                    }
-                  />
-                  <Line type="monotone" dataKey="totalScore" stroke="var(--color-totalScore)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-totalScore)" }} />
-                  <Line type="monotone" dataKey="physics" stroke="var(--color-physics)" strokeWidth={1.5} strokeDasharray="5 5"/>
-                  <Line type="monotone" dataKey="chemistry" stroke="var(--color-chemistry)" strokeWidth={1.5} strokeDasharray="5 5"/>
-                  <Line type="monotone" dataKey="biology" stroke="var(--color-biology)" strokeWidth={1.5} strokeDasharray="5 5"/>
-              </LineChart>
-            </ChartContainer>
+            <ResponsiveContainer width="100%" height="100%">
+              <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
+                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                    <ChartTooltip
+                      content={
+                        <ChartTooltipContent
+                          labelClassName="font-bold"
+                          className="bg-card/80 backdrop-blur-sm"
+                        />
+                      }
+                    />
+                    <Line type="monotone" dataKey="totalScore" stroke="var(--color-totalScore)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-totalScore)" }} />
+                    <Line type="monotone" dataKey="physics" stroke="var(--color-physics)" strokeWidth={1.5} strokeDasharray="5 5"/>
+                    <Line type="monotone" dataKey="chemistry" stroke="var(--color-chemistry)" strokeWidth={1.5} strokeDasharray="5 5"/>
+                    <Line type="monotone" dataKey="biology" stroke="var(--color-biology)" strokeWidth={1.5} strokeDasharray="5 5"/>
+                </LineChart>
+              </ChartContainer>
+            </ResponsiveContainer>
             </div>
         </div>
         <Table>

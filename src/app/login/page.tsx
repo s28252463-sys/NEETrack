@@ -4,16 +4,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { useAuth } from '@/firebase';
 import {
   createUserWithEmailAndPassword,
@@ -23,8 +13,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { BookOpen } from 'lucide-react';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
+import './login.css';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -37,29 +26,26 @@ type FormValues = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [isSignUp, setIsSignUp] = useState(false);
+  const [isFlipped, setIsFlipped] = useState(false);
   const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
-  const form = useForm<FormValues>({
+  const loginForm = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = async (values: FormValues) => {
+  const signupForm = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { email: '', password: '' },
+  });
+
+  const handleLogin = async (values: FormValues) => {
     setIsLoading(true);
     try {
-      if (isSignUp) {
-        await createUserWithEmailAndPassword(auth, values.email, values.password);
-        toast({ title: 'Account created successfully!' });
-      } else {
-        await signInWithEmailAndPassword(auth, values.email, values.password);
-        toast({ title: 'Signed in successfully!' });
-      }
+      await signInWithEmailAndPassword(auth, values.email, values.password);
+      toast({ title: 'Signed in successfully!' });
       router.push('/dashboard');
     } catch (error) {
       const firebaseError = error as FirebaseError;
@@ -73,81 +59,97 @@ export default function LoginPage() {
     }
   };
 
+  const handleSignUp = async (values: FormValues) => {
+    setIsLoading(true);
+    try {
+      await createUserWithEmailAndPassword(auth, values.email, values.password);
+      toast({ title: 'Account created successfully!' });
+      router.push('/dashboard');
+    } catch (error) {
+      const firebaseError = error as FirebaseError;
+      toast({
+        variant: 'destructive',
+        title: 'Sign-up failed',
+        description: firebaseError.code.replace('auth/', '').replace(/-/g, ' '),
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="w-full min-h-screen lg:grid lg:grid-cols-2">
-      <div className="hidden bg-background lg:flex flex-col items-center justify-center p-12 text-white">
-        <div className="flex items-center gap-2 text-2xl font-semibold">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-background">
+        <div className="flex items-center gap-2 text-3xl font-semibold text-white mb-16">
             <BookOpen className="h-8 w-8" />
             <span className="">NEETrack</span>
         </div>
-        <p className="mt-4 text-center text-muted-foreground">
-            Track your progress, ace the exam.
-        </p>
-        <div className="relative w-full max-w-md mt-8">
-            <Image
-                src="https://picsum.photos/seed/rocket/1024/800"
-                alt="Studying"
-                width={1024}
-                height={800}
-                className="rounded-lg object-cover"
-                data-ai-hint="study motivation"
+      <div className="wrapper">
+        <div className="card-switch">
+          <label className="switch">
+            <input
+              type="checkbox"
+              className="toggle"
+              checked={isFlipped}
+              onChange={() => setIsFlipped(!isFlipped)}
             />
+            <span className="slider"></span>
+            <span className="card-side"></span>
+          </label>
         </div>
-      </div>
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid w-[350px] gap-6">
-          <div className="grid gap-2 text-center">
-            <h1 className="text-3xl font-bold">
-              {isSignUp ? 'Create an Account' : 'Welcome Back'}
-            </h1>
-            <p className="text-balance text-muted-foreground">
-              {isSignUp
-                ? 'Enter your email below to create your account'
-                : 'Enter your credentials to access your dashboard'}
-            </p>
-          </div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="name@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="••••••••" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Loading...' : isSignUp ? 'Create Account' : 'Sign In'}
-              </Button>
-            </form>
-          </Form>
-          <div className="mt-4 text-center text-sm">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <Button
-              variant="link"
-              className="p-0"
-              onClick={() => setIsSignUp(!isSignUp)}
+        <div className="flip-card__inner">
+          <div className="flip-card__front">
+            <div className="title">Log in</div>
+            <form
+              onSubmit={loginForm.handleSubmit(handleLogin)}
+              className="flip-card__form"
+              noValidate
             >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
-            </Button>
+              <input
+                {...loginForm.register('email')}
+                className="flip-card__input"
+                placeholder="Email"
+                type="email"
+              />
+              {loginForm.formState.errors.email && <p className="text-red-500 text-xs">{loginForm.formState.errors.email.message}</p>}
+              <input
+                {...loginForm.register('password')}
+                className="flip-card__input"
+                placeholder="Password"
+                type="password"
+              />
+               {loginForm.formState.errors.password && <p className="text-red-500 text-xs">{loginForm.formState.errors.password.message}</p>}
+              <button type="submit" className="flip-card__btn" disabled={isLoading}>
+                {isLoading ? 'Loading...' : 'Let`s go!'}
+              </button>
+            </form>
+          </div>
+          <div className="flip-card__back">
+            <div className="title">Sign up</div>
+            <form
+              onSubmit={signupForm.handleSubmit(handleSignUp)}
+              className="flip-card__form"
+              noValidate
+            >
+              <input
+                {...signupForm.register('email')}
+                className="flip-card__input"
+                placeholder="Email"
+                name="email"
+                type="email"
+              />
+              {signupForm.formState.errors.email && <p className="text-red-500 text-xs">{signupForm.formState.errors.email.message}</p>}
+              <input
+                {...signupForm.register('password')}
+                className="flip-card__input"
+                placeholder="Password"
+                name="password"
+                type="password"
+              />
+              {signupForm.formState.errors.password && <p className="text-red-500 text-xs">{signupForm.formState.errors.password.message}</p>}
+              <button type="submit" className="flip-card__btn" disabled={isLoading}>
+                {isLoading ? 'Loading...' : 'Sign Up'}
+              </button>
+            </form>
           </div>
         </div>
       </div>

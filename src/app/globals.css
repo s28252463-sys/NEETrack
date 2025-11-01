@@ -23,7 +23,14 @@
     --border: 240 5% 25%;
     --input: 217.2 32.6% 17.5%;
     --ring: 260 100% 75%;
-    --radius: 0.5rem;
+
+    /* Custom styles for login page */
+    --input-focus: #2d8cf0;
+    --font-color: #323232;
+    --font-color-sub: #666;
+    --bg-color: #fff;
+    --bg-color-alt: #666;
+    --main-color: #323232;
   }
 
   .dark {
@@ -83,17 +90,4 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 260 100% 65%;
   }
-
-  .dark .lg\\:grid > div:last-child {
-    background-color: hsl(0 0% 100%);
-    color: hsl(222.2 84% 4.9%);
-    --card-foreground: 222.2 84% 4.9%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-  }
-}
-
-.bg-background.lg\\:flex {
-  background-image: linear-gradient(to bottom right, #1e1b4b, #4c1d95);
 }

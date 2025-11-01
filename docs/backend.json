@@ -27,8 +27,6 @@
       },
       "required": [
         "id",
-        "name",
-        "email",
         "createdAt"
       ]
     },
@@ -87,27 +85,27 @@
         "description"
       ]
     },
-    "Topic": {
+    "Chapter": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Topic",
+      "title": "Chapter",
       "type": "object",
-      "description": "Represents a topic within a subject (e.g., Kinematics in Physics).",
+      "description": "Represents a chapter within a subject (e.g., Kinematics in Physics).",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the topic."
+          "description": "Unique identifier for the chapter."
         },
         "subjectId": {
           "type": "string",
-          "description": "Reference to Subject. (Relationship: Subject 1:N Topic)"
+          "description": "Reference to Subject. (Relationship: Subject 1:N Chapter)"
         },
         "name": {
           "type": "string",
-          "description": "Name of the topic (e.g., Kinematics)."
+          "description": "Name of the chapter (e.g., Kinematics)."
         },
         "description": {
           "type": "string",
-          "description": "A brief description of the topic."
+          "description": "A brief description of the chapter."
         }
       },
       "required": [
@@ -117,38 +115,38 @@
         "description"
       ]
     },
-    "UserTopicCompletion": {
+    "UserChapterCompletion": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "UserTopicCompletion",
+      "title": "UserChapterCompletion",
       "type": "object",
-      "description": "Represents a user's completion status for a specific topic.",
+      "description": "Represents a user's completion status for a specific chapter.",
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the user topic completion status."
+          "description": "Unique identifier for the user chapter completion status (can be the chapterId)."
         },
         "userId": {
           "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N UserTopicCompletion)"
+          "description": "Reference to User. (Relationship: User 1:N UserChapterCompletion)"
         },
-        "topicId": {
+        "chapterId": {
           "type": "string",
-          "description": "Reference to Topic. (Relationship: Topic 1:N UserTopicCompletion)"
+          "description": "Reference to Chapter."
         },
         "isCompleted": {
           "type": "boolean",
-          "description": "Indicates whether the user has completed the topic."
+          "description": "Indicates whether the user has completed the chapter."
         },
         "completionDate": {
           "type": "string",
-          "description": "The date when the topic was marked as completed.",
+          "description": "The date when the chapter was marked as completed.",
           "format": "date-time"
         }
       },
       "required": [
         "id",
         "userId",
-        "topicId",
+        "chapterId",
         "isCompleted",
         "completionDate"
       ]
@@ -167,9 +165,9 @@
           "type": "string",
           "description": "Reference to User. (Relationship: User 1:N StudyGoal)"
         },
-        "topicId": {
+        "chapterId": {
           "type": "string",
-          "description": "Reference to Topic. (Relationship: Topic 1:N StudyGoal)"
+          "description": "Reference to Chapter. (Relationship: Chapter 1:N StudyGoal)"
         },
         "goalDate": {
           "type": "string",
@@ -184,7 +182,7 @@
       "required": [
         "id",
         "userId",
-        "topicId",
+        "chapterId",
         "goalDate",
         "estimatedTime"
       ]
@@ -251,13 +249,13 @@
         }
       },
       {
-        "path": "/syllabi/{syllabusId}/subjects/{subjectId}/topics/{topicId}",
+        "path": "/syllabi/{syllabusId}/subjects/{subjectId}/chapters/{chapterId}",
         "definition": {
-          "entityName": "Topic",
+          "entityName": "Chapter",
           "schema": {
-            "$ref": "#/backend/entities/Topic"
+            "$ref": "#/backend/entities/Chapter"
           },
-          "description": "Stores topics within a specific subject. Includes denormalized 'subjectId'.",
+          "description": "Stores chapters within a specific subject. Includes denormalized 'subjectId'.",
           "params": [
             {
               "name": "syllabusId",
@@ -268,28 +266,28 @@
               "description": "The unique identifier for the subject."
             },
             {
-              "name": "topicId",
-              "description": "The unique identifier for the topic."
+              "name": "chapterId",
+              "description": "The unique identifier for the chapter."
             }
           ]
         }
       },
       {
-        "path": "/users/{userId}/topicCompletions/{topicCompletionId}",
+        "path": "/users/{userId}/chapterCompletions/{chapterId}",
         "definition": {
-          "entityName": "UserTopicCompletion",
+          "entityName": "UserChapterCompletion",
           "schema": {
-            "$ref": "#/backend/entities/UserTopicCompletion"
+            "$ref": "#/backend/entities/UserChapterCompletion"
           },
-          "description": "Stores user's completion status for each topic. This path enforces ownership by the user.",
+          "description": "Stores user's completion status for each chapter. This path enforces ownership by the user. The document ID is the chapterId.",
           "params": [
             {
               "name": "userId",
               "description": "The unique identifier for the user."
             },
             {
-              "name": "topicCompletionId",
-              "description": "The unique identifier for the user topic completion status."
+              "name": "chapterId",
+              "description": "The unique identifier for the chapter, matching the document ID."
             }
           ]
         }
@@ -315,6 +313,6 @@
         }
       }
     ],
-    "reasoning": "The Firestore data structure is designed to support the NEETrack app, focusing on efficient data retrieval, clear ownership, and robust security rules. The structure is optimized for tracking syllabus completion and providing personalized study plans for NEET UG aspirants.\n\n**Authorization Independence:**\n\n*   `UserTopicCompletion`: This collection is structured under the `/users/{userId}/topicCompletions/{topicCompletionId}` path. This provides path-based ownership, which is the most secure approach, meaning that `get()` calls are unnecessary in security rules.\n*   `StudyGoal`: This collection is structured under the `/users/{userId}/studyGoals/{studyGoalId}` path. The parent user ID is embedded in the path itself, providing implicit ownership and removing the need for `get()` calls to verify ownership.\n\n**Structural Segregation:**\n\n*   The data structure separates user-specific data (UserTopicCompletion, StudyGoal) under the `/users/{userId}` collection group. This segregation simplifies security rules and ensures that users can only access their own data.\n*   Syllabus, Subject, and Topic are stored in separate collections at the root level. This segregation is based on the assumption that all syllabus/subject/topic data is public. If access control requirements are different (e.g., draft syllabi visible only to admins), these should be segregated into separate collections (e.g., `/admin/draft_syllabi`).\n\n**Access Modeling:**\n\n*   **Path-Based Ownership:** The `/users/{userId}/topicCompletions/{topicCompletionId}` and `/users/{userId}/studyGoals/{studyGoalId}` paths ensure that only the authenticated user (`request.auth.uid`) can read and write data to these collections.\n\n**QAPs (Rules are not Filters):**\n\n*   The path-based ownership model for `UserTopicCompletion` and `StudyGoal` ensures that listing operations are secure. Rules can easily enforce that a user can only list topic completions and study goals under their own user ID. This eliminates the need for filtering on the client-side and prevents unauthorized access to other users' data.\n*   Syllabus, Subject, and Topic are designed to be publicly accessible. If access restrictions are needed for these collections in the future (e.g., admin-only access or role-based access), they can be secured using dedicated roles collections (e.g., `/roles_admin/{uid}`) or a membership map within each document."
+    "reasoning": "The Firestore data structure is designed to support the NEETrack app, focusing on efficient data retrieval, clear ownership, and robust security rules. The structure is optimized for tracking syllabus completion and providing personalized study plans for NEET UG aspirants.\n\n**Authorization Independence:**\n\n*   `UserChapterCompletion`: This collection is structured under the `/users/{userId}/chapterCompletions/{chapterId}` path. This provides path-based ownership, which is the most secure approach, meaning that `get()` calls are unnecessary in security rules.\n*   `StudyGoal`: This collection is structured under the `/users/{userId}/studyGoals/{studyGoalId}` path. The parent user ID is embedded in the path itself, providing implicit ownership and removing the need for `get()` calls to verify ownership.\n\n**Structural Segregation:**\n\n*   The data structure separates user-specific data (UserChapterCompletion, StudyGoal) under the `/users/{userId}` collection group. This segregation simplifies security rules and ensures that users can only access their own data.\n*   Syllabus, Subject, and Chapter are stored in separate collections at the root level. This segregation is based on the assumption that all syllabus/subject/chapter data is public. If access control requirements are different (e.g., draft syllabi visible only to admins), these should be segregated into separate collections (e.g., `/admin/draft_syllabi`).\n\n**Access Modeling:**\n\n*   **Path-Based Ownership:** The `/users/{userId}/chapterCompletions/{chapterId}` and `/users/{userId}/studyGoals/{studyGoalId}` paths ensure that only the authenticated user (`request.auth.uid`) can read and write data to these collections.\n\n**QAPs (Rules are not Filters):**\n\n*   The path-based ownership model for `UserChapterCompletion` and `StudyGoal` ensures that listing operations are secure. Rules can easily enforce that a user can only list chapter completions and study goals under their own user ID. This eliminates the need for filtering on the client-side and prevents unauthorized access to other users' data.\n*   Syllabus, Subject, and Chapter are designed to be publicly accessible. If access restrictions are needed for these collections in the future (e.g., admin-only access or role-based access), they can be secured using dedicated roles collections (e.g., `/roles_admin/{uid}`) or a membership map within each document."
   }
 }

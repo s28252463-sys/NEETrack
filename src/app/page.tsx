@@ -260,7 +260,7 @@ export default function Home() {
       >
         {menuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
-      <main className="lg:ml-64 relative z-10">
+      <main className="lg:ml-64">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <motion.div
             initial={{ opacity: 0, y: -30 }}

@@ -10,8 +10,8 @@ const ExamCountdown = () => {
 
   // The target date for the exam (May 3, 2026, at midnight UTC)
   const targetDate = useMemo(() => new Date('2026-05-03T00:00:00.000Z'), []);
-  // The start date of the countdown period (May 3, 2024, at midnight UTC)
-  const startDate = useMemo(() => new Date('2024-05-03T00:00:00.000Z'), []);
+  // The start date of the countdown period (May 5, 2025, at midnight UTC)
+  const startDate = useMemo(() => new Date('2025-05-05T00:00:00.000Z'), []);
   
   // Total duration of the countdown in days. Memoized for efficiency.
   const totalCountdownDays = useMemo(() => {
@@ -33,8 +33,17 @@ const ExamCountdown = () => {
         // Use Math.ceil to correctly round up to the nearest full day.
         const remainingDays = Math.ceil(difference / (1000 * 60 * 60 * 24));
         setDaysLeft(remainingDays);
-        // Calculate the progress percentage based on days remaining
-        setProgress((remainingDays / totalCountdownDays) * 100);
+        
+        // Calculate days that have passed since the start date
+        const passedDifference = today.getTime() - startDate.getTime();
+        const daysPassed = Math.max(0, Math.ceil(passedDifference / (1000 * 60 * 60 * 24)));
+        
+        // Calculate progress based on days passed
+        const passedPercentage = (daysPassed / totalCountdownDays) * 100;
+
+        // To show a reducing effect, we show the inverse of the passed percentage.
+        setProgress(100 - passedPercentage);
+
       } else {
         setDaysLeft(0);
         setProgress(0);
@@ -44,11 +53,11 @@ const ExamCountdown = () => {
     // Calculate on mount
     calculateDaysLeft();
 
-    // Set up an interval to recalculate once a day (or more frequently if needed, e.g., hourly)
+    // Set up an interval to recalculate once a day
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60);
 
     return () => clearInterval(interval);
-  }, [targetDate, totalCountdownDays]);
+  }, [targetDate, startDate, totalCountdownDays]);
 
 
   return (

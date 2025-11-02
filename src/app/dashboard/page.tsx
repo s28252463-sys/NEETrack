@@ -13,10 +13,16 @@ export default function DashboardPage() {
         </blockquote>
         <p className="mt-2 text-sm text-muted-foreground">— Helen Hayes</p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
-        <ExamCountdown />
-        <MockTestCountdown />
-        <CountdownTimer />
+      <div className="space-y-8">
+        {/* Top row for the two main countdowns */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
+          <ExamCountdown />
+          <MockTestCountdown />
+        </div>
+        {/* Bottom row for the daily timer, centered */}
+        <div className="grid grid-cols-1 justify-items-center">
+          <CountdownTimer />
+        </div>
       </div>
     </div>
   );

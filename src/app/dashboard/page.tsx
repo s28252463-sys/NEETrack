@@ -2,6 +2,7 @@
 
 import CountdownTimer from '@/components/countdown-timer';
 import ExamCountdown from '@/components/exam-countdown';
+import MockTestCountdown from '@/components/mock-test-countdown';
 
 export default function DashboardPage() {
   return (
@@ -12,8 +13,9 @@ export default function DashboardPage() {
         </blockquote>
         <p className="mt-2 text-sm text-muted-foreground">— Helen Hayes</p>
       </div>
-      <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
         <ExamCountdown />
+        <MockTestCountdown />
         <CountdownTimer />
       </div>
     </div>

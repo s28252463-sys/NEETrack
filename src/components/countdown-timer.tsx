@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -29,6 +30,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
       const difference = targetTime - now;
 
       if (difference > 0) {
+        // Calculate days, hours, minutes, seconds from the total difference in milliseconds
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));

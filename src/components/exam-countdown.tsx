@@ -8,21 +8,21 @@ const ExamCountdown = () => {
 
   // Set the target date once using useMemo to prevent re-computation
   const targetDate = useMemo(() => {
-    const date = new Date('2026-05-03T00:00:00.000Z');
-    // We set it to UTC midnight. We will compare it against the current date's midnight UTC.
-    return date;
+    // NEET is May 3rd. We'll set the date to midnight UTC on that day.
+    return new Date('2026-05-03T00:00:00.000Z');
   }, []);
 
   useEffect(() => {
     // This effect runs only on the client
     const calculateDaysLeft = () => {
       const now = new Date();
-      // Get today's date at UTC midnight
+      // Get today's date at midnight UTC
       const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
       
       const difference = targetDate.getTime() - today.getTime();
       
       if (difference > 0) {
+        // Use Math.ceil to correctly round up to the nearest full day.
         const totalDays = Math.ceil(difference / (1000 * 60 * 60 * 24));
         setDaysLeft(totalDays);
       } else {
@@ -33,8 +33,7 @@ const ExamCountdown = () => {
     // Calculate on mount
     calculateDaysLeft();
 
-    // Set up an interval to recalculate once a day (optional, but good practice)
-    // This handles the case where a user leaves the page open overnight.
+    // Set up an interval to recalculate once a day.
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60); // Check every hour
 
     return () => clearInterval(interval);

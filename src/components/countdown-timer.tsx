@@ -72,13 +72,13 @@ const CountdownTimer = () => {
 
   const TimeBox = ({ value, unit }: { value: number; unit: string }) => (
     <div className="flex flex-col items-center justify-center rounded-lg bg-white/10 p-4">
-      <p className="text-4xl font-bold text-white">{String(value).padStart(2, '0')}</p>
-      <p className="text-xs text-white/70">{unit}</p>
+      <p className="text-5xl font-bold text-white">{String(value).padStart(2, '0')}</p>
+      <p className="text-sm text-white/70">{unit}</p>
     </div>
   );
 
   return (
-    <div className="w-full max-w-sm rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
+    <div className="w-full rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
       <div className="flex items-center justify-between text-white/80">
         <h2 className="font-semibold">Time Remaining Today</h2>
         <Clock className="h-5 w-5" />

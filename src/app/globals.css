@@ -190,4 +190,36 @@
     background-attachment: fixed;
     color: hsl(var(--foreground));
   }
+
+  .theme-cliffside {
+    --background: 205 100% 94%; /* Light sky blue */
+    --foreground: 25 25% 20%; /* Dark earthy brown */
+    --card: 40 40% 90% / 0.7; /* Semi-transparent sandy stone */
+    --card-foreground: 25 25% 20%;
+    --popover: 205 100% 92%;
+    --popover-foreground: 25 25% 20%;
+    --primary: 180 70% 50%; /* Vibrant turquoise ocean */
+    --primary-foreground: 180 90% 10%;
+    --secondary: 40 30% 85%;
+    --secondary-foreground: 25 25% 20%;
+    --muted: 40 30% 85%;
+    --muted-foreground: 30 20% 45%;
+    --accent: 180 70% 60%;
+    --accent-foreground: 180 90% 10%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 20% 70%;
+    --input: 40 40% 90% / 0.9;
+    --ring: 180 70% 55%;
+
+    background-color: hsl(var(--background));
+    background-image: 
+      /* Sun glare */
+      radial-gradient(ellipse at 50% 20%, hsla(40, 100%, 95%, 0.4), transparent 40%),
+      /* Distant clouds */
+      radial-gradient(ellipse at 10% 80%, hsla(200, 100%, 100%, 0.3), transparent 50%),
+      radial-gradient(ellipse at 90% 90%, hsla(210, 100%, 90%, 0.3), transparent 50%);
+    background-attachment: fixed;
+    color: hsl(var(--foreground));
+  }
 }

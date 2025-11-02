@@ -6,7 +6,7 @@ import MockTestCountdown from '@/components/mock-test-countdown';
 
 export default function DashboardPage() {
   return (
-    <div className="theme-sakura -m-8 flex-1 p-8">
+    <div className="theme-cliffside -m-8 flex-1 p-8">
       <div className="flex-1 space-y-8">
         <div className="text-center">
           <blockquote className="text-2xl font-semibold italic text-foreground/80">

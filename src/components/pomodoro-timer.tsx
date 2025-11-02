@@ -196,7 +196,7 @@ const PomodoroTimer = () => {
 
       <main className="my-10 flex flex-col items-center">
         <div className="relative flex size-56 items-center justify-center">
-          <CircularProgress value={progress} size={224} strokeWidth={8} />
+          <CircularProgress value={progress} size={224} strokeWidth={10} />
           <div className="absolute flex flex-col items-center">
             <span className="font-mono text-7xl font-bold tracking-tighter">
               {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}

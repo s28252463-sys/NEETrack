@@ -1,4 +1,3 @@
-
 'use client';
 import * as React from 'react';
 
@@ -28,7 +27,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       className={className}
     >
       <circle
-        className="text-black/5"
+        className="text-muted/20"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"
@@ -37,7 +36,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         cy={size / 2}
       />
       <circle
-        className="text-primary"
+        className="text-primary drop-shadow-[0_0_5px_hsl(var(--primary))]"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"
@@ -50,7 +49,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           strokeDashoffset: offset,
           transform: 'rotate(-90deg)',
           transformOrigin: '50% 50%',
-          transition: 'stroke-dashoffset 0.3s ease',
+          transition: 'stroke-dashoffset 0.5s ease-in-out',
         }}
       />
     </svg>

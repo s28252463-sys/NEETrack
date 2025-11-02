@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -20,11 +19,21 @@ interface TimeLeft {
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
   const [initialTotalDays, setInitialTotalDays] = useState<number>(0);
-  
+  const [isClient, setIsClient] = useState(false);
+
   // Memoize target time to avoid re-calculating on every render
   const targetTime = targetDate.getTime();
 
   useEffect(() => {
+    // This ensures the component only renders and runs logic on the client
+    setIsClient(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isClient) {
+      return; // Don't run the timer logic on the server
+    }
+
     const calculateTimeLeft = () => {
       const now = new Date().getTime();
       const difference = targetTime - now;
@@ -58,10 +67,10 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     }, 1000);
 
     return () => clearInterval(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetTime]); // Only re-run if the target time changes
+    // Only re-run if the target time or client status changes
+  }, [targetTime, isClient, initialTotalDays]); 
 
-  if (!timeLeft) {
+  if (!isClient || !timeLeft) {
     return (
         <div className="w-full max-w-sm rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
             <div className="flex items-center justify-between text-white/80">

@@ -11,6 +11,7 @@ import {
   Timer,
   ListChecks,
   ClipboardList,
+  LayoutDashboard,
 } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import {
@@ -67,7 +68,7 @@ function DashboardNav() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="/dashboard/pomodoro-timer"
+                href="/pomodoro-timer"
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 <Timer className="h-5 w-5" />
@@ -81,7 +82,7 @@ function DashboardNav() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="/dashboard/syllabus-tracker"
+                href="/syllabus-tracker"
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ListChecks className="h-5 w-5" />
@@ -95,7 +96,7 @@ function DashboardNav() {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="/dashboard/mock-tests"
+                href="/mock-tests"
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
                 <ClipboardList className="h-5 w-5" />
@@ -127,25 +128,26 @@ function DashboardNav() {
             >
               <Logo className="h-8 w-auto" />
             </Link>
-            <Link href="/dashboard" className="hover:text-foreground">
+            <Link href="/dashboard" className="hover:text-foreground flex items-center gap-4">
+              <LayoutDashboard className="h-5 w-5" />
               Dashboard
             </Link>
             <Link
-              href="/dashboard/pomodoro-timer"
+              href="/pomodoro-timer"
               className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
             >
               <Timer className="h-5 w-5" />
               Pomodoro Timer
             </Link>
             <Link
-              href="/dashboard/syllabus-tracker"
+              href="/syllabus-tracker"
               className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
             >
               <ListChecks className="h-5 w-5" />
               Syllabus Tracker
             </Link>
             <Link
-              href="/dashboard/mock-tests"
+              href="/mock-tests"
               className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
             >
               <ClipboardList className="h-5 w-5" />
@@ -181,9 +183,9 @@ function DashboardNav() {
   );
 }
 
-const protectedRoutes = ['/dashboard', '/dashboard/pomodoro-timer', '/dashboard/syllabus-tracker', '/dashboard/mock-tests'];
+const protectedRoutes = ['/dashboard', '/pomodoro-timer', '/syllabus-tracker', '/mock-tests'];
 
-export default function DashboardLayout({
+export default function AppLayout({
   children,
 }: {
   children: ReactNode;

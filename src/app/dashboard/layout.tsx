@@ -28,6 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { Logo } from '@/components/ui/logo';
 
 export default function DashboardLayout({
   children,
@@ -57,8 +58,7 @@ export default function DashboardLayout({
               href="/dashboard"
               className="flex items-center gap-2 text-lg font-semibold md:text-base"
             >
-              <BookOpen className="h-6 w-6" />
-              <span className="">NEETrack</span>
+              <Logo className="h-8 w-auto" />
             </Link>
             <Link
               href="/dashboard"
@@ -127,8 +127,7 @@ export default function DashboardLayout({
                 href="/dashboard"
                 className="flex items-center gap-2 text-lg font-semibold"
               >
-                <BookOpen className="h-6 w-6" />
-                <span className="">NEETrack</span>
+                <Logo className="h-8 w-auto" />
               </Link>
               <Link href="/dashboard" className="hover:text-foreground">
                 Dashboard

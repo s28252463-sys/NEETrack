@@ -12,7 +12,7 @@ import {
 } from 'firebase/auth';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
-import { BookOpen } from 'lucide-react';
+import { Logo } from '@/components/ui/logo';
 import './login.css';
 
 const formSchema = z.object({
@@ -79,9 +79,8 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background">
-        <div className="flex items-center gap-2 text-3xl font-semibold text-white mb-16">
-            <BookOpen className="h-8 w-8" />
-            <span className="">NEETrack</span>
+        <div className="mb-16">
+            <Logo className="h-20 w-auto" />
         </div>
       <div className="wrapper">
         <div className="card-switch">

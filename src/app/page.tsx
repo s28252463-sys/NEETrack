@@ -1,13 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import './loader.css';
 
+const LOADING_TIMEOUT = 5000; // 5 seconds
+
 export default function HomePage() {
   const router = useRouter();
   const { user, isUserLoading } = useUser();
+  const [didTimeout, setDidTimeout] = useState(false);
 
   useEffect(() => {
     if (!isUserLoading) {
@@ -18,6 +21,22 @@ export default function HomePage() {
       }
     }
   }, [user, isUserLoading, router]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isUserLoading) {
+        setDidTimeout(true);
+      }
+    }, LOADING_TIMEOUT);
+
+    return () => clearTimeout(timer);
+  }, [isUserLoading]);
+
+  useEffect(() => {
+    if (didTimeout) {
+      router.replace('/login');
+    }
+  }, [didTimeout, router]);
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">

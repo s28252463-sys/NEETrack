@@ -1,6 +1,7 @@
 'use client';
 
 import CountdownTimer from '@/components/countdown-timer';
+import ExamCountdown from '@/components/exam-countdown';
 
 export default function DashboardPage() {
   return (
@@ -11,7 +12,8 @@ export default function DashboardPage() {
         </blockquote>
         <p className="mt-2 text-sm text-muted-foreground">— Helen Hayes</p>
       </div>
-      <div className="flex justify-center">
+      <div className="flex flex-col md:flex-row items-center justify-center gap-8">
+        <ExamCountdown />
         <CountdownTimer />
       </div>
     </div>

@@ -18,39 +18,46 @@ interface TimeLeft {
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
-  const [totalInitialDays, setTotalInitialDays] = useState<number>(0);
+  const [initialTotalDays, setInitialTotalDays] = useState<number>(0);
+  
+  // Memoize target time to avoid re-calculating on every render
+  const targetTime = targetDate.getTime();
 
   useEffect(() => {
     const calculateTimeLeft = () => {
-      const difference = +targetDate - +new Date();
-      let newTimeLeft: TimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
+      const now = new Date().getTime();
+      const difference = targetTime - now;
 
       if (difference > 0) {
-        newTimeLeft = {
-          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
-          minutes: Math.floor((difference / 1000 / 60) % 60),
-          seconds: Math.floor((difference / 1000) % 60),
-        };
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+        return { days, hours, minutes, seconds };
       }
-      return newTimeLeft;
+      
+      return { days: 0, hours: 0, minutes: 0, seconds: 0 };
     };
 
-    // Set the initial total days only once on the client
-    const initialDifference = +targetDate - +new Date();
-    if(initialDifference > 0 && totalInitialDays === 0) {
-      setTotalInitialDays(Math.floor(initialDifference / (1000 * 60 * 60 * 24)));
+    // Set initial total days once on mount
+    if (initialTotalDays === 0) {
+      const now = new Date().getTime();
+      const initialDifference = targetTime - now;
+      if (initialDifference > 0) {
+        setInitialTotalDays(Math.floor(initialDifference / (1000 * 60 * 60 * 24)));
+      }
     }
-
-    // Set the initial value and then start the interval
+    
+    // Set initial value
     setTimeLeft(calculateTimeLeft());
+
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targetDate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetTime]); // Only re-run if the target time changes
 
   if (!timeLeft) {
     return (
@@ -71,12 +78,12 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     );
   }
 
-  const progressPercentage = totalInitialDays > 0 ? ((totalInitialDays - timeLeft.days) / totalInitialDays) * 100 : 0;
+  const progressPercentage = initialTotalDays > 0 ? ((initialTotalDays - timeLeft.days) / initialTotalDays) * 100 : 0;
   const targetDateFormatted = format(targetDate, 'MMMM d, yyyy');
 
   const TimeBox = ({ value, unit }: { value: number; unit: string }) => (
     <div className="flex flex-col items-center justify-center rounded-lg bg-white/10 p-3">
-      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-2xl font-bold text-white">{String(value).padStart(2, '0')}</p>
       <p className="text-xs text-white/70">{unit}</p>
     </div>
   );

@@ -4,7 +4,7 @@ import PomodoroTimer from '@/components/pomodoro-timer';
 
 export default function PomodoroTimerPage() {
   return (
-    <div className="flex justify-center items-start h-full">
+    <div className="dark -m-8 flex flex-1 justify-center items-start p-8" style={{ background: 'hsl(var(--background))' }}>
       <PomodoroTimer />
     </div>
   );

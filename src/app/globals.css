@@ -53,6 +53,12 @@
     --border: 240 5% 25%;
     --input: 217.2 32.6% 17.5%;
     --ring: 260 100% 75%;
+    background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(circle at top left, hsla(260, 100%, 70%, 0.1), transparent 30%),
+      radial-gradient(circle at bottom right, hsla(224, 71%, 40%, 0.2), transparent 40%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='100' y1='33' x2='100' y2='-3'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='100' y1='135' x2='100' y2='97'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/defs%3E%3Cg fill='%230d1a49' fill-opacity='0.08'%3E%3Crect x='100' width='100' height='100'/%3E%3Crect y='100' width='100' height='100'/%3E%3C/g%3E%3Cg fill-opacity='0.08'%3E%3Cpolygon fill='url(%23a)' points='100 30 0 0 200 0'/%3E%3Cpolygon fill='url(%23b)' points='100 100 0 130 0 100 200 100 200 130'/%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
 }
 
@@ -64,35 +70,31 @@
     @apply bg-background text-foreground;
   }
   
-  .dark body {
+  .light {
+    --background: 40 100% 97%; /* Light cream */
+    --foreground: 20 10% 25%; /* Dark gray */
+    --card: 30 50% 92%; /* Slightly darker cream */
+    --card-foreground: 20 10% 25%;
+    --popover: 40 100% 97%;
+    --popover-foreground: 20 10% 25%;
+    --primary: 10 80% 65%; /* Soft pink/peach */
+    --primary-foreground: 20 10% 10%;
+    --secondary: 30 50% 92%;
+    --secondary-foreground: 20 10% 25%;
+    --muted: 30 30% 90%;
+    --muted-foreground: 20 10% 45%;
+    --accent: 10 80% 65%;
+    --accent-foreground: 20 10% 10%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 30% 85%;
+    --input: 30 30% 90%;
+    --ring: 10 80% 65%;
+
     background-color: hsl(var(--background));
     background-image: 
-      radial-gradient(circle at top left, hsla(260, 100%, 70%, 0.1), transparent 30%),
-      radial-gradient(circle at bottom right, hsla(224, 71%, 40%, 0.2), transparent 40%),
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='100' y1='33' x2='100' y2='-3'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3ClinearGradient id='b' gradientUnits='userSpaceOnUse' x1='100' y1='135' x2='100' y2='97'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='1'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='%230d1a49' fill-opacity='0.08'%3E%3Crect x='100' width='100' height='100'/%3E%3Crect y='100' width='100' height='100'/%3E%3C/g%3E%3Cg fill-opacity='0.08'%3E%3Cpolygon fill='url(%23a)' points='100 30 0 0 200 0'/%3E%3Cpolygon fill='url(%23b)' points='100 100 0 130 0 100 200 100 200 130'/%3E%3C/g%3E%3C/svg%3E");
+      radial-gradient(circle at top right, hsla(10, 80%, 75%, 0.2), transparent 40%),
+      radial-gradient(circle at bottom left, hsla(30, 50%, 85%, 0.3), transparent 50%);
     background-attachment: fixed;
-  }
-
-  .light body {
-    background-image: none;
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 260 100% 60%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 260 100% 65%;
   }
 }

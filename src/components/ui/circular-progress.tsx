@@ -28,7 +28,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       className={className}
     >
       <circle
-        className="text-white/10"
+        className="text-black/5"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"
@@ -37,7 +37,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
         cy={size / 2}
       />
       <circle
-        className="text-cyan-400"
+        className="text-primary"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"

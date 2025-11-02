@@ -50,8 +50,8 @@ export default function DashboardLayout({
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col">
-      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background/50 px-4 backdrop-blur-sm md:px-6 z-10">
+    <div className="flex min-h-screen w-full flex-col bg-background">
+      <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background/80 px-4 backdrop-blur-sm md:px-6 z-10">
         <TooltipProvider>
           <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
             <Link

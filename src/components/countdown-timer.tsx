@@ -53,16 +53,16 @@ const CountdownTimer = () => {
   if (!isClient) {
     // Show a loading state or placeholder on the server
     return (
-        <div className="w-full max-w-sm rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
-            <div className="flex items-center justify-between text-white/80">
+        <div className="w-full max-w-lg rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+            <div className="flex items-center justify-between text-card-foreground/80">
                 <h2 className="font-semibold">Time Remaining Today</h2>
                 <Clock className="h-5 w-5" />
             </div>
             <div className="my-6 text-center">
-                <p className="text-4xl md:text-5xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(74,222,222,0.5)]">
+                <p className="text-4xl md:text-5xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
                   --:--:--
                 </p>
-                <p className="text-sm text-white/70">
+                <p className="text-sm text-muted-foreground">
                   Loading...
                 </p>
             </div>
@@ -71,15 +71,15 @@ const CountdownTimer = () => {
   }
 
   const TimeBox = ({ value, unit }: { value: number; unit: string }) => (
-    <div className="flex flex-col items-center justify-center rounded-lg bg-white/10 p-4">
-      <p className="text-5xl font-bold text-white">{String(value).padStart(2, '0')}</p>
-      <p className="text-sm text-white/70">{unit}</p>
+    <div className="flex flex-col items-center justify-center rounded-lg bg-black/5 p-4">
+      <p className="text-5xl font-bold text-foreground">{String(value).padStart(2, '0')}</p>
+      <p className="text-sm text-muted-foreground">{unit}</p>
     </div>
   );
 
   return (
-    <div className="w-full rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
-      <div className="flex items-center justify-between text-white/80">
+    <div className="w-full max-w-2xl rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+      <div className="flex items-center justify-between text-card-foreground/80">
         <h2 className="font-semibold">Time Remaining Today</h2>
         <Clock className="h-5 w-5" />
       </div>

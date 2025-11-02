@@ -178,7 +178,7 @@ export default function MockTestTracker() {
 
   if (isUserLoading || isLoadingTests) {
     return (
-      <Card className="w-full max-w-4xl bg-card/50 backdrop-blur-sm">
+      <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm">
         <CardHeader>
           <Skeleton className="h-8 w-1/2" />
           <Skeleton className="h-4 w-1/4 mt-2" />
@@ -192,7 +192,7 @@ export default function MockTestTracker() {
   }
 
   return (
-    <Card className="w-full max-w-4xl bg-card/50 backdrop-blur-sm">
+    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle className="flex items-center gap-2">

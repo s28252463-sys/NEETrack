@@ -232,7 +232,7 @@ const SyllabusTracker = () => {
   
   if(isLoading) {
     return (
-        <Card className="w-full max-w-4xl bg-card/50 backdrop-blur-sm">
+        <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm">
             <CardHeader>
                 <Skeleton className="h-8 w-1/2" />
                 <Skeleton className="h-4 w-1/4 mt-2"/>
@@ -249,7 +249,7 @@ const SyllabusTracker = () => {
   const overallProgress = getOverallProgress();
 
   return (
-    <Card className="w-full max-w-4xl bg-card/50 backdrop-blur-sm">
+    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Book className="h-6 w-6" />
@@ -282,7 +282,7 @@ const SyllabusTracker = () => {
               <AccordionContent className="pl-4">
                 <div className="space-y-3">
                   {subject.chapters.map((chapter) => (
-                    <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-white/5 transition-colors">
+                    <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-black/5 transition-colors">
                       <Checkbox
                         id={`${subject.id}-${chapter.id}`}
                         checked={chapter.completed}

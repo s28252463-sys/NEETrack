@@ -107,8 +107,8 @@ const PomodoroTimer = () => {
       variant="ghost"
       onClick={() => setMode(targetMode)}
       className={cn(
-        'flex h-auto flex-col items-center justify-center gap-1 rounded-2xl p-3 text-sm font-normal text-white/70 transition-all',
-        mode === targetMode ? 'bg-cyan-400/20 text-cyan-300' : 'bg-white/10'
+        'flex h-auto flex-col items-center justify-center gap-1 rounded-2xl p-3 text-sm font-normal text-foreground/70 transition-all',
+        mode === targetMode ? 'bg-primary/20 text-primary' : 'bg-black/5'
       )}
     >
       {children}
@@ -117,24 +117,24 @@ const PomodoroTimer = () => {
   );
 
   return (
-    <div className="w-full max-w-sm rounded-3xl bg-gradient-to-br from-[#2a3a6b] to-[#1e2a53] p-6 text-white shadow-2xl">
+    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-6 text-foreground shadow-lg backdrop-blur-lg">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-cyan-400/20 p-2">
-            <BrainCircuit className="size-6 text-cyan-300" />
+          <div className="rounded-lg bg-primary/20 p-2">
+            <BrainCircuit className="size-6 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">{timerModes[mode].label}</h1>
-            <p className="text-sm text-white/60">Session {mode === 'focus' ? sessionCount + 1 : sessionCount}</p>
+            <p className="text-sm text-muted-foreground">Session {mode === 'focus' ? sessionCount + 1 : sessionCount}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-white/70 hover:bg-white/20 hover:text-white">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-black/10 hover:text-foreground">
             <Volume2 className="size-5" />
           </Button>
            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white/70 hover:bg-white/20 hover:text-white">
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-black/10 hover:text-foreground">
                 <Settings className="size-5" />
               </Button>
             </DialogTrigger>
@@ -201,7 +201,7 @@ const PomodoroTimer = () => {
             <span className="font-mono text-7xl font-bold tracking-tighter">
               {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
             </span>
-            <p className="text-xs text-white/60">
+            <p className="text-xs text-muted-foreground">
               {Math.floor(progress)}% Complete
             </p>
           </div>
@@ -211,11 +211,11 @@ const PomodoroTimer = () => {
       <div className="grid grid-cols-2 gap-4">
         <Button
           onClick={toggleTimer}
-          className="h-16 rounded-2xl bg-cyan-400 text-lg font-bold text-slate-900 shadow-lg transition-all hover:bg-cyan-300"
+          className="h-16 rounded-2xl bg-primary text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90"
         >
           {isActive ? <Pause className="size-8" /> : <Play className="size-8" />}
         </Button>
-        <Button onClick={resetTimer} className="h-16 rounded-2xl bg-white/10 text-white/70 shadow-lg transition-all hover:bg-white/20">
+        <Button onClick={resetTimer} className="h-16 rounded-2xl bg-black/5 text-muted-foreground shadow-lg transition-all hover:bg-black/10">
           <RotateCw className="size-8" />
         </Button>
       </div>
@@ -233,13 +233,13 @@ const PomodoroTimer = () => {
       </div>
       
       <footer className="mt-6 flex items-center justify-center gap-2">
-          <span className="text-sm text-white/60">Focus Sessions:</span>
+          <span className="text-sm text-muted-foreground">Focus Sessions:</span>
           <div className="flex gap-1.5">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className={cn("size-2 rounded-full", i < sessionCount % 4 ? "bg-cyan-300" : "bg-white/20")}></div>
+              <div key={i} className={cn("size-2 rounded-full", i < sessionCount % 4 ? "bg-primary" : "bg-black/10")}></div>
             ))}
           </div>
-          <span className="ml-2 text-sm font-semibold text-white/80">{sessionCount}</span>
+          <span className="ml-2 text-sm font-semibold text-foreground/80">{sessionCount}</span>
       </footer>
     </div>
   );

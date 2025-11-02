@@ -61,8 +61,8 @@ const ExamCountdown = () => {
 
 
   return (
-    <div className="w-full max-w-sm rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
-      <div className="flex items-center justify-between text-white/80">
+    <div className="w-full max-w-sm rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+      <div className="flex items-center justify-between text-card-foreground/80">
         <h2 className="font-semibold">Days Until Exam</h2>
         <Calendar className="h-5 w-5" />
       </div>
@@ -71,15 +71,15 @@ const ExamCountdown = () => {
             <CircularProgress value={progress} size={224} strokeWidth={10} />
             <div className="absolute flex flex-col items-center">
               {daysLeft !== null ? (
-                  <p className="text-6xl md:text-7xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(74,222,222,0.5)]">
+                  <p className="text-6xl md:text-7xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
                       {daysLeft}
                   </p>
               ) : (
-                  <p className="text-6xl md:text-7xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(74,222,222,0.5)]">
+                  <p className="text-6xl md:text-7xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
                       --
                   </p>
               )}
-              <p className="text-sm text-white/70">NEET UG 2026</p>
+              <p className="text-sm text-muted-foreground">NEET UG 2026</p>
             </div>
          </div>
       </div>

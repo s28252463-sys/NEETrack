@@ -72,15 +72,15 @@ const MockTestCountdown = () => {
   };
 
   return (
-    <div className="w-full max-w-sm rounded-2xl bg-white/10 p-6 shadow-2xl backdrop-blur-lg">
-      <div className="flex items-center justify-between text-white/80">
+    <div className="w-full max-w-sm rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+      <div className="flex items-center justify-between text-card-foreground/80">
         <h2 className="font-semibold">Next Mock Test</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="text-white/70 hover:bg-white/20 hover:text-white -mr-2"
+              className="text-card-foreground/70 hover:bg-black/10 hover:text-foreground -mr-2"
             >
               <Settings className="h-5 w-5" />
             </Button>
@@ -109,10 +109,10 @@ const MockTestCountdown = () => {
       <div className="my-6 text-center">
         {daysLeft !== null ? (
           <>
-            <p className="text-6xl md:text-7xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(74,222,222,0.5)]">
+            <p className="text-6xl md:text-7xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
               {daysLeft}
             </p>
-            <p className="text-sm text-white/70">
+            <p className="text-sm text-muted-foreground">
               Days Remaining
             </p>
           </>
@@ -121,7 +121,7 @@ const MockTestCountdown = () => {
             <p className="text-muted-foreground">No date set.</p>
             <Button
               variant="link"
-              className="text-cyan-300"
+              className="text-primary"
               onClick={() => setIsDialogOpen(true)}
             >
               Set Mock Test Date
@@ -129,7 +129,7 @@ const MockTestCountdown = () => {
           </div>
         )}
       </div>
-       <div className="flex items-center justify-center gap-2 text-sm text-white/60">
+       <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
             <CalendarIcon className="h-4 w-4" />
             <span>{targetDate ? format(targetDate, 'PPP') : 'Not Set'}</span>
         </div>

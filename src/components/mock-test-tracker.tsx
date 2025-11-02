@@ -178,7 +178,7 @@ export default function MockTestTracker() {
 
   if (isUserLoading || isLoadingTests) {
     return (
-      <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm">
+      <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-0 shadow-xl shadow-black/20">
         <CardHeader>
           <Skeleton className="h-8 w-1/2" />
           <Skeleton className="h-4 w-1/4 mt-2" />
@@ -192,14 +192,14 @@ export default function MockTestTracker() {
   }
 
   return (
-    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm">
+    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-0 shadow-xl shadow-black/20">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
-          <CardTitle className="flex items-center gap-2">
-            <ClipboardList className="h-6 w-6" />
+          <CardTitle className="flex items-center gap-2 text-2xl font-bold tracking-wider">
+            <ClipboardList className="h-6 w-6 text-primary" />
             Mock Test Tracker
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-muted-foreground">
             Log and analyze your mock test performance.
           </CardDescription>
         </div>
@@ -292,21 +292,27 @@ export default function MockTestTracker() {
             <ResponsiveContainer width="100%" height="100%">
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
                 <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.5)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.2)" />
                     <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                     <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
                     <ChartTooltip
                       content={
                         <ChartTooltipContent
                           labelClassName="font-bold"
-                          className="bg-card/80 backdrop-blur-sm"
+                          className="bg-card/80 backdrop-blur-sm border-border/50"
                         />
                       }
                     />
-                    <Line type="monotone" dataKey="totalScore" stroke="var(--color-totalScore)" strokeWidth={2} dot={{ r: 4, fill: "var(--color-totalScore)" }} />
-                    <Line type="monotone" dataKey="physics" stroke="var(--color-physics)" strokeWidth={1.5} strokeDasharray="5 5"/>
-                    <Line type="monotone" dataKey="chemistry" stroke="var(--color-chemistry)" strokeWidth={1.5} strokeDasharray="5 5"/>
-                    <Line type="monotone" dataKey="biology" stroke="var(--color-biology)" strokeWidth={1.5} strokeDasharray="5 5"/>
+                    <defs>
+                      <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
+                      </linearGradient>
+                    </defs>
+                    <Line type="monotone" dataKey="totalScore" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--primary))" }} />
+                    <Line type="monotone" dataKey="physics" stroke="hsl(var(--chart-1))" strokeWidth={1.5} strokeDasharray="5 5" dot={false}/>
+                    <Line type="monotone" dataKey="chemistry" stroke="hsl(var(--chart-2))" strokeWidth={1.5} strokeDasharray="5 5" dot={false}/>
+                    <Line type="monotone" dataKey="biology" stroke="hsl(var(--chart-3))" strokeWidth={1.5} strokeDasharray="5 5" dot={false}/>
                 </LineChart>
               </ChartContainer>
             </ResponsiveContainer>
@@ -314,22 +320,22 @@ export default function MockTestTracker() {
         </div>
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="border-border/20">
               <TableHead>Test Name</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Physics</TableHead>
               <TableHead className="text-right">Chemistry</TableHead>
               <TableHead className="text-right">Biology</TableHead>
-              <TableHead className="text-right font-bold">Total</TableHead>
+              <TableHead className="text-right font-bold text-primary">Total</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sortedTests.length > 0 ? (
               sortedTests.map((test) => (
-                <TableRow key={test.id}>
+                <TableRow key={test.id} className="border-border/10">
                   <TableCell className="font-medium">{test.testName}</TableCell>
-                  <TableCell>{format(test.date, 'MMM d, yyyy')}</TableCell>
+                  <TableCell className="text-muted-foreground">{format(test.date, 'MMM d, yyyy')}</TableCell>
                   <TableCell className="text-right">
                     {test.physicsScore}
                   </TableCell>
@@ -339,14 +345,14 @@ export default function MockTestTracker() {
                   <TableCell className="text-right">
                     {test.biologyScore}
                   </TableCell>
-                  <TableCell className="text-right font-bold">
+                  <TableCell className="text-right font-bold text-primary">
                     {test.totalScore}
                   </TableCell>
                   <TableCell className="text-right">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button variant="ghost" size="icon">
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="h-4 w-4 text-destructive/70 hover:text-destructive" />
                         </Button>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -369,7 +375,7 @@ export default function MockTestTracker() {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="text-center h-24">
+                <TableCell colSpan={7} className="text-center h-24 text-muted-foreground">
                   No mock tests logged yet.
                 </TableCell>
               </TableRow>

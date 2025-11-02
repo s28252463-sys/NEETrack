@@ -3,7 +3,6 @@
 import { useUser } from '@/firebase';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, type ReactNode } from 'react';
-import { Logo } from '@/components/ui/logo'; // Assuming you might want a better loading screen
 import '@/app/loader.css';
 
 interface AuthProviderProps {
@@ -25,10 +24,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [user, isUserLoading, router, pathname]);
 
   // While the user's authentication state is loading,
-  // return null to prevent rendering protected content prematurely.
+  // show a full-page loading indicator to prevent rendering protected content.
   if (isUserLoading) {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">
+        <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-background">
         <div className="loader">
           <div className="truckWrapper">
             <div className="truckBody">
@@ -88,11 +87,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     );
   }
 
-  // If the user is not logged in and on a protected route, we also return null
-  // while the router is handling the redirection to avoid a flash of content.
+  // If there's no user and we are on a protected route, return null
+  // while the router is handling the redirection.
   if (!user && !unauthenticatedRoutes.includes(pathname)) {
     return null;
   }
-
+  
+  // If the user is authenticated, or if we are on a public route, render the children.
   return <>{children}</>;
 }

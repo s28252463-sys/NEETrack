@@ -1,29 +1,11 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useUser } from '@/firebase';
 import './loader.css';
 
 export default function HomePage() {
-  const router = useRouter();
-  const { user, isUserLoading } = useUser();
-
-  useEffect(() => {
-    // Wait until the authentication check is complete
-    if (!isUserLoading) {
-      if (user) {
-        // If user is logged in, redirect to the dashboard
-        router.replace('/dashboard');
-      } else {
-        // If no user is logged in, redirect to the login page
-        router.replace('/login');
-      }
-    }
-    // This effect should run whenever the user's loading status or the user object changes.
-  }, [user, isUserLoading, router]);
-
-  // Display a loading indicator while checking for authentication.
+  // This component now only displays the loading indicator.
+  // The redirection logic is handled by the AuthProvider,
+  // which is a more robust pattern for protected routes.
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">
       <div className="loader">

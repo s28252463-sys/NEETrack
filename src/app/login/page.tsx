@@ -6,14 +6,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAuth } from '@/firebase';
 import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  FirebaseError,
-} from 'firebase/auth';
-import { useRouter } from 'next/navigation';
+  initiateEmailSignUp,
+  initiateEmailSignIn,
+} from '@/firebase/non-blocking-login';
+import { FirebaseError } from 'firebase/auth';
 import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/ui/logo';
 import './login.css';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -28,8 +28,8 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const auth = useAuth();
-  const router = useRouter();
   const { toast } = useToast();
+  const router = useRouter();
 
   const loginForm = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -41,12 +41,11 @@ export default function LoginPage() {
     defaultValues: { email: '', password: '' },
   });
 
-  const handleLogin = async (values: FormValues) => {
+  const handleLogin = (values: FormValues) => {
     setIsLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, values.email, values.password);
-      toast({ title: 'Signed in successfully!' });
-      router.push('/dashboard');
+      initiateEmailSignIn(auth, values.email, values.password);
+      // The AuthProvider will handle the redirect on successful login.
     } catch (error) {
       const firebaseError = error as FirebaseError;
       toast({
@@ -54,17 +53,15 @@ export default function LoginPage() {
         title: 'Authentication failed',
         description: firebaseError.code.replace('auth/', '').replace(/-/g, ' '),
       });
-    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSignUp = async (values: FormValues) => {
+  const handleSignUp = (values: FormValues) => {
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, values.email, values.password);
-      toast({ title: 'Account created successfully!' });
-      router.push('/dashboard');
+      initiateEmailSignUp(auth, values.email, values.password);
+      // The AuthProvider will handle the redirect on successful sign-up.
     } catch (error) {
       const firebaseError = error as FirebaseError;
       toast({
@@ -72,7 +69,6 @@ export default function LoginPage() {
         title: 'Sign-up failed',
         description: firebaseError.code.replace('auth/', '').replace(/-/g, ' '),
       });
-    } finally {
       setIsLoading(false);
     }
   };

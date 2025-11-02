@@ -1,5 +1,6 @@
 
 
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -112,12 +113,8 @@
   transform-style: preserve-3d;
 }
 
-.toggle:checked ~ .flip-card__inner {
+.flip-card__inner.is-flipped {
   transform: rotateY(180deg);
-}
-
-.toggle:checked ~ .flip-card__front {
-  box-shadow: none;
 }
 
 .flip-card__front, .flip-card__back {

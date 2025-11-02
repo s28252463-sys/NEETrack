@@ -142,7 +142,7 @@ export default function LoginPage() {
             <span className="card-side"></span>
           </label>
         </div>
-        <div className="flip-card__inner">
+        <div className={`flip-card__inner ${isFlipped ? 'is-flipped' : ''}`}>
           <div className="flip-card__front">
             <div className="title">Log in</div>
             <form

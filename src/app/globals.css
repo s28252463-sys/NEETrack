@@ -94,6 +94,35 @@
     background-attachment: fixed;
     color: hsl(var(--foreground));
   }
+
+  .theme-racer {
+    --background: 220 10% 12%; /* Dark charcoal */
+    --foreground: 0 0% 98%; /* White */
+    --card: 220 10% 18%; /* Slightly lighter charcoal */
+    --card-foreground: 0 0% 95%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 0 90% 55%; /* Vibrant Red */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 10% 28%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 220 10% 28%;
+    --muted-foreground: 220 10% 65%;
+    --accent: 0 90% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 80% 55%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 0 80% 45%;
+    --input: 220 10% 22%;
+    --ring: 0 90% 60%;
+
+    background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(ellipse at 90% 90%, hsla(0, 90%, 55%, 0.15), transparent 50%),
+      radial-gradient(ellipse at 10% 20%, hsla(0, 0%, 50%, 0.1), transparent 50%);
+    background-attachment: fixed;
+    color: hsl(var(--foreground));
+  }
 }
 
 @layer base {

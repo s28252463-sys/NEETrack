@@ -24,7 +24,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [user, isUserLoading, router, pathname]);
 
   // While the user's authentication state is loading,
-  // show a full-page loading indicator to prevent rendering protected content.
+  // return null to prevent rendering protected content prematurely.
   if (isUserLoading) {
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-background">
@@ -54,7 +54,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 height="24"
                 viewBox="0 0 24 24"
                 fill="none"
-                xmlns="http://www.w3.org/2000/svg"
+                xmlns="http://wwww.w3.org/2000/svg"
               >
                 <circle cx="12" cy="12" r="10" fill="#282828"></circle>
                 <circle cx="12" cy="12" r="4" fill="white"></circle>
@@ -88,7 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   // If there's no user and we are on a protected route, return null
-  // while the router is handling the redirection.
+  // while the router is handling the redirection. This prevents a flash of content.
   if (!user && !unauthenticatedRoutes.includes(pathname)) {
     return null;
   }

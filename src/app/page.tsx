@@ -1,13 +1,33 @@
 'use client';
 
+import { useEffect } from 'react';
+import { useUser } from '@/firebase';
+import { useRouter } from 'next/navigation';
 import './loader.css';
 
 export default function HomePage() {
-  // This component now only displays the loading indicator.
-  // The redirection logic is handled by the AuthProvider,
-  // which is a more robust pattern for protected routes.
+  const { user, isUserLoading } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Don't do anything until the auth state is confirmed
+    if (isUserLoading) {
+      return;
+    }
+
+    if (user) {
+      // If user is authenticated, redirect to the dashboard
+      router.replace('/dashboard');
+    } else {
+      // If user is not authenticated, redirect to the login page
+      router.replace('/login');
+    }
+  }, [user, isUserLoading, router]);
+
+  // While checking the auth state, show a loading indicator.
+  // This is the only thing this page will render.
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">
+    <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-background">
       <div className="loader">
         <div className="truckWrapper">
           <div className="truckBody">
@@ -23,7 +43,7 @@ export default function HomePage() {
                 fill="#282828"
               ></path>
               <path
-                d="M91.56,12.89h-76.78a4,4,0,0,0-4,4V29.11H99.19V21.11A8.22,8.22,0,0,0,91.56,12.89Z"
+                d="M91.56,12.89h-76.78a4,4.0,0,0,0-4,4V29.11H99.19V21.11A8.22,8.22,0,0,0,91.56,12.89Z"
                 fill="#282828"
               ></path>
             </svg>

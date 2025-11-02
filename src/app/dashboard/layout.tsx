@@ -181,7 +181,7 @@ function DashboardNav() {
   );
 }
 
-const unauthenticatedRoutes = ['/login'];
+const protectedRoutes = ['/dashboard', '/dashboard/pomodoro-timer', '/dashboard/syllabus-tracker', '/dashboard/mock-tests'];
 
 export default function DashboardLayout({
   children,
@@ -193,11 +193,11 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    if (isUserLoading) return; // Wait until the user status is confirmed.
+    if (isUserLoading) {
+      return; // Do nothing while loading
+    }
 
-    // If there's no user and the current route is not a public/unauthenticated route,
-    // redirect to the login page.
-    if (!user && !unauthenticatedRoutes.includes(pathname)) {
+    if (!user && protectedRoutes.includes(pathname)) {
       router.replace('/login');
     }
   }, [user, isUserLoading, router, pathname]);
@@ -267,12 +267,12 @@ export default function DashboardLayout({
 
   // If loading is complete but there is no user, and we are on a protected route,
   // render nothing while the redirect happens.
-  if (!user && !unauthenticatedRoutes.includes(pathname)) {
+  if (!user && protectedRoutes.includes(pathname)) {
     return null;
   }
   
-  // If the user is authenticated or on a public route that should show the layout
-  if (user && !unauthenticatedRoutes.includes(pathname)) {
+  // If the user is authenticated, show the dashboard layout.
+  if (user) {
     return (
         <PomodoroProvider>
           <div className="theme-cliffside flex min-h-screen w-full flex-col bg-background">
@@ -285,6 +285,6 @@ export default function DashboardLayout({
     );
   }
 
-  // Fallback for public routes that don't need the full dashboard layout
+  // Fallback for public routes that don't need the dashboard layout (e.g., /login)
   return <>{children}</>;
 }

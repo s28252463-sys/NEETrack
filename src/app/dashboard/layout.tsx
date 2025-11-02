@@ -53,13 +53,13 @@ function DashboardNav() {
       <TooltipProvider>
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link
-            href="/dashboard"
+            href="/"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <Logo className="h-8 w-auto" />
           </Link>
           <Link
-            href="/dashboard"
+            href="/"
             className="text-foreground transition-colors hover:text-foreground"
           >
             Dashboard
@@ -122,12 +122,12 @@ function DashboardNav() {
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="/dashboard"
+              href="/"
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Logo className="h-8 w-auto" />
             </Link>
-            <Link href="/dashboard" className="hover:text-foreground">
+            <Link href="/" className="hover:text-foreground">
               Dashboard
             </Link>
             <Link
@@ -193,12 +193,16 @@ export default function DashboardLayout({
   const pathname = usePathname();
 
   useEffect(() => {
-    if (isUserLoading) return;
+    if (isUserLoading) return; // Wait until the user status is confirmed.
+
+    // If there's no user and the current route is not a public/unauthenticated route,
+    // redirect to the login page.
     if (!user && !unauthenticatedRoutes.includes(pathname)) {
       router.replace('/login');
     }
   }, [user, isUserLoading, router, pathname]);
 
+  // While the user status is being checked, display a global loading indicator.
   if (isUserLoading) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-background">
@@ -261,10 +265,13 @@ export default function DashboardLayout({
     );
   }
 
+  // If loading is complete but there is no user, and we are on a protected route,
+  // render nothing while the redirect happens.
   if (!user && !unauthenticatedRoutes.includes(pathname)) {
     return null;
   }
   
+  // If the user is authenticated, render the full dashboard layout.
   return (
       <PomodoroProvider>
         <div className="theme-cliffside flex min-h-screen w-full flex-col bg-background">

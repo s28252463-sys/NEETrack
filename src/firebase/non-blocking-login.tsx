@@ -4,26 +4,44 @@ import {
   signInAnonymously,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  // Assume getAuth and app are initialized elsewhere
+  FirebaseError,
 } from 'firebase/auth';
+import { toast } from '@/hooks/use-toast';
+
+const handleAuthError = (error: unknown) => {
+  const firebaseError = error as FirebaseError;
+  let description = firebaseError.message; // Default message
+
+  // Provide more user-friendly messages for common errors
+  if (firebaseError.code === 'auth/invalid-credential') {
+    description = 'Incorrect email or password. Please try again.';
+  } else if (firebaseError.code === 'auth/email-already-in-use') {
+    description = 'An account with this email already exists.';
+  } else if (firebaseError.code === 'auth/weak-password') {
+    description = 'The password is too weak. Please use at least 6 characters.';
+  } else {
+    // Generic message for other errors
+    description = firebaseError.code.replace('auth/', '').replace(/-/g, ' ');
+  }
+
+  toast({
+    variant: 'destructive',
+    title: 'Authentication Failed',
+    description: description,
+  });
+};
 
 /** Initiate anonymous sign-in (non-blocking). */
-export function initiateAnonymousSignIn(authInstance: Auth): void {
-  // CRITICAL: Call signInAnonymously directly. Do NOT use 'await signInAnonymously(...)'.
-  signInAnonymously(authInstance);
-  // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
+export function initiateAnonymousSignIn(authInstance: Auth): Promise<void> {
+  return signInAnonymously(authInstance).catch(handleAuthError);
 }
 
 /** Initiate email/password sign-up (non-blocking). */
-export function initiateEmailSignUp(authInstance: Auth, email: string, password: string): void {
-  // CRITICAL: Call createUserWithEmailAndPassword directly. Do NOT use 'await createUserWithEmailAndPassword(...)'.
-  createUserWithEmailAndPassword(authInstance, email, password);
-  // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
+export function initiateEmailSignUp(authInstance: Auth, email: string, password: string): Promise<void> {
+  return createUserWithEmailAndPassword(authInstance, email, password).catch(handleAuthError);
 }
 
 /** Initiate email/password sign-in (non-blocking). */
-export function initiateEmailSignIn(authInstance: Auth, email: string, password: string): void {
-  // CRITICAL: Call signInWithEmailAndPassword directly. Do NOT use 'await signInWithEmailAndPassword(...)'.
-  signInWithEmailAndPassword(authInstance, email, password);
-  // Code continues immediately. Auth state change is handled by onAuthStateChanged listener.
+export function initiateEmailSignIn(authInstance: Auth, email: string, password: string): Promise<void> {
+  return signInWithEmailAndPassword(authInstance, email, password).catch(handleAuthError);
 }

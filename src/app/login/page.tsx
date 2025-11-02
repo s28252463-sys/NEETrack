@@ -9,11 +9,8 @@ import {
   initiateEmailSignUp,
   initiateEmailSignIn,
 } from '@/firebase/non-blocking-login';
-import { FirebaseError } from 'firebase/auth';
-import { useToast } from '@/hooks/use-toast';
 import { Logo } from '@/components/ui/logo';
 import './login.css';
-import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Invalid email address.' }),
@@ -28,8 +25,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const auth = useAuth();
-  const { toast } = useToast();
-  const router = useRouter();
 
   const loginForm = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -43,34 +38,18 @@ export default function LoginPage() {
 
   const handleLogin = (values: FormValues) => {
     setIsLoading(true);
-    try {
-      initiateEmailSignIn(auth, values.email, values.password);
-      // The AuthProvider will handle the redirect on successful login.
-    } catch (error) {
-      const firebaseError = error as FirebaseError;
-      toast({
-        variant: 'destructive',
-        title: 'Authentication failed',
-        description: firebaseError.code.replace('auth/', '').replace(/-/g, ' '),
-      });
-      setIsLoading(false);
-    }
+    initiateEmailSignIn(auth, values.email, values.password).finally(() => {
+        setIsLoading(false);
+    });
+    // The AuthProvider will handle the redirect on successful login.
   };
 
   const handleSignUp = (values: FormValues) => {
     setIsLoading(true);
-    try {
-      initiateEmailSignUp(auth, values.email, values.password);
-      // The AuthProvider will handle the redirect on successful sign-up.
-    } catch (error) {
-      const firebaseError = error as FirebaseError;
-      toast({
-        variant: 'destructive',
-        title: 'Sign-up failed',
-        description: firebaseError.code.replace('auth/', '').replace(/-/g, ' '),
-      });
-      setIsLoading(false);
-    }
+    initiateEmailSignUp(auth, values.email, values.password).finally(() => {
+        setIsLoading(false);
+    });
+    // The AuthProvider will handle the redirect on successful sign-up.
   };
 
   return (

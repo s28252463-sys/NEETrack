@@ -53,13 +53,13 @@ function DashboardNav() {
       <TooltipProvider>
         <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
           <Link
-            href="/"
+            href="/dashboard"
             className="flex items-center gap-2 text-lg font-semibold md:text-base"
           >
             <Logo className="h-8 w-auto" />
           </Link>
           <Link
-            href="/"
+            href="/dashboard"
             className="text-foreground transition-colors hover:text-foreground"
           >
             Dashboard
@@ -122,12 +122,12 @@ function DashboardNav() {
         <SheetContent side="left">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
-              href="/"
+              href="/dashboard"
               className="flex items-center gap-2 text-lg font-semibold"
             >
               <Logo className="h-8 w-auto" />
             </Link>
-            <Link href="/" className="hover:text-foreground">
+            <Link href="/dashboard" className="hover:text-foreground">
               Dashboard
             </Link>
             <Link
@@ -271,15 +271,20 @@ export default function DashboardLayout({
     return null;
   }
   
-  // If the user is authenticated, render the full dashboard layout.
-  return (
-      <PomodoroProvider>
-        <div className="theme-cliffside flex min-h-screen w-full flex-col bg-background">
-          <DashboardNav />
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            {children}
-          </main>
-        </div>
-      </PomodoroProvider>
-  );
+  // If the user is authenticated or on a public route that should show the layout
+  if (user && !unauthenticatedRoutes.includes(pathname)) {
+    return (
+        <PomodoroProvider>
+          <div className="theme-cliffside flex min-h-screen w-full flex-col bg-background">
+            <DashboardNav />
+            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+              {children}
+            </main>
+          </div>
+        </PomodoroProvider>
+    );
+  }
+
+  // Fallback for public routes that don't need the full dashboard layout
+  return <>{children}</>;
 }

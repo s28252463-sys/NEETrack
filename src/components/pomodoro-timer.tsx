@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import {
@@ -23,86 +23,30 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-type TimerMode = 'focus' | 'shortBreak' | 'longBreak';
+import { usePomodoro } from '@/context/pomodoro-context';
 
 const PomodoroTimer = () => {
-  const [timerModes, setTimerModes] = useState({
-    focus: { time: 25 * 60, label: 'Focus Time', icon: <BrainCircuit className="size-5" /> },
-    shortBreak: { time: 5 * 60, label: 'Short Break', icon: <Coffee className="size-5" /> },
-    longBreak: { time: 15 * 60, label: 'Long Break', icon: <Coffee className="size-5" /> },
-  });
+  const {
+    mode,
+    setMode,
+    time,
+    isActive,
+    sessionCount,
+    timerModes,
+    toggleTimer,
+    resetTimer,
+    settings,
+    handleSettingsChange,
+    handleSaveSettings,
+  } = usePomodoro();
 
-  const [mode, setMode] = useState<TimerMode>('focus');
-  const [time, setTime] = useState(timerModes[mode].time);
-  const [isActive, setIsActive] = useState(false);
-  const [sessionCount, setSessionCount] = useState(0);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  
-  // State for settings form inputs
-  const [settings, setSettings] = useState({
-    focus: timerModes.focus.time / 60,
-    shortBreak: timerModes.shortBreak.time / 60,
-    longBreak: timerModes.longBreak.time / 60,
-  });
-
-  useEffect(() => {
-    setTime(timerModes[mode].time);
-    setIsActive(false);
-  }, [mode, timerModes]);
-
-  useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isActive && time > 0) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (time === 0 && isActive) {
-      if (mode === 'focus') {
-        setSessionCount((prev) => prev + 1);
-        if ((sessionCount + 1) % 4 === 0) {
-          setMode('longBreak');
-        } else {
-          setMode('shortBreak');
-        }
-      } else {
-        setMode('focus');
-      }
-      setIsActive(false);
-    }
-
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [isActive, time, mode, sessionCount]);
-
-  const toggleTimer = () => setIsActive(!isActive);
-
-  const resetTimer = () => {
-    setTime(timerModes[mode].time);
-    setIsActive(false);
-  };
-
-  const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setSettings(prev => ({ ...prev, [name]: Number(value) }));
-  };
-  
-  const handleSaveSettings = () => {
-    setTimerModes({
-      focus: { ...timerModes.focus, time: settings.focus * 60 },
-      shortBreak: { ...timerModes.shortBreak, time: settings.shortBreak * 60 },
-      longBreak: { ...timerModes.longBreak, time: settings.longBreak * 60 },
-    });
-    setIsSettingsOpen(false);
-  };
-
 
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
   const progress = (timerModes[mode].time - time) / timerModes[mode].time * 100;
 
-  const ModeButton = ({ targetMode, label, children }: { targetMode: TimerMode, label: string, children: React.ReactNode }) => (
+  const ModeButton = ({ targetMode, label, children }: { targetMode: 'focus' | 'shortBreak' | 'longBreak', label: string, children: React.ReactNode }) => (
     <Button
       variant="ghost"
       onClick={() => setMode(targetMode)}
@@ -187,7 +131,10 @@ const PomodoroTimer = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleSaveSettings}>Save Changes</Button>
+                <Button onClick={() => {
+                  handleSaveSettings();
+                  setIsSettingsOpen(false);
+                }}>Save Changes</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>

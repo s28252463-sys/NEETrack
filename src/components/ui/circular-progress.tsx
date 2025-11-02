@@ -31,9 +31,8 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
     >
       <defs>
         <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style={{stopColor: '#34d399', stopOpacity: 1}} />
-            <stop offset="50%" style={{stopColor: '#fde047', stopOpacity: 1}} />
-            <stop offset="100%" style={{stopColor: '#f87171', stopOpacity: 1}} />
+          <stop offset="0%" stopColor="hsl(var(--primary))" />
+          <stop offset="100%" stopColor="hsl(var(--accent))" />
         </linearGradient>
       </defs>
       <circle

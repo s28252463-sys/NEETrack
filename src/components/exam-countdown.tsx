@@ -62,7 +62,7 @@ const ExamCountdown = () => {
 
 
   return (
-    <div className="w-full h-[400px] flex flex-col justify-between rounded-2xl bg-card p-6 shadow-lg backdrop-blur-md border border-border">
+    <div className="w-full h-full flex flex-col justify-between rounded-2xl bg-card p-6 shadow-lg backdrop-blur-md border border-border">
       <div className="flex items-center justify-between text-card-foreground/80">
         <h2 className="font-semibold text-lg">Exam Countdown</h2>
       </div>

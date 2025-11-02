@@ -127,7 +127,7 @@
   .theme-galaxy {
     --background: 240 10% 10%; /* Deep dark blue */
     --foreground: 240 10% 95%; /* Light grey/white */
-    --card: 250 50% 100% / 0.1;
+    --card: 250 50% 100% / 0.05;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 15%;
     --popover-foreground: 0 0% 98%;

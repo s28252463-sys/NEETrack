@@ -160,4 +160,34 @@
       radial-gradient(circle at bottom left, hsla(30, 50%, 85%, 0.3), transparent 50%);
     background-attachment: fixed;
   }
+
+  .theme-sakura {
+    --background: 345 100% 98%; /* Very light, soft pink */
+    --foreground: 340 30% 30%; /* Dark, muted pink/rose */
+    --card: 345 100% 100% / 0.6; /* Semi-transparent white for a frosted glass effect */
+    --card-foreground: 340 30% 30%;
+    --popover: 345 100% 97%;
+    --popover-foreground: 340 30% 30%;
+    --primary: 340 80% 75%; /* Warm, soft pink from petals */
+    --primary-foreground: 340 50% 20%; /* Darker pink for text on primary */
+    --secondary: 345 60% 92%;
+    --secondary-foreground: 340 40% 25%;
+    --muted: 345 60% 92%;
+    --muted-foreground: 340 20% 55%;
+    --accent: 340 80% 80%;
+    --accent-foreground: 340 50% 20%;
+    --destructive: 0 70% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 340 60% 88%;
+    --input: 345 70% 94%;
+    --ring: 340 80% 75%;
+
+    background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(ellipse at 100% 0%, hsla(340, 80%, 85%, 0.3), transparent 50%),
+      radial-gradient(ellipse at 0% 100%, hsla(30, 80%, 90%, 0.4), transparent 50%),
+      radial-gradient(ellipse at 50% 50%, hsla(345, 100%, 98%, 1), transparent 100%);
+    background-attachment: fixed;
+    color: hsl(var(--foreground));
+  }
 }

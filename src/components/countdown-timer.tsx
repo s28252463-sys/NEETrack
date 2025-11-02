@@ -18,43 +18,38 @@ interface TimeLeft {
 
 const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
   const [timeLeft, setTimeLeft] = useState<TimeLeft | null>(null);
-  const [initialTotalSeconds, setInitialTotalSeconds] = useState<number>(0);
+  const [totalInitialDays, setTotalInitialDays] = useState<number>(0);
 
   useEffect(() => {
-    // This function will only run on the client
     const calculateTimeLeft = () => {
       const difference = +targetDate - +new Date();
-      let timeLeftData: TimeLeft = {
-        days: 0,
-        hours: 0,
-        minutes: 0,
-        seconds: 0,
-      };
+      let newTimeLeft: TimeLeft = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 
       if (difference > 0) {
-        timeLeftData = {
+        newTimeLeft = {
           days: Math.floor(difference / (1000 * 60 * 60 * 24)),
           hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
           minutes: Math.floor((difference / 1000 / 60) % 60),
           seconds: Math.floor((difference / 1000) % 60),
         };
       }
-      return timeLeftData;
+      return newTimeLeft;
     };
-    
-    // Set initial values only once on mount, inside useEffect
+
+    // Set the initial total days only once on the client
     const initialDifference = +targetDate - +new Date();
-    if (initialDifference > 0) {
-        setInitialTotalSeconds(initialDifference / 1000);
+    if(initialDifference > 0 && totalInitialDays === 0) {
+      setTotalInitialDays(Math.floor(initialDifference / (1000 * 60 * 60 * 24)));
     }
-    
-    // Set initial time left and then update every second
+
+    // Set the initial value and then start the interval
     setTimeLeft(calculateTimeLeft());
     const timer = setInterval(() => {
       setTimeLeft(calculateTimeLeft());
     }, 1000);
 
     return () => clearInterval(timer);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetDate]);
 
   if (!timeLeft) {
@@ -76,8 +71,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({ targetDate }) => {
     );
   }
 
-  const currentTotalSeconds = (timeLeft.days * 24 * 60 * 60) + (timeLeft.hours * 60 * 60) + (timeLeft.minutes * 60) + timeLeft.seconds;
-  const progressPercentage = initialTotalSeconds > 0 ? (1 - (currentTotalSeconds / initialTotalSeconds)) * 100 : 0;
+  const progressPercentage = totalInitialDays > 0 ? ((totalInitialDays - timeLeft.days) / totalInitialDays) * 100 : 0;
   const targetDateFormatted = format(targetDate, 'MMMM d, yyyy');
 
   const TimeBox = ({ value, unit }: { value: number; unit: string }) => (

@@ -3,7 +3,10 @@
 import CountdownTimer from '@/components/countdown-timer';
 
 export default function DashboardPage() {
-  const examDate = new Date('2026-05-03T09:00:00');
+  // Explicitly set the date with a timezone offset to prevent ambiguity.
+  // NEET is typically in India (UTC+5:30), but for consistency we'll use a specific offset.
+  // Let's assume the user wants to track based on a consistent time.
+  const examDate = new Date('2026-05-03T09:00:00.000Z');
 
   return (
     <div className="flex-1 space-y-8">

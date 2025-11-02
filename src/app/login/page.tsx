@@ -83,6 +83,7 @@ export default function LoginPage() {
                 className="flip-card__input"
                 placeholder="Email"
                 type="email"
+                disabled={isLoading}
               />
               {loginForm.formState.errors.email && <p className="text-red-500 text-xs">{loginForm.formState.errors.email.message}</p>}
               <input
@@ -90,17 +91,18 @@ export default function LoginPage() {
                 className="flip-card__input"
                 placeholder="Password"
                 type="password"
+                disabled={isLoading}
               />
                {loginForm.formState.errors.password && <p className="text-red-500 text-xs">{loginForm.formState.errors.password.message}</p>}
-              <button type="submit" className="flip-card__btn" disabled={isLoading}>
-                {isLoading ? 'Loading...' : 'Let`s go!'}
+              <button className="flip-card__btn" type="submit" disabled={isLoading}>
+                {isLoading ? 'Logging in...' : 'Log in'}
               </button>
             </form>
           </div>
           <div className="flip-card__back">
             <div className="title">Sign up</div>
-            <form
-              onSubmit={signupForm.handleSubmit(handleSignUp)}
+            <form 
+              onSubmit={signupForm.handleSubmit(handleSignUp)} 
               className="flip-card__form"
               noValidate
             >
@@ -108,20 +110,20 @@ export default function LoginPage() {
                 {...signupForm.register('email')}
                 className="flip-card__input"
                 placeholder="Email"
-                name="email"
                 type="email"
+                disabled={isLoading}
               />
               {signupForm.formState.errors.email && <p className="text-red-500 text-xs">{signupForm.formState.errors.email.message}</p>}
               <input
                 {...signupForm.register('password')}
                 className="flip-card__input"
                 placeholder="Password"
-                name="password"
                 type="password"
+                disabled={isLoading}
               />
               {signupForm.formState.errors.password && <p className="text-red-500 text-xs">{signupForm.formState.errors.password.message}</p>}
-              <button type="submit" className="flip-card__btn" disabled={isLoading}>
-                {isLoading ? 'Loading...' : 'Sign Up'}
+              <button className="flip-card__btn" type="submit" disabled={isLoading}>
+                {isLoading ? 'Signing up...' : 'Sign up'}
               </button>
             </form>
           </div>

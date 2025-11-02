@@ -40,11 +40,11 @@ export default function HomePage() {
             >
               <path
                 d="M104.24,59.37H14.78a4,4,0,0,1-4-4V16.89a4,4,0,0,1,4-4H91.56a13.7,13.7,0,0,1,12.68,8.22L116,47.45V55.37a4,4,0,0,1-4,4ZM18.78,51.37H99.19v-26.H18.78Z"
-                fill="#282828"
+                fill="currentColor"
               ></path>
               <path
                 d="M91.56,12.89h-76.78a4,4,0,0,0-4,4V29.11H99.19V21.11A8.22,8.22,0,0,0,91.56,12.89Z"
-                fill="#282828"
+                fill="currentColor"
               ></path>
             </svg>
           </div>
@@ -56,8 +56,8 @@ export default function HomePage() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle cx="12" cy="12" r="10" fill="#282828"></circle>
-              <circle cx="12" cy="12" r="4" fill="white"></circle>
+              <circle cx="12" cy="12" r="10" fill="currentColor"></circle>
+              <circle cx="12" cy="12" r="4" fill="var(--background)"></circle>
             </svg>
             <svg
               width="24"
@@ -66,8 +66,8 @@ export default function HomePage() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <circle cx="12" cy="12" r="10" fill="#282828"></circle>
-              <circle cx="12" cy="12" r="4" fill="white"></circle>
+              <circle cx="12" cy="12" r="10" fill="currentColor"></circle>
+              <circle cx="12" cy="12" r="4" fill="var(--background)"></circle>
             </svg>
           </div>
           <div className="road"></div>
@@ -79,7 +79,7 @@ export default function HomePage() {
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path d="M5 90V10H35V0L25 10H5" stroke="#282828" strokeWidth="3" />
+            <path d="M5 90V10H35V0L25 10H5" stroke="currentColor" strokeWidth="3" />
           </svg>
         </div>
       </div>

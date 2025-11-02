@@ -1,43 +1,29 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/firebase';
 import './loader.css';
 
-const LOADING_TIMEOUT = 5000; // 5 seconds
-
 export default function HomePage() {
   const router = useRouter();
   const { user, isUserLoading } = useUser();
-  const [didTimeout, setDidTimeout] = useState(false);
 
   useEffect(() => {
+    // Wait until the authentication check is complete
     if (!isUserLoading) {
       if (user) {
+        // If user is logged in, redirect to the dashboard
         router.replace('/dashboard');
       } else {
+        // If no user is logged in, redirect to the login page
         router.replace('/login');
       }
     }
+    // This effect should run whenever the user's loading status or the user object changes.
   }, [user, isUserLoading, router]);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isUserLoading) {
-        setDidTimeout(true);
-      }
-    }, LOADING_TIMEOUT);
-
-    return () => clearTimeout(timer);
-  }, [isUserLoading]);
-
-  useEffect(() => {
-    if (didTimeout) {
-      router.replace('/login');
-    }
-  }, [didTimeout, router]);
-
+  // Display a loading indicator while checking for authentication.
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-white">
       <div className="loader">

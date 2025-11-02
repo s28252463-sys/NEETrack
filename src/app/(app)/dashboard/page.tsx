@@ -1,24 +1,14 @@
 'use client';
 
-import CountdownTimer from '@/components/countdown-timer';
 import ExamCountdown from '@/components/exam-countdown';
 import MockTestCountdown from '@/components/mock-test-countdown';
 
 export default function DashboardPage() {
   return (
-    <div className="-m-8 flex-1 p-8">
-      <div className="flex-1 space-y-8">
-        <div className="space-y-8">
-          {/* Top row for the two main countdowns */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 justify-items-center">
-            <ExamCountdown />
-            <MockTestCountdown />
-          </div>
-          {/* Bottom row for the daily timer, centered */}
-          <div className="grid grid-cols-1 justify-items-center">
-            <CountdownTimer />
-          </div>
-        </div>
+    <div className="theme-galaxy -m-8 flex-1 p-8 flex items-center justify-center">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl">
+        <ExamCountdown />
+        <MockTestCountdown />
       </div>
     </div>
   );

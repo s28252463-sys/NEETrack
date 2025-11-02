@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Calendar } from 'lucide-react';
 import { CircularProgress } from '@/components/ui/circular-progress';
+import { Button } from './ui/button';
 
 const ExamCountdown = () => {
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
@@ -61,27 +62,31 @@ const ExamCountdown = () => {
 
 
   return (
-    <div className="w-full max-w-sm rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+    <div className="w-full h-[400px] flex flex-col justify-between rounded-2xl bg-card p-6 shadow-lg backdrop-blur-md border border-border">
       <div className="flex items-center justify-between text-card-foreground/80">
-        <h2 className="font-semibold">Days Until Exam</h2>
-        <Calendar className="h-5 w-5" />
+        <h2 className="font-semibold text-lg">Exam Countdown</h2>
       </div>
-      <div className="my-6 text-center flex justify-center items-center">
-         <div className="relative flex size-56 items-center justify-center">
-            <CircularProgress value={progress} size={224} strokeWidth={10} />
+      <div className="flex flex-col items-center justify-center text-center flex-grow">
+         <div className="relative flex size-48 items-center justify-center">
+            <CircularProgress value={progress} size={192} strokeWidth={8} />
             <div className="absolute flex flex-col items-center">
               {daysLeft !== null ? (
-                  <p className="text-6xl md:text-7xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
+                  <p className="text-7xl font-bold text-foreground">
                       {daysLeft}
                   </p>
               ) : (
-                  <p className="text-6xl md:text-7xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
+                  <p className="text-7xl font-bold text-foreground">
                       --
                   </p>
               )}
-              <p className="text-sm text-muted-foreground">NEET UG 2026</p>
+              <p className="text-sm text-muted-foreground">Days Remaining</p>
             </div>
          </div>
+      </div>
+      <div className="text-center">
+        <Button variant="outline" className="bg-transparent border-border rounded-full">
+            NEET UG 2026
+        </Button>
       </div>
     </div>
   );

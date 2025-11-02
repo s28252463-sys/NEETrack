@@ -72,15 +72,15 @@ const MockTestCountdown = () => {
   };
 
   return (
-    <div className="w-full max-w-sm rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+    <div className="w-full h-[400px] flex flex-col justify-between rounded-2xl bg-card p-6 shadow-lg backdrop-blur-md border border-border">
       <div className="flex items-center justify-between text-card-foreground/80">
-        <h2 className="font-semibold">Next Mock Test</h2>
+        <h2 className="font-semibold text-lg">Next Mock Test</h2>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="text-card-foreground/70 hover:bg-black/10 hover:text-foreground -mr-2"
+              className="text-card-foreground/70 hover:bg-transparent hover:text-foreground -mr-2 -mt-2"
             >
               <Settings className="h-5 w-5" />
             </Button>
@@ -106,14 +106,14 @@ const MockTestCountdown = () => {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="my-6 text-center">
+      <div className="my-6 text-center flex-grow flex flex-col items-center justify-center">
         {daysLeft !== null ? (
           <>
-            <p className="text-6xl md:text-7xl font-bold text-primary drop-shadow-[0_0_10px_rgba(235,123,91,0.5)]">
+            <p className="text-9xl font-bold text-primary">
               {daysLeft}
             </p>
-            <p className="text-sm text-muted-foreground">
-              Days Remaining
+            <p className="text-sm text-muted-foreground uppercase tracking-widest">
+              Days Until Mock
             </p>
           </>
         ) : (

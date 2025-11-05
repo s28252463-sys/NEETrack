@@ -10,11 +10,13 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { Book, Target, TestTube, Atom, CheckCircle2 } from 'lucide-react';
+import { BookOpen, Target, TestTube, Atom, CheckCircle2, ChevronDown } from 'lucide-react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CircularProgress } from '@/components/ui/circular-progress';
+import { Button } from '@/components/ui/button';
 
 const initialSyllabus = [
   {
@@ -107,7 +109,7 @@ const initialSyllabus = [
         { id: 'b7-1', name: 'Principles of Inheritance and Variation', completed: false },
         { id: 'b7-2', name: 'Molecular Basis of Inheritance', completed: false },
         { id: 'b7-3', name: 'Evolution', completed: false },
-        { id: 'b8-1', name: 'Human Health and Disease', completed: false },
+        { id: 'b8-1-1', name: 'Human Health and Disease', completed: false },
         { id: 'b8-2', name: 'Strategies for Enhancement in Food Production', completed: false },
         { id: 'b8-3', 'name': 'Microbes in Human Welfare', completed: false },
         { id: 'b9-1', name: 'Biotechnology: Principles and Processes', completed: false },
@@ -143,6 +145,8 @@ type UserChapterCompletion = {
 
 const SyllabusTracker = () => {
   const [syllabus, setSyllabus] = useState<Subject[]>(initialSyllabus);
+  const [activeSubject, setActiveSubject] = useState<string | null>(null);
+
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
@@ -154,10 +158,8 @@ const SyllabusTracker = () => {
   const { data: chapterCompletions, isLoading: isLoadingCompletions } = useCollection<UserChapterCompletion>(chapterCompletionsQuery);
 
   useEffect(() => {
-    // Only process Firestore data if it's not loading.
     if (!isLoadingCompletions) {
       const completionMap = new Map<string, boolean>();
-      // If we have completion data, populate the map
       if (chapterCompletions) {
         chapterCompletions.forEach(comp => {
           if (comp.isCompleted) {
@@ -176,7 +178,6 @@ const SyllabusTracker = () => {
       setSyllabus(updatedSyllabus);
     }
   }, [chapterCompletions, isLoadingCompletions]);
-
 
   const handleChapterToggle = (subjectId: string, chapterId: string, isChecked: boolean) => {
     if (!user) return;
@@ -225,22 +226,22 @@ const SyllabusTracker = () => {
   
   if(isLoading) {
     return (
-      <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-0 shadow-xl shadow-black/10">
+      <Card className="w-full max-w-4xl bg-card border-border shadow-2xl shadow-black/50">
         <CardHeader>
-            <Skeleton className="h-8 w-1/2" />
-            <Skeleton className="h-4 w-1/4 mt-2"/>
+          <Skeleton className="h-8 w-1/2" />
+          <Skeleton className="h-4 w-1/4 mt-2"/>
         </CardHeader>
-        <CardContent className="space-y-4 p-6">
-            <div className="flex gap-8">
-                <div className="flex-shrink-0">
-                    <Skeleton className="h-48 w-48 rounded-md" />
-                </div>
-                <div className="flex-1 space-y-4">
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                    <Skeleton className="h-12 w-full" />
-                </div>
+        <CardContent className="p-6">
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="flex-shrink-0 flex items-center justify-center">
+              <Skeleton className="h-48 w-48 rounded-full" />
             </div>
+            <div className="flex-1 space-y-4">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </div>
         </CardContent>
       </Card>
     );
@@ -249,70 +250,87 @@ const SyllabusTracker = () => {
   const overallProgress = getOverallProgress();
 
   return (
-    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-0 shadow-xl shadow-black/10">
+    <Card className="w-full max-w-4xl bg-card border-border shadow-2xl shadow-black/50">
       <CardHeader>
-        <CardTitle className="flex items-center gap-3 text-xl font-bold text-foreground/90">
-          <Book className="h-6 w-6 text-primary" />
+        <CardTitle className="flex items-center gap-3 text-xl font-bold">
+          <BookOpen className="h-6 w-6 text-muted-foreground" />
           Syllabus Tracker
         </CardTitle>
         <div className="pt-4">
-            <div className="flex justify-between items-center mb-2">
-                <span className="text-base font-medium text-muted-foreground">Overall Progress</span>
-                <span className="text-lg font-semibold text-primary">{Math.round(overallProgress)}%</span>
-            </div>
-            <Progress value={overallProgress} className="h-2" />
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
+            <span className="text-sm font-semibold text-foreground">{Math.round(overallProgress)}%</span>
+          </div>
+          <Progress value={overallProgress} className="h-2 bg-muted" />
         </div>
       </CardHeader>
       <CardContent className="p-6">
-          <Accordion type="single" collapsible className="w-full space-y-3">
-            {syllabus.map((subject) => {
-              const subjectProgress = getSubjectProgress(subject.chapters);
-              return (
-                <AccordionItem value={subject.id} key={subject.id} className="border rounded-lg bg-background/50 transition-all hover:bg-background/80">
-                  <AccordionTrigger className="p-4 hover:no-underline">
-                    <div className="flex w-full items-center gap-4">
-                      <span className="text-primary">{subject.icon}</span>
-                      <span className="flex-1 text-left font-semibold text-foreground/80">{subject.name}</span>
-                      <div className="flex items-center gap-3 w-40">
-                        <Progress value={subjectProgress} className="h-1.5 bg-muted/50" />
-                        <span className="text-sm font-semibold text-muted-foreground w-12 text-right">
-                          {Math.round(subjectProgress)}%
-                        </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-col items-center justify-center md:col-span-1">
+            <div className="relative size-48">
+              <CircularProgress value={overallProgress} size={192} strokeWidth={12} />
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-5xl font-bold text-foreground drop-shadow-[0_2px_4px_hsl(var(--primary)_/_0.5)]">
+                  {Math.round(overallProgress)}%
+                </span>
+                <span className="text-sm text-muted-foreground">Completed</span>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-4 md:col-span-2">
+            <Accordion type="single" collapsible value={activeSubject ?? undefined} onValueChange={setActiveSubject}>
+              {syllabus.map((subject) => {
+                const subjectProgress = getSubjectProgress(subject.chapters);
+                return (
+                  <div key={subject.id} className="space-y-2">
+                    <div className="flex items-center gap-4">
+                      <div className="text-primary">{subject.icon}</div>
+                      <div className="flex-1">
+                        <div className="flex justify-between items-center">
+                          <span className="font-semibold">{subject.name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium text-muted-foreground">{Math.round(subjectProgress)}%</span>
+                            <Button variant="ghost" size="icon" className='h-8 w-8' onClick={() => setActiveSubject(activeSubject === subject.id ? null : subject.id)}>
+                               <CheckCircle2 className="h-4 w-4 text-green-500/70" />
+                            </Button>
+                          </div>
+                        </div>
+                        <Progress value={subjectProgress} className="h-1.5 mt-1 bg-muted" />
                       </div>
                     </div>
-                  </AccordionTrigger>
-                  <AccordionContent className="px-4 pb-2">
-                    <div className="space-y-3 py-2 border-t border-border/50">
-                      {subject.chapters.map((chapter) => (
-                        <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-black/5 transition-colors">
-                          <Checkbox
-                            id={`${subject.id}-${chapter.id}`}
-                            checked={chapter.completed}
-                            onCheckedChange={(checked) =>
-                              handleChapterToggle(subject.id, chapter.id, !!checked)
-                            }
-                            className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary"
-                          />
-                          <label
-                            htmlFor={`${subject.id}-${chapter.id}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground/70"
-                          >
-                            {chapter.name}
-                          </label>
-                           {chapter.completed && <CheckCircle2 className="h-4 w-4 text-green-500 ml-auto" />}
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              )
-            })}
-          </Accordion>
+                     <AccordionContent asChild>
+                        <AccordionItem value={subject.id} className="border-none">
+                            <div className="space-y-3 py-2 pl-9">
+                            {subject.chapters.map((chapter) => (
+                                <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-secondary/50 transition-colors">
+                                <Checkbox
+                                    id={`${subject.id}-${chapter.id}`}
+                                    checked={chapter.completed}
+                                    onCheckedChange={(checked) =>
+                                    handleChapterToggle(subject.id, chapter.id, !!checked)
+                                    }
+                                    className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary"
+                                />
+                                <label
+                                    htmlFor={`${subject.id}-${chapter.id}`}
+                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground/70"
+                                >
+                                    {chapter.name}
+                                </label>
+                                </div>
+                            ))}
+                            </div>
+                        </AccordionItem>
+                     </AccordionContent>
+                  </div>
+                );
+              })}
+            </Accordion>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
 };
 
 export default SyllabusTracker;
-
-    

@@ -178,6 +178,31 @@
     background-attachment: fixed;
     color: hsl(var(--foreground));
   }
+  
+  .theme-serenity {
+    --background: 220 40% 10%; /* Deep Navy Blue */
+    --foreground: 35 30% 88%; /* Soft Gold/Cream */
+    --card: 220 40% 15% / 0.7; /* Semi-transparent darker blue */
+    --card-foreground: 35 30% 88%;
+    --popover: 220 40% 10%;
+    --popover-foreground: 35 30% 88%;
+    --primary: 35 80% 65%; /* Bright Gold */
+    --primary-foreground: 35 80% 10%;
+    --secondary: 220 30% 25%;
+    --secondary-foreground: 35 30% 88%;
+    --muted: 220 30% 25%;
+    --muted-foreground: 220 20% 60%;
+    --accent: 330 80% 70%; /* Glowing Pink/Lotus color */
+    --accent-foreground: 330 80% 10%;
+    --destructive: 0 70% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 35 50% 40% / 0.5;
+    --input: 220 30% 20%;
+    --ring: 35 80% 65%;
+
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
 }
 
 @layer base {

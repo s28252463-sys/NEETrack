@@ -30,6 +30,10 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       className={cn('transform -rotate-90', className)}
     >
       <defs>
+        <linearGradient id="timer-gradient-serenity" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(var(--accent))" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" />
+        </linearGradient>
         <linearGradient id={gradientId} x1="0%" y1="100%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="hsl(var(--accent))" />
           <stop offset="100%" stopColor="hsl(var(--primary))" />

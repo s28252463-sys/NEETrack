@@ -72,7 +72,7 @@ const PomodoroTimer = () => {
   );
 
   return (
-    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-4 sm:p-6 text-card-foreground shadow-2xl shadow-black/50 backdrop-blur-lg border-t border-white/10">
+    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-4 sm:p-6 text-card-foreground shadow-2xl shadow-black/50 backdrop-blur-lg border-t border-border">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-primary/10 p-2">
@@ -172,7 +172,7 @@ const PomodoroTimer = () => {
             value={progress}
             size={240}
             strokeWidth={14}
-            gradientId="timer-gradient"
+            gradientId="timer-gradient-serenity"
           />
           <div className="absolute flex flex-col items-center">
             <span className="font-mono text-7xl font-bold tracking-tighter">
@@ -190,7 +190,7 @@ const PomodoroTimer = () => {
         <div></div>
         <Button
           onClick={toggleTimer}
-          className="h-20 w-20 rounded-full bg-primary/20 text-primary shadow-lg transition-all hover:bg-primary/30"
+          className="h-20 w-20 rounded-full bg-primary/90 text-primary-foreground shadow-lg transition-all hover:bg-primary"
           size="icon"
         >
           {isActive ? (

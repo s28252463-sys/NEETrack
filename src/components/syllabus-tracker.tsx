@@ -15,8 +15,6 @@ import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebas
 import { doc, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CaduceusIcon } from '@/components/ui/caduceus-icon';
-
 
 const initialSyllabus = [
   {
@@ -145,7 +143,6 @@ type UserChapterCompletion = {
 
 const SyllabusTracker = () => {
   const [syllabus, setSyllabus] = useState<Subject[]>(initialSyllabus);
-  const [activeAccordionItem, setActiveAccordionItem] = useState<string | string[]>([]);
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
@@ -252,7 +249,7 @@ const SyllabusTracker = () => {
   const overallProgress = getOverallProgress();
 
   return (
-    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-border/50 shadow-xl shadow-black/10">
+    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-0 shadow-xl shadow-black/10">
       <CardHeader>
         <CardTitle className="flex items-center gap-3 text-xl font-bold text-foreground/90">
           <Book className="h-6 w-6 text-primary" />
@@ -266,12 +263,8 @@ const SyllabusTracker = () => {
             <Progress value={overallProgress} className="h-2" />
         </div>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6">
-        <div className="md:col-span-1 flex flex-col items-center justify-center -mt-8">
-            <CaduceusIcon className="w-48 h-auto" />
-        </div>
-        <div className="md:col-span-2">
-          <Accordion type="multiple" value={activeAccordionItem} onValueChange={setActiveAccordionItem} className="w-full space-y-3">
+      <CardContent className="p-6">
+          <Accordion type="single" collapsible className="w-full space-y-3">
             {syllabus.map((subject) => {
               const subjectProgress = getSubjectProgress(subject.chapters);
               return (
@@ -315,10 +308,11 @@ const SyllabusTracker = () => {
               )
             })}
           </Accordion>
-        </div>
       </CardContent>
     </Card>
   );
 };
 
 export default SyllabusTracker;
+
+    

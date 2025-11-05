@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import {
-  BrainCircuit,
   Coffee,
   Play,
   Pause,
@@ -24,6 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePomodoro } from '@/context/pomodoro-context';
+import { CaduceusIcon } from '@/components/ui/caduceus-icon';
 
 const PomodoroTimer = () => {
   const {
@@ -61,11 +61,11 @@ const PomodoroTimer = () => {
   );
 
   return (
-    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-6 text-foreground shadow-lg backdrop-blur-lg">
+    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-6 text-card-foreground shadow-lg backdrop-blur-lg border border-border">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/20 p-2">
-            <BrainCircuit className="size-6 text-primary" />
+          <div className="rounded-lg bg-primary/10 p-2">
+            <CaduceusIcon className="size-6 text-primary" />
           </div>
           <div>
             <h1 className="text-xl font-bold">{timerModes[mode].label}</h1>
@@ -162,14 +162,14 @@ const PomodoroTimer = () => {
         >
           {isActive ? <Pause className="size-8" /> : <Play className="size-8" />}
         </Button>
-        <Button onClick={resetTimer} className="h-16 rounded-2xl bg-black/5 text-muted-foreground shadow-lg transition-all hover:bg-black/10">
+        <Button onClick={resetTimer} className="h-16 rounded-2xl bg-secondary/50 text-muted-foreground shadow-lg transition-all hover:bg-secondary/80">
           <RotateCw className="size-8" />
         </Button>
       </div>
 
       <div className="mt-6 grid grid-cols-3 gap-3">
         <ModeButton targetMode="focus" label="Focus">
-          <BrainCircuit className="size-5" />
+          <CaduceusIcon className="size-5" />
         </ModeButton>
         <ModeButton targetMode="shortBreak" label="Short Break">
           <Coffee className="size-5" />
@@ -183,7 +183,7 @@ const PomodoroTimer = () => {
           <span className="text-sm text-muted-foreground">Focus Sessions:</span>
           <div className="flex gap-1.5">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className={cn("size-2 rounded-full", i < sessionCount % 4 ? "bg-primary" : "bg-black/10")}></div>
+              <div key={i} className={cn("size-2 rounded-full", i < sessionCount % 4 ? "bg-primary" : "bg-muted/50")}></div>
             ))}
           </div>
           <span className="ml-2 text-sm font-semibold text-foreground/80">{sessionCount}</span>

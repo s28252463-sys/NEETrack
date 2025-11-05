@@ -53,7 +53,7 @@ const CountdownTimer = () => {
   if (!isClient) {
     // Show a loading state or placeholder on the server
     return (
-        <div className="w-full max-w-lg rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+        <div className="w-full max-w-lg rounded-2xl bg-card/80 p-6 shadow-lg backdrop-blur-md border border-border/30">
             <div className="flex items-center justify-between text-card-foreground/80">
                 <h2 className="font-semibold">Time Remaining Today</h2>
                 <Clock className="h-5 w-5" />
@@ -78,7 +78,7 @@ const CountdownTimer = () => {
   );
 
   return (
-    <div className="w-full max-w-2xl rounded-2xl bg-card/60 p-6 shadow-lg backdrop-blur-lg">
+    <div className="w-full h-full flex flex-col justify-between max-w-2xl rounded-2xl bg-card/80 p-6 shadow-lg backdrop-blur-md border border-border/30">
       <div className="flex items-center justify-between text-card-foreground/80">
         <h2 className="font-semibold">Time Remaining Today</h2>
         <Clock className="h-5 w-5" />

@@ -203,6 +203,30 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
   }
+
+  .theme-meadow {
+    --background: 100 70% 92%; /* Light, vibrant green */
+    --foreground: 100 25% 20%; /* Dark, earthy green */
+    --card: 100 60% 100% / 0.6; /* Semi-transparent white with a green tint */
+    --card-foreground: 100 25% 20%;
+    --popover: 100 70% 90%;
+    --popover-foreground: 100 25% 20%;
+    --primary: 45 100% 55%; /* Sunny yellow */
+    --primary-foreground: 45 100% 15%; /* Darker yellow/brown for text on primary */
+    --secondary: 100 50% 85%;
+    --secondary-foreground: 100 25% 20%;
+    --muted: 100 50% 85%;
+    --muted-foreground: 100 20% 45%;
+    --accent: 45 100% 65%;
+    --accent-foreground: 45 100% 15%;
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 100 20% 65%;
+    --input: 100 60% 95%;
+    --ring: 45 100% 55%;
+
+    color: hsl(var(--foreground));
+  }
 }
 
 @layer base {

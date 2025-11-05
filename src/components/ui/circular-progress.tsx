@@ -38,9 +38,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           <stop offset="0%" stopColor="hsl(var(--accent))" />
           <stop offset="100%" stopColor="hsl(var(--primary))" />
         </linearGradient>
+        <linearGradient id="meadow-progress-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(120, 70%, 60%)" />
+            <stop offset="100%" stopColor="hsl(45, 100%, 55%)" />
+        </linearGradient>
       </defs>
       <circle
-        className="text-white/10"
+        className="text-black/10"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"

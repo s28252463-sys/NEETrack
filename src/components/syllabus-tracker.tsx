@@ -10,13 +10,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
-import { BookOpen, Target, TestTube, Atom, CheckCircle2, ChevronDown } from 'lucide-react';
+import { BookOpen, Target, TestTube, Atom } from 'lucide-react';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CircularProgress } from '@/components/ui/circular-progress';
-import { Button } from '@/components/ui/button';
 
 const initialSyllabus = [
   {
@@ -145,7 +144,6 @@ type UserChapterCompletion = {
 
 const SyllabusTracker = () => {
   const [syllabus, setSyllabus] = useState<Subject[]>(initialSyllabus);
-  const [activeSubject, setActiveSubject] = useState<string | null>(null);
 
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
@@ -278,51 +276,46 @@ const SyllabusTracker = () => {
             </div>
           </div>
           <div className="space-y-4 md:col-span-2">
-            <Accordion type="single" collapsible value={activeSubject ?? undefined} onValueChange={setActiveSubject}>
+            <Accordion type="single" collapsible className="w-full">
               {syllabus.map((subject) => {
                 const subjectProgress = getSubjectProgress(subject.chapters);
                 return (
-                  <div key={subject.id} className="space-y-2">
-                    <div className="flex items-center gap-4">
-                      <div className="text-primary">{subject.icon}</div>
-                      <div className="flex-1">
-                        <div className="flex justify-between items-center">
-                          <span className="font-semibold">{subject.name}</span>
-                          <div className="flex items-center gap-2">
+                  <AccordionItem value={subject.id} key={subject.id}>
+                    <AccordionTrigger>
+                      <div className="flex items-center gap-4 w-full">
+                        <div className="text-primary">{subject.icon}</div>
+                        <div className="flex-1">
+                          <div className="flex justify-between items-center">
+                            <span className="font-semibold">{subject.name}</span>
                             <span className="text-sm font-medium text-muted-foreground">{Math.round(subjectProgress)}%</span>
-                            <Button variant="ghost" size="icon" className='h-8 w-8' onClick={() => setActiveSubject(activeSubject === subject.id ? null : subject.id)}>
-                               <CheckCircle2 className="h-4 w-4 text-green-500/70" />
-                            </Button>
                           </div>
+                          <Progress value={subjectProgress} className="h-1.5 mt-1 bg-muted" />
                         </div>
-                        <Progress value={subjectProgress} className="h-1.5 mt-1 bg-muted" />
                       </div>
-                    </div>
-                     <AccordionContent asChild>
-                        <AccordionItem value={subject.id} className="border-none">
-                            <div className="space-y-3 py-2 pl-9">
-                            {subject.chapters.map((chapter) => (
-                                <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-secondary/50 transition-colors">
-                                <Checkbox
-                                    id={`${subject.id}-${chapter.id}`}
-                                    checked={chapter.completed}
-                                    onCheckedChange={(checked) =>
-                                    handleChapterToggle(subject.id, chapter.id, !!checked)
-                                    }
-                                    className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary"
-                                />
-                                <label
-                                    htmlFor={`${subject.id}-${chapter.id}`}
-                                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground/70"
-                                >
-                                    {chapter.name}
-                                </label>
-                                </div>
-                            ))}
-                            </div>
-                        </AccordionItem>
-                     </AccordionContent>
-                  </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-3 py-2 pl-9">
+                        {subject.chapters.map((chapter) => (
+                          <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-secondary/50 transition-colors">
+                            <Checkbox
+                              id={`${subject.id}-${chapter.id}`}
+                              checked={chapter.completed}
+                              onCheckedChange={(checked) =>
+                                handleChapterToggle(subject.id, chapter.id, !!checked)
+                              }
+                              className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary"
+                            />
+                            <label
+                              htmlFor={`${subject.id}-${chapter.id}`}
+                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground/70"
+                            >
+                              {chapter.name}
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
                 );
               })}
             </Accordion>

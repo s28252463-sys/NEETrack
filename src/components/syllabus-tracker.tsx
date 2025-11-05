@@ -15,7 +15,38 @@ import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebas
 import { doc, collection } from 'firebase/firestore';
 import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
 import { Skeleton } from '@/components/ui/skeleton';
-import { CircularProgress } from '@/components/ui/circular-progress';
+
+const CaduceusIcon = (props: React.SVGProps<SVGSVGElement>) => (
+    <svg {...props} viewBox="0 0 200 300">
+        <defs>
+            <linearGradient id="brush-stroke" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.2" />
+                <stop offset="100%" stopColor="hsl(var(--accent))" stopOpacity="0.3" />
+            </linearGradient>
+        </defs>
+        <path d="M 80 160 C 100 150, 120 170, 140 165 S 150 140, 130 130" fill="url(#brush-stroke)" stroke="none" />
+        <path d="M 70 180 C 90 170, 110 190, 130 185 S 140 160, 120 150" fill="url(#brush-stroke)" stroke="none" />
+
+        <g className="fill-current text-foreground/80">
+            <line x1="100" y1="50" x2="100" y2="250" stroke="currentColor" strokeWidth="4"/>
+            <circle cx="100" cy="250" r="8" fill="currentColor"/>
+            <path d="M 100 240 Q 70 220 75 200 Q 80 180 100 170 Q 85 150 80 130 Q 75 110 100 90" 
+                    fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/>
+            <path d="M 100 240 Q 130 220 125 200 Q 120 180 100 170 Q 115 150 120 130 Q 125 110 100 90" 
+                    fill="none" stroke="currentColor" strokeWidth="6" strokeLinecap="round"/>
+            <ellipse cx="75" cy="200" rx="6" ry="8" fill="currentColor"/>
+            <circle cx="73" cy="198" r="1.5" fill="hsl(var(--background))"/>
+            <ellipse cx="125" cy="200" rx="6" ry="8" fill="currentColor"/>
+            <circle cx="127" cy="198" r="1.5" fill="hsl(var(--background))"/>
+            <path d="M 100 80 Q 60 70 40 85 Q 30 95 45 100 Q 35 105 40 115 Q 50 120 70 110 Q 80 95 100 90" 
+                    fill="currentColor" opacity="0.9"/>
+            <path d="M 100 80 Q 140 70 160 85 Q 170 95 155 100 Q 165 105 160 115 Q 150 120 130 110 Q 120 95 100 90" 
+                    fill="currentColor" opacity="0.9"/>
+            <circle cx="100" cy="60" r="12" fill="currentColor"/>
+            <circle cx="97" cy="57" r="3" fill="hsl(var(--background))" opacity="0.6"/>
+        </g>
+    </svg>
+)
 
 
 const initialSyllabus = [
@@ -228,7 +259,7 @@ const SyllabusTracker = () => {
   
   if(isLoading) {
     return (
-      <Card className="w-full max-w-4xl bg-card/80 backdrop-blur-sm border-0 shadow-2xl shadow-black/50">
+      <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-0 shadow-xl shadow-black/10">
         <CardHeader>
             <Skeleton className="h-8 w-1/2" />
             <Skeleton className="h-4 w-1/4 mt-2"/>
@@ -236,7 +267,7 @@ const SyllabusTracker = () => {
         <CardContent className="space-y-4 p-6">
             <div className="flex gap-8">
                 <div className="flex-shrink-0">
-                    <Skeleton className="h-48 w-48 rounded-full" />
+                    <Skeleton className="h-48 w-48 rounded-md" />
                 </div>
                 <div className="flex-1 space-y-4">
                     <Skeleton className="h-12 w-full" />
@@ -252,45 +283,37 @@ const SyllabusTracker = () => {
   const overallProgress = getOverallProgress();
 
   return (
-    <Card className="w-full max-w-4xl bg-card/80 backdrop-blur-sm border-0 shadow-2xl shadow-black/50">
+    <Card className="w-full max-w-4xl bg-card/60 backdrop-blur-sm border-border/50 shadow-xl shadow-black/10">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl font-bold">
+        <CardTitle className="flex items-center gap-3 text-xl font-bold text-foreground/90">
           <Book className="h-6 w-6 text-primary" />
           Syllabus Tracker
         </CardTitle>
-        <div className="pt-2">
-            <div className="flex justify-between items-center mb-1">
-                <span className="text-sm font-medium text-muted-foreground">Overall Progress</span>
-                <span className="text-sm font-semibold">{Math.round(overallProgress)}%</span>
+        <div className="pt-4">
+            <div className="flex justify-between items-center mb-2">
+                <span className="text-base font-medium text-muted-foreground">Overall Progress</span>
+                <span className="text-lg font-semibold text-primary">{Math.round(overallProgress)}%</span>
             </div>
             <Progress value={overallProgress} className="h-2" />
         </div>
       </CardHeader>
       <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-8 p-6">
-        <div className="md:col-span-1 flex flex-col items-center justify-center">
-            <div className="relative flex size-48 items-center justify-center">
-                <CircularProgress value={overallProgress} size={192} strokeWidth={12} />
-                <div className="absolute flex flex-col items-center">
-                    <p className="text-5xl font-bold text-primary drop-shadow-[0_0_10px_hsl(var(--primary))]">
-                        {Math.round(overallProgress)}%
-                    </p>
-                    <p className="text-sm text-muted-foreground">Completed</p>
-                </div>
-            </div>
+        <div className="md:col-span-1 flex flex-col items-center justify-center -mt-8">
+            <CaduceusIcon className="w-48 h-auto" />
         </div>
         <div className="md:col-span-2">
-          <Accordion type="multiple" value={activeAccordionItem} onValueChange={setActiveAccordionItem} className="w-full space-y-2">
+          <Accordion type="multiple" value={activeAccordionItem} onValueChange={setActiveAccordionItem} className="w-full space-y-3">
             {syllabus.map((subject) => {
               const subjectProgress = getSubjectProgress(subject.chapters);
               return (
-                <AccordionItem value={subject.id} key={subject.id} className="border-b-0 rounded-lg bg-black/20">
+                <AccordionItem value={subject.id} key={subject.id} className="border rounded-lg bg-background/50 transition-all hover:bg-background/80">
                   <AccordionTrigger className="p-4 hover:no-underline">
                     <div className="flex w-full items-center gap-4">
                       <span className="text-primary">{subject.icon}</span>
-                      <span className="flex-1 text-left font-semibold">{subject.name}</span>
+                      <span className="flex-1 text-left font-semibold text-foreground/80">{subject.name}</span>
                       <div className="flex items-center gap-3 w-40">
-                        <Progress value={subjectProgress} className="h-2 bg-muted/50" />
-                        <span className="text-xs text-muted-foreground w-12 text-right">
+                        <Progress value={subjectProgress} className="h-1.5 bg-muted/50" />
+                        <span className="text-sm font-semibold text-muted-foreground w-12 text-right">
                           {Math.round(subjectProgress)}%
                         </span>
                       </div>
@@ -299,18 +322,18 @@ const SyllabusTracker = () => {
                   <AccordionContent className="px-4 pb-2">
                     <div className="space-y-3 py-2 border-t border-border/50">
                       {subject.chapters.map((chapter) => (
-                        <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-black/20 transition-colors">
+                        <div key={chapter.id} className="flex items-center gap-3 p-2 rounded-md hover:bg-black/5 transition-colors">
                           <Checkbox
                             id={`${subject.id}-${chapter.id}`}
                             checked={chapter.completed}
                             onCheckedChange={(checked) =>
                               handleChapterToggle(subject.id, chapter.id, !!checked)
                             }
-                            className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:border-primary-foreground"
+                            className="border-primary/50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground data-[state=checked]:border-primary"
                           />
                           <label
                             htmlFor={`${subject.id}-${chapter.id}`}
-                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-foreground/70"
                           >
                             {chapter.name}
                           </label>

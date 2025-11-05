@@ -15,12 +15,12 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
   size = 100,
   strokeWidth = 10,
   className,
+  gradientId = 'progress-gradient'
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   // Ensure offset doesn't go below 0
   const offset = Math.max(0, circumference - (value / 100) * circumference);
-  const gradientId = React.useId();
 
   return (
     <svg
@@ -30,13 +30,13 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
       className={cn('transform -rotate-90', className)}
     >
       <defs>
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="hsl(var(--primary))" />
-          <stop offset="100%" stopColor="hsl(var(--accent))" />
+        <linearGradient id={gradientId} x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="hsl(var(--accent))" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" />
         </linearGradient>
       </defs>
       <circle
-        className="text-muted/20"
+        className="text-white/10"
         stroke="currentColor"
         strokeWidth={strokeWidth}
         fill="transparent"

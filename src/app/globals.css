@@ -137,7 +137,7 @@
     --secondary-foreground: 0 0% 98%;
     --muted: 250 50% 100% / 0.1;
     --muted-foreground: 240 10% 75%;
-    --accent: 330 100% 75%;
+    --accent: 180 100% 50%; /* Cyan accent */
     --accent-foreground: 0 0% 10%;
     --destructive: 0 80% 60%;
     --destructive-foreground: 0 0% 100%;

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CircularProgress } from '@/components/ui/circular-progress';
 import {
+  BrainCircuit,
   Coffee,
   Play,
   Pause,
@@ -23,7 +24,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { usePomodoro } from '@/context/pomodoro-context';
-import { CaduceusIcon } from '@/components/ui/caduceus-icon';
 
 const PomodoroTimer = () => {
   const {
@@ -44,41 +44,62 @@ const PomodoroTimer = () => {
 
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
-  const progress = (timerModes[mode].time - time) / timerModes[mode].time * 100;
+  const progress =
+    (timerModes[mode].time - time) / timerModes[mode].time * 100;
 
-  const ModeButton = ({ targetMode, label, children }: { targetMode: 'focus' | 'shortBreak' | 'longBreak', label: string, children: React.ReactNode }) => (
+  const ModeButton = ({
+    targetMode,
+    label,
+    children,
+  }: {
+    targetMode: 'focus' | 'shortBreak' | 'longBreak';
+    label: string;
+    children: React.ReactNode;
+  }) => (
     <Button
-      variant="ghost"
+      variant={mode === targetMode ? 'secondary' : 'ghost'}
       onClick={() => setMode(targetMode)}
       className={cn(
-        'flex h-auto flex-col items-center justify-center gap-1 rounded-2xl p-3 text-sm font-normal text-foreground/70 transition-all',
-        mode === targetMode ? 'bg-primary/20 text-primary' : 'bg-black/5'
+        'h-auto flex-1 rounded-full p-3 text-sm font-semibold transition-all',
+        mode === targetMode
+          ? 'bg-primary/80 text-primary-foreground'
+          : 'bg-transparent text-muted-foreground'
       )}
     >
       {children}
-      <span>{label}</span>
+      <span className="hidden sm:inline">{label}</span>
     </Button>
   );
 
   return (
-    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-6 text-card-foreground shadow-lg backdrop-blur-lg border border-border">
+    <div className="w-full max-w-sm rounded-3xl bg-card/60 p-4 sm:p-6 text-card-foreground shadow-2xl shadow-black/50 backdrop-blur-lg border-t border-white/10">
       <header className="flex items-start justify-between">
         <div className="flex items-center gap-3">
           <div className="rounded-lg bg-primary/10 p-2">
-            <CaduceusIcon className="size-6 text-primary" />
+            <BrainCircuit className="size-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-xl font-bold">{timerModes[mode].label}</h1>
-            <p className="text-sm text-muted-foreground">Session {mode === 'focus' ? sessionCount + 1 : sessionCount}</p>
+            <h1 className="text-lg font-bold">{timerModes[mode].label}</h1>
+            <p className="text-sm text-muted-foreground">
+              Session {mode === 'focus' ? sessionCount + 1 : sessionCount}
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-black/10 hover:text-foreground">
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-muted-foreground hover:bg-white/10 hover:text-foreground"
+          >
             <Volume2 className="size-5" />
           </Button>
-           <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+          <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
             <DialogTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-black/10 hover:text-foreground">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-muted-foreground hover:bg-white/10 hover:text-foreground"
+              >
                 <Settings className="size-5" />
               </Button>
             </DialogTrigger>
@@ -131,45 +152,66 @@ const PomodoroTimer = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={() => {
-                  handleSaveSettings();
-                  setIsSettingsOpen(false);
-                }}>Save Changes</Button>
+                <Button
+                  onClick={() => {
+                    handleSaveSettings();
+                    setIsSettingsOpen(false);
+                  }}
+                >
+                  Save Changes
+                </Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
         </div>
       </header>
 
-      <main className="my-10 flex flex-col items-center">
-        <div className="relative flex size-56 items-center justify-center">
-          <CircularProgress value={progress} size={224} strokeWidth={10} />
+      <main className="my-8 sm:my-12 flex flex-col items-center">
+        <div className="relative flex size-60 items-center justify-center">
+          <CircularProgress
+            value={progress}
+            size={240}
+            strokeWidth={14}
+            gradientId="timer-gradient"
+          />
           <div className="absolute flex flex-col items-center">
             <span className="font-mono text-7xl font-bold tracking-tighter">
-              {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
+              {String(minutes).padStart(2, '0')}:
+              {String(seconds).padStart(2, '0')}
             </span>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {Math.floor(progress)}% Complete
             </p>
           </div>
         </div>
       </main>
-      
-      <div className="grid grid-cols-2 gap-4">
+
+      <div className="flex items-center justify-center gap-8 px-4">
+        <div></div>
         <Button
           onClick={toggleTimer}
-          className="h-16 rounded-2xl bg-primary text-lg font-bold text-primary-foreground shadow-lg transition-all hover:bg-primary/90"
+          className="h-20 w-20 rounded-full bg-primary/20 text-primary shadow-lg transition-all hover:bg-primary/30"
+          size="icon"
         >
-          {isActive ? <Pause className="size-8" /> : <Play className="size-8" />}
+          {isActive ? (
+            <Pause className="size-10" />
+          ) : (
+            <Play className="size-10 ml-1" />
+          )}
         </Button>
-        <Button onClick={resetTimer} className="h-16 rounded-2xl bg-secondary/50 text-muted-foreground shadow-lg transition-all hover:bg-secondary/80">
-          <RotateCw className="size-8" />
+        <Button
+          onClick={resetTimer}
+          className="text-muted-foreground"
+          variant="ghost"
+          size="icon"
+        >
+          <RotateCw className="size-6" />
         </Button>
       </div>
 
-      <div className="mt-6 grid grid-cols-3 gap-3">
+      <div className="mt-6 sm:mt-8 flex justify-center items-center gap-2 rounded-full bg-black/20 p-1.5">
         <ModeButton targetMode="focus" label="Focus">
-          <CaduceusIcon className="size-5" />
+          <BrainCircuit className="size-5" />
         </ModeButton>
         <ModeButton targetMode="shortBreak" label="Short Break">
           <Coffee className="size-5" />
@@ -178,20 +220,26 @@ const PomodoroTimer = () => {
           <Coffee className="size-5" />
         </ModeButton>
       </div>
-      
+
       <footer className="mt-6 flex items-center justify-center gap-2">
-          <span className="text-sm text-muted-foreground">Focus Sessions:</span>
-          <div className="flex gap-1.5">
-            {[...Array(4)].map((_, i) => (
-              <div key={i} className={cn("size-2 rounded-full", i < sessionCount % 4 ? "bg-primary" : "bg-muted/50")}></div>
-            ))}
-          </div>
-          <span className="ml-2 text-sm font-semibold text-foreground/80">{sessionCount}</span>
+        <span className="text-sm text-muted-foreground">Focus Sessions:</span>
+        <div className="flex gap-1.5">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className={cn(
+                'size-2 rounded-full',
+                i < sessionCount % 4 ? 'bg-primary' : 'bg-white/20'
+              )}
+            ></div>
+          ))}
+        </div>
+        <span className="ml-2 text-sm font-semibold text-foreground/80">
+          {sessionCount}
+        </span>
       </footer>
     </div>
   );
 };
 
 export default PomodoroTimer;
-
-    

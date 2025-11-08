@@ -68,7 +68,7 @@ const ExamCountdown = () => {
       </div>
       <div className="flex flex-col items-center justify-center text-center flex-grow">
          <div className="relative flex size-48 items-center justify-center">
-            <CircularProgress value={progress} size={192} strokeWidth={8} gradientId="meadow-progress-gradient"/>
+            <CircularProgress value={progress} size={192} strokeWidth={8} gradientId="progress-gradient"/>
             <div className="absolute flex flex-col items-center">
               {daysLeft !== null ? (
                   <p className="text-7xl font-bold text-foreground">

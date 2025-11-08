@@ -144,9 +144,6 @@
     --border: 250 50% 100% / 0.2;
     --input: 250 50% 100% / 0.15;
     --ring: 330 100% 70%;
-
-    background: linear-gradient(135deg, #232555, #432d6a, #6c3272);
-    background-attachment: fixed;
   }
 
   .theme-sakura {

@@ -32,6 +32,7 @@ import {
 } from '@/components/ui/tooltip';
 import { Logo } from '@/components/ui/logo';
 import { PomodoroProvider } from '@/context/pomodoro-context';
+import InstallPwaButton from '@/components/install-pwa-button';
 import '@/app/loader.css';
 
 function DashboardNav() {
@@ -157,6 +158,7 @@ function DashboardNav() {
         </SheetContent>
       </Sheet>
       <div className="flex w-full items-center justify-end gap-4 md:ml-auto md:gap-2 lg:gap-4">
+        <InstallPwaButton />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="secondary" size="icon" className="rounded-full">

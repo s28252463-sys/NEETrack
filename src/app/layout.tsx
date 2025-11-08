@@ -6,6 +6,7 @@ import { FirebaseClientProvider } from '@/firebase';
 export const metadata: Metadata = {
   title: 'NEETrack',
   description: 'Track your progress, ace the exam.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({

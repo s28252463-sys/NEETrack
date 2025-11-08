@@ -23,7 +23,7 @@ const InstallPwaButton = () => {
       // Prevent the mini-infobar from appearing on mobile
       event.preventDefault();
       // Stash the event so it can be triggered later.
-      setInstallPrompt(event as BeforeInstallProofreadEvent);
+      setInstallPrompt(event as BeforeInstallPromptEvent);
       // Show the custom install button.
       setShowButton(true);
     };

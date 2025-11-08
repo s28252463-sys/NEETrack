@@ -8,6 +8,7 @@ import {
   ReactNode,
   Dispatch,
   SetStateAction,
+  useRef,
 } from 'react';
 import { BrainCircuit, Coffee } from 'lucide-react';
 
@@ -53,47 +54,75 @@ export const PomodoroProvider = ({ children }: { children: ReactNode }) => {
   const [isActive, setIsActive] = useState(false);
   const [sessionCount, setSessionCount] = useState(0);
 
+  // Refs to handle background timing issues
+  const timerEndDate = useRef<number | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
   const [settings, setSettings] = useState({
     focus: timerModes.focus.time / 60,
     shortBreak: timerModes.shortBreak.time / 60,
     longBreak: timerModes.longBreak.time / 60,
   });
 
+  // This effect resets the timer when the mode or settings change
   useEffect(() => {
-    setTime(timerModes[mode].time);
     setIsActive(false);
+    setTime(timerModes[mode].time);
   }, [mode, timerModes]);
 
+  // This is the main timer effect
   useEffect(() => {
-    let interval: NodeJS.Timeout | null = null;
-    if (isActive && time > 0) {
-      interval = setInterval(() => {
-        setTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (time === 0 && isActive) {
-      if (mode === 'focus') {
-        setSessionCount((prev) => prev + 1);
-        if ((sessionCount + 1) % 4 === 0) {
-          setMode('longBreak');
-        } else {
-          setMode('shortBreak');
-        }
-      } else {
-        setMode('focus');
+    // Clear any existing interval when the effect re-runs or component unmounts
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    if (isActive) {
+      // If the timer is starting, set the end date, unless it's already set
+      if (timerEndDate.current === null) {
+        timerEndDate.current = Date.now() + time * 1000;
       }
-      setIsActive(false);
+
+      intervalRef.current = setInterval(() => {
+        const now = Date.now();
+        const newRemainingTime = Math.round((timerEndDate.current! - now) / 1000);
+
+        if (newRemainingTime > 0) {
+          setTime(newRemainingTime);
+        } else {
+          setTime(0);
+          // Timer finished logic
+          if (mode === 'focus') {
+            setSessionCount((prev) => prev + 1);
+            if ((sessionCount + 1) % 4 === 0) {
+              setMode('longBreak');
+            } else {
+              setMode('shortBreak');
+            }
+          } else {
+            setMode('focus');
+          }
+          setIsActive(false); // This will trigger the effect to clean up
+        }
+      }, 500); // Check every 500ms for better responsiveness
+    } else {
+      // If timer is paused or reset, clear the end date
+      timerEndDate.current = null;
     }
 
     return () => {
-      if (interval) clearInterval(interval);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
     };
-  }, [isActive, time, mode, sessionCount]);
+  }, [isActive, mode, sessionCount, timerModes]); // Rerun when activity state or mode changes
 
   const toggleTimer = () => setIsActive(!isActive);
 
   const resetTimer = () => {
-    setTime(timerModes[mode].time);
     setIsActive(false);
+    setTime(timerModes[mode].time);
+    // sessionCount is not reset here intentionally
   };
 
   const handleSettingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -28,7 +28,7 @@ const InstallPwaButton = () => {
       setShowButton(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
 
     // Check if the app is already installed
     if (window.matchMedia('(display-mode: standalone)').matches) {
@@ -36,7 +36,7 @@ const InstallPwaButton = () => {
     }
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
     };
   }, []);
 

@@ -5,6 +5,7 @@ import MockTestCountdown from '@/components/mock-test-countdown';
 import CountdownTimer from '@/components/countdown-timer';
 import { DashboardBackground } from '@/components/ui/dashboard-background';
 import DailyQuote from '@/components/daily-quote';
+import Script from 'next/script';
 
 export default function DashboardPage() {
   return (
@@ -16,6 +17,7 @@ export default function DashboardPage() {
             <MockTestCountdown />
             <DailyQuote />
         </div>
+        <Script async={true} data-cfasync="false" src="//pl28085801.effectivegatecpm.com/48a2c7d50ab69852baf22279c014a0b5/invoke.js" />
         <div id="container-48a2c7d50ab69852baf22279c014a0b5" className="mt-8"></div>
     </div>
   );

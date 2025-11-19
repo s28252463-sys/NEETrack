@@ -12,6 +12,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { MandalaBackground } from '@/components/ui/mandala-background';
+import Script from 'next/script';
 
 // Define categories to group the topics
 const categories: { name: string, icon: ReactNode, topics: string[] }[] = [
@@ -181,6 +182,7 @@ export default function StudyArenaPage() {
             ))}
           </Accordion>
         </div>
+        <Script async={true} data-cfasync="false" src="//pl28085801.effectivegatecpm.com/48a2c7d50ab69852baf22279c014a0b5/invoke.js" />
         <div id="container-48a2c7d50ab69852baf22279c014a0b5" className="mt-8"></div>
       </div>
     </div>

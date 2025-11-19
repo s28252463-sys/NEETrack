@@ -224,6 +224,31 @@
 
     color: hsl(var(--foreground));
   }
+
+  .theme-artist {
+    --background: 40 10% 97%; /* Off-white */
+    --foreground: 220 10% 20%; /* Dark Grey Blue */
+    --card: 0 0% 100% / 0.6; /* Frosted glass */
+    --card-foreground: 220 10% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 10% 15%;
+    --primary: 200 80% 50%; /* Vibrant Blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 25 100% 60%; /* Bright Orange */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 10% 90%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 330 100% 65%; /* Hot Pink */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 10% 80% / 0.5;
+    --input: 0 0% 100% / 0.8;
+    --ring: 200 80% 55%;
+    
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
 }
 
 @layer base {

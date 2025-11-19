@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Download, X } from 'lucide-react';
+import { Download } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 // This is the event type from the spec
 interface BeforeInstallPromptEvent extends Event {
@@ -16,7 +17,6 @@ interface BeforeInstallPromptEvent extends Event {
 
 const InstallPwaButton = () => {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  const [showButton, setShowButton] = useState(false);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: Event) => {
@@ -24,16 +24,9 @@ const InstallPwaButton = () => {
       event.preventDefault();
       // Stash the event so it can be triggered later.
       setInstallPrompt(event as BeforeInstallPromptEvent);
-      // Show the custom install button.
-      setShowButton(true);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
-
-    // Check if the app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setShowButton(false);
-    }
 
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
@@ -55,32 +48,29 @@ const InstallPwaButton = () => {
     }
     // We can only use the prompt once, so clear it.
     setInstallPrompt(null);
-    setShowButton(false);
   };
   
-  const handleDismiss = () => {
-    setShowButton(false);
-    // You might want to store this preference in localStorage to not show it again for a while
+  // Hide the button if the app is already installed or the prompt isn't available
+  if (typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches) {
+    return null;
   }
 
-  if (!showButton || !installPrompt) {
+  if (!installPrompt) {
     return null;
   }
 
   return (
-     <div className="fixed bottom-4 right-4 z-50">
-        <div className="bg-card text-card-foreground rounded-lg shadow-lg p-4 flex items-center gap-4 border border-border">
-          <Download className="h-6 w-6 text-primary" />
-          <div className="flex-grow">
-            <p className="font-semibold">Install the app now</p>
-            <p className="text-sm text-muted-foreground">Get the full experience on your device.</p>
-          </div>
-          <Button onClick={handleInstallClick} size="sm">Install</Button>
-          <Button onClick={handleDismiss} variant="ghost" size="icon" className="h-8 w-8">
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+    <Tooltip>
+        <TooltipTrigger asChild>
+            <Button onClick={handleInstallClick} variant="ghost" size="icon">
+                <Download className="h-5 w-5" />
+                <span className="sr-only">Install App</span>
+            </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+            <p>Install App</p>
+        </TooltipContent>
+    </Tooltip>
   );
 };
 

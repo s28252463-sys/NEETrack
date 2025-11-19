@@ -1,11 +1,11 @@
 {
-  "name": "NEETrack",
+  "name": "NEETrack - Your NEET UG Companion",
   "short_name": "NEETrack",
-  "description": "Track your progress, ace the exam.",
+  "description": "Track your NEET UG syllabus progress, manage mock tests, and stay motivated.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#1E4671",
+  "background_color": "#111827",
+  "theme_color": "#8b5cf6",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",

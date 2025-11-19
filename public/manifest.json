@@ -2,6 +2,10 @@
   "name": "NEETrack",
   "short_name": "NEETrack",
   "description": "Track your progress, ace the exam.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1E4671",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -13,9 +17,5 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#ffffff"
+  ]
 }

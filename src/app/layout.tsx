@@ -23,6 +23,7 @@ export default function RootLayout({
         </FirebaseClientProvider>
         <Toaster />
         <Script async={true} data-cfasync="false" src="//pl28085801.effectivegatecpm.com/48a2c7d50ab69852baf22279c014a0b5/invoke.js"></Script>
+        <Script type='text/javascript' src='//pl28085855.effectivegatecpm.com/71/1d/0d/711d0d3b9e4895cfcb484ddd3d32318d.js'></Script>
       </body>
     </html>
   );

@@ -17,8 +17,14 @@ interface BeforeInstallPromptEvent extends Event {
 
 const InstallPwaButton = () => {
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const [isAppInstalled, setIsAppInstalled] = useState(false);
 
   useEffect(() => {
+    // Check if the app is already installed
+    if (window.matchMedia('(display-mode: standalone)').matches) {
+      setIsAppInstalled(true);
+    }
+
     const handleBeforeInstallPrompt = (event: Event) => {
       // Prevent the mini-infobar from appearing on mobile
       event.preventDefault();
@@ -26,10 +32,10 @@ const InstallPwaButton = () => {
       setInstallPrompt(event as BeforeInstallPromptEvent);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
   }, []);
 
@@ -50,25 +56,30 @@ const InstallPwaButton = () => {
     setInstallPrompt(null);
   };
   
-  // Hide the button if the app is already installed or the prompt isn't available
-  if (typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches) {
-    return null;
-  }
-
-  if (!installPrompt) {
-    return null;
+  const getTooltipContent = () => {
+    if (isAppInstalled) return 'App is already installed';
+    if (installPrompt) return 'Install App';
+    return 'Installation not available on this browser';
   }
 
   return (
     <Tooltip>
         <TooltipTrigger asChild>
-            <Button onClick={handleInstallClick} variant="ghost" size="icon">
-                <Download className="h-5 w-5" />
-                <span className="sr-only">Install App</span>
-            </Button>
+            {/* The button is wrapped in a span to allow the tooltip to work even when the button is disabled */}
+            <span>
+              <Button 
+                onClick={handleInstallClick} 
+                variant="ghost" 
+                size="icon"
+                disabled={!installPrompt || isAppInstalled}
+                aria-label="Install App"
+              >
+                  <Download className="h-5 w-5" />
+              </Button>
+            </span>
         </TooltipTrigger>
         <TooltipContent>
-            <p>Install App</p>
+            <p>{getTooltipContent()}</p>
         </TooltipContent>
     </Tooltip>
   );

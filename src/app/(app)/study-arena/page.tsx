@@ -181,6 +181,7 @@ export default function StudyArenaPage() {
             ))}
           </Accordion>
         </div>
+        <div id="container-48a2c7d50ab69852baf22279c014a0b5" className="z-10 mt-8"></div>
       </div>
     </div>
   );

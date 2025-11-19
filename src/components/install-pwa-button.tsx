@@ -20,11 +20,15 @@ const InstallPwaButton = () => {
   const [isAppInstalled, setIsAppInstalled] = useState(false);
 
   useEffect(() => {
-    // Check if the app is already installed
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsAppInstalled(true);
-    }
-
+    // This effect runs only on the client
+    const checkInstallationStatus = () => {
+        // The check must be inside a function to ensure window is defined
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            setIsAppInstalled(true);
+        }
+    };
+    checkInstallationStatus();
+    
     const handleBeforeInstallPrompt = (event: Event) => {
       // Prevent the mini-infobar from appearing on mobile
       event.preventDefault();
@@ -49,6 +53,7 @@ const InstallPwaButton = () => {
     const { outcome } = await installPrompt.userChoice;
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt');
+      setIsAppInstalled(true); // Assume installation is successful
     } else {
       console.log('User dismissed the install prompt');
     }
@@ -69,10 +74,11 @@ const InstallPwaButton = () => {
             <span>
               <Button 
                 onClick={handleInstallClick} 
-                variant="outline"
+                variant="default"
                 size="sm"
                 disabled={!installPrompt || isAppInstalled}
                 aria-label="Install App"
+                className="bg-green-600 hover:bg-green-700 text-white"
               >
                   <Download className="mr-2 h-4 w-4" />
                   Install App

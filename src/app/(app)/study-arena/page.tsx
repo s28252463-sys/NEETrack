@@ -5,6 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Library, Link as LinkIcon, Atom, TestTube, Target } from 'lucide-react';
 import type { ReactNode } from 'react';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 
 // Define categories to group the topics
 const categories: { name: string, icon: ReactNode, topics: string[] }[] = [
@@ -126,46 +132,50 @@ export default function StudyArenaPage() {
         </p>
       </header>
 
-      <div className="space-y-12">
+      <Accordion type="multiple" className="w-full space-y-4">
         {categories.map((category) => (
-          <section key={category.name}>
-            <h2 className="text-2xl font-semibold flex items-center gap-3 mb-6 border-b pb-3 border-border">
-                {category.icon}
-                {category.name}
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {studyArenaData
-                    .filter(item => category.topics.includes(item.Subject))
-                    .map((item, index) => (
-                    <Card key={index} className="overflow-hidden bg-card/50">
-                        <CardHeader>
-                        <CardTitle className="text-lg capitalize">{item.Subject}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                        <div className="aspect-video mb-4 rounded-md overflow-hidden">
-                            <iframe
-                            width="100%"
-                            height="100%"
-                            src={item.YouTube_URL}
-                            title={`YouTube video player for ${item.Subject}`}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            allowFullScreen
-                            ></iframe>
-                        </div>
-                        <Button asChild className="w-full">
-                            <a href={item.Notes_Drive_Link} target="_blank" rel="noopener noreferrer">
-                            <LinkIcon className="mr-2 h-4 w-4" />
-                            View/Download Notes
-                            </a>
-                        </Button>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-          </section>
+          <AccordionItem value={category.name} key={category.name} className="border rounded-lg bg-card/50 px-4">
+            <AccordionTrigger className="hover:no-underline">
+                <h2 className="text-2xl font-semibold flex items-center gap-3">
+                    {category.icon}
+                    {category.name}
+                </h2>
+            </AccordionTrigger>
+            <AccordionContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+                    {studyArenaData
+                        .filter(item => category.topics.includes(item.Subject))
+                        .map((item, index) => (
+                        <Card key={index} className="overflow-hidden bg-card/80">
+                            <CardHeader>
+                            <CardTitle className="text-lg capitalize">{item.Subject}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                            <div className="aspect-video mb-4 rounded-md overflow-hidden">
+                                <iframe
+                                width="100%"
+                                height="100%"
+                                src={item.YouTube_URL}
+                                title={`YouTube video player for ${item.Subject}`}
+                                frameBorder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowFullScreen
+                                ></iframe>
+                            </div>
+                            <Button asChild className="w-full">
+                                <a href={item.Notes_Drive_Link} target="_blank" rel="noopener noreferrer">
+                                <LinkIcon className="mr-2 h-4 w-4" />
+                                View/Download Notes
+                                </a>
+                            </Button>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </div>
   );
 }

@@ -58,7 +58,7 @@ const InstallPwaButton = () => {
   
   const getTooltipContent = () => {
     if (isAppInstalled) return 'App is already installed';
-    if (installPrompt) return 'Install App';
+    if (installPrompt) return 'Install App on your device';
     return 'Installation not available on this browser';
   }
 
@@ -69,12 +69,13 @@ const InstallPwaButton = () => {
             <span>
               <Button 
                 onClick={handleInstallClick} 
-                variant="ghost" 
-                size="icon"
+                variant="outline"
+                size="sm"
                 disabled={!installPrompt || isAppInstalled}
                 aria-label="Install App"
               >
-                  <Download className="h-5 w-5" />
+                  <Download className="mr-2 h-4 w-4" />
+                  Install App
               </Button>
             </span>
         </TooltipTrigger>

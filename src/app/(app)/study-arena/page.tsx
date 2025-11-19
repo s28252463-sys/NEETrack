@@ -3,7 +3,7 @@
 import { studyArenaData } from '@/lib/study-arena-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Library, Link as LinkIcon, Atom, TestTube, Target } from 'lucide-react';
+import { BookOpen, Link as LinkIcon, Atom, TestTube, Target } from 'lucide-react';
 import type { ReactNode } from 'react';
 import {
   Accordion,
@@ -124,7 +124,7 @@ export default function StudyArenaPage() {
     <div className="flex-1">
       <header className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
-          <Library className="h-8 w-8 text-primary" />
+          <BookOpen className="h-8 w-8 text-primary" />
           Study Arena
         </h1>
         <p className="text-muted-foreground mt-2">

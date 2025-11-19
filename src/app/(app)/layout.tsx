@@ -12,7 +12,6 @@ import {
   ListChecks,
   ClipboardList,
   LayoutDashboard,
-  Library,
 } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import {
@@ -115,7 +114,7 @@ function DashboardNav() {
                 href="/study-arena"
                 className="text-muted-foreground transition-colors hover:text-foreground"
               >
-                <Library className="h-5 w-5" />
+                <BookOpen className="h-5 w-5" />
                 <span className="sr-only">Study Arena</span>
               </Link>
             </TooltipTrigger>
@@ -173,7 +172,7 @@ function DashboardNav() {
               href="/study-arena"
               className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
             >
-              <Library className="h-5 w-5" />
+              <BookOpen className="h-5 w-5" />
               Study Arena
             </Link>
           </nav>

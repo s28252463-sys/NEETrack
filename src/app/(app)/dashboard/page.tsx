@@ -7,13 +7,14 @@ import { DashboardBackground } from '@/components/ui/dashboard-background';
 
 export default function DashboardPage() {
   return (
-    <div className="theme-galaxy -m-8 flex-1 p-8 flex items-center justify-center relative overflow-hidden">
+    <div className="theme-galaxy -m-8 flex-1 p-8 flex flex-col items-center justify-center relative overflow-hidden">
         <DashboardBackground />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 w-full max-w-7xl z-10">
             <ExamCountdown />
             <CountdownTimer />
             <MockTestCountdown />
         </div>
+        <div id="container-48a2c7d50ab69852baf22279c014a0b5" className="z-10 mt-8"></div>
     </div>
   );
 }

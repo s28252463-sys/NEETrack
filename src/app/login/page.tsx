@@ -49,7 +49,7 @@ export default function LoginPage() {
   const handleLogin = (values: FormValues) => {
     setIsLoading(true);
     initiateEmailSignIn(auth, values.email, values.password).finally(() => {
-        setIsLoading(false);
+      setIsLoading(false);
     });
     // The AuthProvider will handle the redirect on successful login.
   };
@@ -57,13 +57,13 @@ export default function LoginPage() {
   const handleSignUp = (values: FormValues) => {
     setIsLoading(true);
     initiateEmailSignUp(auth, values.email, values.password).finally(() => {
-        setIsLoading(false);
+      setIsLoading(false);
     });
     // The AuthProvider will handle the redirect on successful sign-up.
   };
 
   if (isUserLoading || user) {
-     return (
+    return (
       <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-background">
         <div className="loader">
           <div className="truckWrapper">
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M104.24,59.37H14.78a4,4,0,0,1-4-4V16.89a4,4,0,0,1,4-4H91.56a13.7,13.7,0,0,1,12.68,8.22L116,47.45V55.37a4,4,0,0,1-4,4ZM18.78,51.37H99.19v-26.H18.78Z"
+                  d="M104.24,59.37H14.78a4,4,0,0,1-4-4V16.89a4,4,0,0,1,4-4H91.56a13.7,13.7,0,0,1,12.68,8.22L116,47.45V55.37a4,4,0,0,1-4,4ZM18.78,51.37H99.19v-26H18.78Z"
                   fill="currentColor"
                 ></path>
                 <path
@@ -126,9 +126,9 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background">
-        <div className="mb-16">
-            <Logo className="h-20 w-auto" />
-        </div>
+      <div className="mb-16">
+        <Logo className="h-20 w-auto" />
+      </div>
       <div className="wrapper">
         <div className="card-switch">
           <label className="switch">
@@ -165,7 +165,7 @@ export default function LoginPage() {
                 type="password"
                 disabled={isLoading}
               />
-               {loginForm.formState.errors.password && <p className="text-red-500 text-xs">{loginForm.formState.errors.password.message}</p>}
+              {loginForm.formState.errors.password && <p className="text-red-500 text-xs">{loginForm.formState.errors.password.message}</p>}
               <button className="flip-card__btn" type="submit" disabled={isLoading}>
                 {isLoading ? 'Logging in...' : 'Log in'}
               </button>
@@ -173,8 +173,8 @@ export default function LoginPage() {
           </div>
           <div className="flip-card__back">
             <div className="title">Sign up</div>
-            <form 
-              onSubmit={signupForm.handleSubmit(handleSignUp)} 
+            <form
+              onSubmit={signupForm.handleSubmit(handleSignUp)}
               className="flip-card__form"
               noValidate
             >

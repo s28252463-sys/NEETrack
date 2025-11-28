@@ -3,7 +3,7 @@
 import { useEffect, type ReactNode } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetTrigger, SheetContent, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import {
   Menu,
   BookOpen,
@@ -135,6 +135,10 @@ function DashboardNav() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left">
+            <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+            <SheetDescription className="sr-only">
+              Main navigation menu for the application
+            </SheetDescription>
             <nav className="grid gap-6 text-lg font-medium">
               <Link
                 href="/dashboard"
@@ -167,7 +171,7 @@ function DashboardNav() {
                 <ClipboardList className="h-5 w-5" />
                 Mock Tests
               </Link>
-               <Link
+              <Link
                 href="/study-arena"
                 className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
               >
@@ -213,7 +217,14 @@ export default function AppLayout({
 }: {
   children: ReactNode;
 }) {
-  const { user, isUserLoading } = useUser();
+  const { user: realUser, isUserLoading } = useUser();
+  // MOCK USER FOR PREVIEW
+  const user = realUser || {
+    email: 'preview@example.com',
+    uid: 'preview-user',
+    isAnonymous: false,
+    photoURL: ''
+  };
   const router = useRouter();
   const pathname = usePathname();
 
@@ -242,7 +253,7 @@ export default function AppLayout({
                 xmlns="http://www.w3.org/2000/svg"
               >
                 <path
-                  d="M104.24,59.37H14.78a4,4,0,0,1-4-4V16.89a4,4,0,0,1,4-4H91.56a13.7,13.7,0,0,1,12.68,8.22L116,47.45V55.37a4,4,0,0,1-4,4ZM18.78,51.37H99.19v-26.H18.78Z"
+                  d="M104.24,59.37H14.78a4,4,0,0,1-4-4V16.89a4,4,0,0,1,4-4H91.56a13.7,13.7,0,0,1,12.68,8.22L116,47.45V55.37a4,4,0,0,1-4,4ZM18.78,51.37H99.19v-26H18.78Z"
                   fill="currentColor"
                 ></path>
                 <path
@@ -295,18 +306,18 @@ export default function AppLayout({
   if (!user && protectedRoutes.includes(pathname)) {
     return null;
   }
-  
+
   // If the user is authenticated, show the dashboard layout.
   if (user) {
     return (
-        <PomodoroProvider>
-          <div className="flex min-h-screen w-full flex-col bg-background">
-            <DashboardNav />
-            <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-              {children}
-            </main>
-          </div>
-        </PomodoroProvider>
+      <PomodoroProvider>
+        <div className="flex min-h-screen w-full flex-col bg-background">
+          <DashboardNav />
+          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+            {children}
+          </main>
+        </div>
+      </PomodoroProvider>
     );
   }
 

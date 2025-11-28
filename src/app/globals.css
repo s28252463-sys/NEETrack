@@ -318,4 +318,34 @@
     background-attachment: fixed;
     color: hsl(var(--foreground));
   }
+
+  .theme-neon-glass {
+    --background: 260 60% 5%; /* Deep Purple/Black */
+    --foreground: 210 40% 98%; /* White/Light Grey */
+    --card: 260 50% 10% / 0.4; /* Translucent dark purple */
+    --card-foreground: 210 40% 98%;
+    --popover: 260 60% 5%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 280 100% 60%; /* Neon Purple */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 160 100% 50%; /* Neon Green */
+    --secondary-foreground: 260 60% 5%;
+    --muted: 260 40% 20% / 0.5;
+    --muted-foreground: 260 20% 70%;
+    --accent: 160 100% 50%; /* Neon Green Accent */
+    --accent-foreground: 260 60% 5%;
+    --destructive: 0 100% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 260 50% 30% / 0.3;
+    --input: 260 50% 15% / 0.5;
+    --ring: 280 100% 60%;
+
+    background-color: hsl(var(--background));
+    background-image: 
+      radial-gradient(circle at 10% 20%, hsla(280, 100%, 60%, 0.15), transparent 40%),
+      radial-gradient(circle at 90% 80%, hsla(160, 100%, 50%, 0.1), transparent 40%),
+      radial-gradient(circle at 50% 50%, hsla(260, 60%, 15%, 0.3), transparent 60%);
+    background-attachment: fixed;
+    color: hsl(var(--foreground));
+  }
 }

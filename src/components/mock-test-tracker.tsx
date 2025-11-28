@@ -142,11 +142,11 @@ export default function MockTestTracker() {
       createdAt: serverTimestamp(),
       userId: user.uid,
     });
-    
+
     form.reset();
     setIsDialogOpen(false);
   };
-  
+
   const handleDeleteTest = (testId: string) => {
     if (!user) return;
     const testRef = doc(firestore, 'users', user.uid, 'mockTests', testId);
@@ -160,8 +160,8 @@ export default function MockTestTracker() {
     // Also, filter out tests where createdAt is still null (pending server timestamp).
     const testsWithDate = mockTests
       .filter(t => t.createdAt) // Ensure createdAt is not null
-      .map(t => ({...t, date: t.createdAt!.toDate()}))
-      
+      .map(t => ({ ...t, date: t.createdAt!.toDate() }))
+
     return testsWithDate.sort((a, b) => a.date.getTime() - b.date.getTime());
   }, [mockTests]);
 
@@ -210,10 +210,10 @@ export default function MockTestTracker() {
               Log New Test
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby="log-test-desc" aria-labelledby="log-test-title">
             <DialogHeader>
-              <DialogTitle>Log New Mock Test</DialogTitle>
-              <DialogDescription>
+              <DialogTitle id="log-test-title">Log New Mock Test</DialogTitle>
+              <DialogDescription id="log-test-desc">
                 Enter your scores for each subject. The total will be calculated
                 automatically.
               </DialogDescription>
@@ -287,36 +287,36 @@ export default function MockTestTracker() {
       </CardHeader>
       <CardContent>
         <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-4">Performance Over Time</h3>
-            <div className="h-64 w-full">
+          <h3 className="text-lg font-semibold mb-4">Performance Over Time</h3>
+          <div className="h-64 w-full">
             <ResponsiveContainer width="100%" height="100%">
               <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
                 <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.2)" />
-                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                    <ChartTooltip
-                      content={
-                        <ChartTooltipContent
-                          labelClassName="font-bold"
-                          className="bg-card/80 backdrop-blur-sm border-border/50"
-                        />
-                      }
-                    />
-                    <defs>
-                      <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1}/>
-                      </linearGradient>
-                    </defs>
-                    <Line type="monotone" dataKey="totalScore" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--primary))" }} />
-                    <Line type="monotone" dataKey="physics" stroke="hsl(var(--chart-1))" strokeWidth={1.5} strokeDasharray="5 5" dot={false}/>
-                    <Line type="monotone" dataKey="chemistry" stroke="hsl(var(--chart-2))" strokeWidth={1.5} strokeDasharray="5 5" dot={false}/>
-                    <Line type="monotone" dataKey="biology" stroke="hsl(var(--chart-3))" strokeWidth={1.5} strokeDasharray="5 5" dot={false}/>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border) / 0.2)" />
+                  <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <YAxis domain={[0, 720]} stroke="hsl(var(--muted-foreground))" fontSize={12} />
+                  <ChartTooltip
+                    content={
+                      <ChartTooltipContent
+                        labelClassName="font-bold"
+                        className="bg-card/80 backdrop-blur-sm border-border/50"
+                      />
+                    }
+                  />
+                  <defs>
+                    <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <Line type="monotone" dataKey="totalScore" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 5, fill: "hsl(var(--primary))" }} />
+                  <Line type="monotone" dataKey="physics" stroke="hsl(var(--chart-1))" strokeWidth={1.5} strokeDasharray="5 5" dot={false} />
+                  <Line type="monotone" dataKey="chemistry" stroke="hsl(var(--chart-2))" strokeWidth={1.5} strokeDasharray="5 5" dot={false} />
+                  <Line type="monotone" dataKey="biology" stroke="hsl(var(--chart-3))" strokeWidth={1.5} strokeDasharray="5 5" dot={false} />
                 </LineChart>
               </ChartContainer>
             </ResponsiveContainer>
-            </div>
+          </div>
         </div>
         <Table>
           <TableHeader>

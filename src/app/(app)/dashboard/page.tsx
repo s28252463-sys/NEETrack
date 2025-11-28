@@ -9,16 +9,16 @@ import Script from 'next/script';
 
 export default function DashboardPage() {
   return (
-    <div className="theme-galaxy -m-8 flex-1 p-8 flex flex-col items-center justify-center relative overflow-hidden">
-        <DashboardBackground />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl z-10">
-            <ExamCountdown />
-            <CountdownTimer />
-            <MockTestCountdown />
-            <DailyQuote />
-        </div>
-        <Script async={true} data-cfasync="false" src="//pl28085801.effectivegatecpm.com/48a2c7d50ab69852baf22279c014a0b5/invoke.js" />
-        <div id="container-48a2c7d50ab69852baf22279c014a0b5" className="mt-8"></div>
+    <div className="-m-8 flex-1 p-8 flex flex-col items-center justify-center relative overflow-hidden min-h-[calc(100vh-4rem)]">
+      <DashboardBackground />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-7xl z-10">
+        <ExamCountdown />
+        <CountdownTimer />
+        <MockTestCountdown />
+        <DailyQuote />
+      </div>
+      <Script async={true} data-cfasync="false" src="//pl28085801.effectivegatecpm.com/48a2c7d50ab69852baf22279c014a0b5/invoke.js" />
+      <div id="container-48a2c7d50ab69852baf22279c014a0b5" className="mt-8"></div>
     </div>
   );
 }

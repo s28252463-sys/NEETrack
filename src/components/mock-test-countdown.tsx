@@ -85,10 +85,10 @@ const MockTestCountdown = () => {
               <Settings className="h-5 w-5" />
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent aria-describedby="set-date-desc" aria-labelledby="set-date-title">
             <DialogHeader>
-              <DialogTitle>Set Mock Test Date</DialogTitle>
-              <DialogDescription>
+              <DialogTitle id="set-date-title">Set Mock Test Date</DialogTitle>
+              <DialogDescription id="set-date-desc">
                 Select the date of your next mock test to start the countdown.
               </DialogDescription>
             </DialogHeader>
@@ -129,10 +129,10 @@ const MockTestCountdown = () => {
           </div>
         )}
       </div>
-       <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-            <CalendarIcon className="h-4 w-4" />
-            <span>{targetDate ? format(targetDate, 'PPP') : 'Not Set'}</span>
-        </div>
+      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+        <CalendarIcon className="h-4 w-4" />
+        <span>{targetDate ? format(targetDate, 'PPP') : 'Not Set'}</span>
+      </div>
     </div>
   );
 };

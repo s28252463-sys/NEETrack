@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="theme-neon-glass dark">
-      <body>
+    <html lang="en" className="theme-neon-glass dark" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <FirebaseClientProvider>
           {children}
         </FirebaseClientProvider>

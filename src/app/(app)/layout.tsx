@@ -12,6 +12,7 @@ import {
   ListChecks,
   ClipboardList,
   LayoutDashboard,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuth, useUser } from '@/firebase';
 import {
@@ -122,6 +123,20 @@ function DashboardNav() {
               <p>Study Arena</p>
             </TooltipContent>
           </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/feedback"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <MessageSquare className="h-5 w-5" />
+                <span className="sr-only">Feedback</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Feedback</p>
+            </TooltipContent>
+          </Tooltip>
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -177,6 +192,13 @@ function DashboardNav() {
               >
                 <BookOpen className="h-5 w-5" />
                 Study Arena
+              </Link>
+              <Link
+                href="/feedback"
+                className="flex items-center gap-4 text-muted-foreground hover:text-foreground"
+              >
+                <MessageSquare className="h-5 w-5" />
+                Feedback
               </Link>
             </nav>
           </SheetContent>

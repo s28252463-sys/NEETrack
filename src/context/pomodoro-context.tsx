@@ -11,6 +11,7 @@ import {
   useRef,
 } from 'react';
 import { BrainCircuit, Coffee } from 'lucide-react';
+import { SoundManager } from '@/lib/soundManager';
 
 type TimerMode = 'focus' | 'shortBreak' | 'longBreak';
 
@@ -103,6 +104,7 @@ export const PomodoroProvider = ({ children }: { children: ReactNode }) => {
             setMode('focus');
           }
           setIsActive(false); // This will trigger the effect to clean up
+          SoundManager.playComplete();
         }
       }, 500); // Check every 500ms for better responsiveness
     } else {
@@ -117,7 +119,15 @@ export const PomodoroProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [isActive, mode, sessionCount, timerModes]); // Rerun when activity state or mode changes
 
-  const toggleTimer = () => setIsActive(!isActive);
+  const toggleTimer = () => {
+    const newState = !isActive;
+    setIsActive(newState);
+    if (newState) {
+      SoundManager.playStart();
+    } else {
+      SoundManager.playPause();
+    }
+  };
 
   const resetTimer = () => {
     setIsActive(false);
@@ -139,7 +149,7 @@ export const PomodoroProvider = ({ children }: { children: ReactNode }) => {
     setTimerModes(newTimerModes);
     // If the currently active mode's time was changed, update the timer
     if (!isActive) {
-        setTime(newTimerModes[mode].time);
+      setTime(newTimerModes[mode].time);
     }
   };
 

@@ -14,20 +14,32 @@ import {
 } from '@/components/ui/dialog';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
+import { CircularProgress } from '@/components/ui/circular-progress';
 
 const MockTestCountdown = () => {
   const [targetDate, setTargetDate] = useState<Date | null>(null);
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [progress, setProgress] = useState(100);
+  const [totalDays, setTotalDays] = useState<number>(30); // Default 30 days
 
   // Load the saved date from localStorage on initial client render
   useEffect(() => {
     const savedDate = localStorage.getItem('mockTestTargetDate');
+    const savedStartDate = localStorage.getItem('mockTestStartDate');
+
     if (savedDate) {
       const date = new Date(savedDate);
       setTargetDate(date);
       setSelectedDate(date);
+
+      // Calculate total days from start date if available
+      if (savedStartDate) {
+        const start = new Date(savedStartDate);
+        const total = Math.ceil((date.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        setTotalDays(total > 0 ? total : 30);
+      }
     }
   }, []);
 
@@ -35,6 +47,7 @@ const MockTestCountdown = () => {
   useEffect(() => {
     if (!targetDate) {
       setDaysLeft(null);
+      setProgress(0);
       return;
     }
 
@@ -51,9 +64,15 @@ const MockTestCountdown = () => {
       const difference = target.getTime() - today.getTime();
 
       if (difference >= 0) {
-        setDaysLeft(Math.ceil(difference / (1000 * 60 * 60 * 24)));
+        const remaining = Math.ceil(difference / (1000 * 60 * 60 * 24));
+        setDaysLeft(remaining);
+
+        // Calculate progress (reducing effect: progress decreases as days decrease)
+        const progressPercentage = (remaining / totalDays) * 100;
+        setProgress(Math.min(100, Math.max(0, progressPercentage)));
       } else {
-        setDaysLeft(null); // Or show a "past due" message
+        setDaysLeft(null);
+        setProgress(0);
       }
     };
 
@@ -61,12 +80,20 @@ const MockTestCountdown = () => {
     // Update once a day
     const interval = setInterval(calculateDaysLeft, 1000 * 60 * 60 * 24);
     return () => clearInterval(interval);
-  }, [targetDate]);
+  }, [targetDate, totalDays]);
 
   const handleSaveDate = () => {
     if (selectedDate) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      // Calculate total days from today to selected date
+      const total = Math.ceil((selectedDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      setTotalDays(total > 0 ? total : 30);
+
       setTargetDate(selectedDate);
       localStorage.setItem('mockTestTargetDate', selectedDate.toISOString());
+      localStorage.setItem('mockTestStartDate', today.toISOString());
       setIsDialogOpen(false);
     }
   };
@@ -108,16 +135,17 @@ const MockTestCountdown = () => {
       </div>
       <div className="my-6 text-center flex-grow flex flex-col items-center justify-center">
         {daysLeft !== null ? (
-          <>
-            <p className="text-9xl font-bold text-primary">
-              {daysLeft}
-            </p>
-            <p className="text-sm text-muted-foreground uppercase tracking-widest">
-              Days Until Mock
-            </p>
-          </>
+          <div className="relative flex size-48 items-center justify-center">
+            <CircularProgress value={progress} size={192} strokeWidth={8} gradientId="mock-test-gradient" />
+            <div className="absolute flex flex-col items-center">
+              <p className="text-7xl font-bold text-foreground">
+                {daysLeft}
+              </p>
+              <p className="text-sm text-muted-foreground">Days Until Mock</p>
+            </div>
+          </div>
         ) : (
-          <div className="flex flex-col items-center justify-center h-28">
+          <div className="flex flex-col items-center justify-center h-48">
             <p className="text-muted-foreground">No date set.</p>
             <Button
               variant="link"

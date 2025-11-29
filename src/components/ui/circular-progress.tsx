@@ -38,21 +38,32 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
           <stop offset="0%" stopColor="hsl(var(--accent))" />
           <stop offset="100%" stopColor="hsl(var(--primary))" />
         </linearGradient>
-        <circle
-          stroke={`url(#${gradientId})`}
-          strokeWidth={strokeWidth}
-          fill="transparent"
-          strokeLinecap="round"
-          r={radius}
-          cx={size / 2}
-          cy={size / 2}
-          style={{
-            strokeDasharray: circumference,
-            strokeDashoffset: offset,
-            transition: 'stroke-dashoffset 0.5s ease-in-out',
-          }}
-        />
       </defs>
+      {/* Background circle */}
+      <circle
+        stroke="hsl(var(--border))"
+        strokeWidth={strokeWidth}
+        fill="transparent"
+        r={radius}
+        cx={size / 2}
+        cy={size / 2}
+        opacity={0.2}
+      />
+      {/* Progress circle */}
+      <circle
+        stroke={`url(#${gradientId})`}
+        strokeWidth={strokeWidth}
+        fill="transparent"
+        strokeLinecap="round"
+        r={radius}
+        cx={size / 2}
+        cy={size / 2}
+        style={{
+          strokeDasharray: circumference,
+          strokeDashoffset: offset,
+          transition: 'stroke-dashoffset 0.5s ease-in-out',
+        }}
+      />
     </svg>
   );
 };

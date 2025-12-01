@@ -1,20 +1,30 @@
-# Move Feedback to Sidebar
+# Google Ads Integration Plan
 
 ## Goal Description
-Move the access point for the Feedback page from the Pomodoro Timer header to the main application Sidebar/Navigation menu, as requested by the user.
+Integrate Google Ads into the Syllabus Tracker and Mock Test Tracker sections as requested by the user. The ad script should only be present in these specific sections.
+
+## User Review Required
+> [!IMPORTANT]
+> I will be using `next/script` to load the Google Ad script. This is the recommended way to load third-party scripts in Next.js applications.
 
 ## Proposed Changes
 
 ### Components
-#### [MODIFY] [src/app/(app)/layout.tsx](file:///c:/Apps/NEETrack/NEETrack/src/app/(app)/layout.tsx)
-*   **Action**: Add "Feedback" link to `DashboardNav` (both desktop and mobile menus).
-*   **Icon**: `MessageSquare`.
-*   **Link**: `/feedback`.
 
-#### [MODIFY] [src/components/pomodoro-timer.tsx](file:///c:/Apps/NEETrack/NEETrack/src/components/pomodoro-timer.tsx)
-*   **Action**: Remove the temporary Feedback button (MessageSquare icon) from the header.
+#### [MODIFY] [syllabus-tracker.tsx](file:///c:/Apps/NEETrack/NEETrack/src/components/syllabus-tracker.tsx)
+- Import `Script` from `next/script`.
+- Add the Google Ad script using the `Script` component.
+
+#### [MODIFY] [mock-test-tracker.tsx](file:///c:/Apps/NEETrack/NEETrack/src/components/mock-test-tracker.tsx)
+- Import `Script` from `next/script`.
+- Add the Google Ad script using the `Script` component.
 
 ## Verification Plan
-1.  **Sidebar**: Verify "Feedback" appears in the main menu.
-2.  **Navigation**: Click "Feedback" in sidebar -> Go to `/feedback`.
-3.  **Cleanup**: Verify the icon is gone from the Pomodoro Timer card.
+
+### Manual Verification
+- Run the application locally using `npm run dev`.
+- Navigate to the Syllabus Tracker page.
+- Verify that the Google Ad script is loaded (check network tab or inspect elements).
+- Navigate to the Mock Test Tracker page.
+- Verify that the Google Ad script is loaded.
+- Navigate to other pages to ensure the script is NOT loaded there (if possible, though `next/script` might optimize loading).

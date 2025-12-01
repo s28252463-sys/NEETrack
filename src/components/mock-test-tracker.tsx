@@ -1,5 +1,7 @@
 'use client';
 
+import Script from 'next/script';
+
 import { useState, useMemo } from 'react';
 import {
   Card,
@@ -383,6 +385,12 @@ export default function MockTestTracker() {
           </TableBody>
         </Table>
       </CardContent>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7738925860017359"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
     </Card>
   );
 }

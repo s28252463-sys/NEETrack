@@ -85,7 +85,7 @@
     - [x] Locate and Update Sidebar Component <!-- id: 50 -->
     - [x] Remove Link from PomodoroTimer <!-- id: 51 -->
     - [x] Verify Navigation <!-- id: 52 -->
-- [ ] Publish to GitHub <!-- id: 53 -->
-    - [ ] Check Git Status and Remote <!-- id: 54 -->
-    - [ ] Commit Changes <!-- id: 55 -->
-    - [ ] Push to Remote <!-- id: 56 -->
+- [x] Publish to GitHub <!-- id: 53 -->
+    - [x] Check Git Status and Remote <!-- id: 54 -->
+    - [x] Commit Changes <!-- id: 55 -->
+    - [x] Push to Remote <!-- id: 56 -->

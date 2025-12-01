@@ -1,5 +1,7 @@
 'use client';
 
+import Script from 'next/script';
+
 import { useState, useEffect } from 'react';
 import {
   Accordion,
@@ -56,26 +58,26 @@ const initialSyllabus = [
     name: 'Chemistry',
     icon: <TestTube className="h-5 w-5" />,
     chapters: [
-        { id: 'c1', name: 'Some Basic Concepts in Chemistry', completed: false },
-        { id: 'c2', name: 'Atomic Structure', completed: false },
-        { id: 'c3', name: 'Chemical Bonding and Molecular Structure', completed: false },
-        { id: 'c4', name: 'Chemical Thermodynamics', completed: false },
-        { id: 'c5', name: 'Solutions', completed: false },
-        { id: 'c6', name: 'Equilibrium', completed: false },
-        { id: 'c7', name: 'Redox Reactions and Electrochemistry', completed: false },
-        { id: 'c8', name: 'Chemical Kinetics', completed: false },
-        { id: 'c9', name: 'Classification of Elements and Periodicity in Properties', completed: false },
-        { id: 'c10', name: 'p-Block Elements', completed: false },
-        { id: 'c11', name: 'd- and f-Block Elements', completed: false },
-        { id: 'c12', name: 'Coordination Compounds', completed: false },
-        { id: 'c13', name: 'Purification and Characterisation of Organic Compounds', completed: false },
-        { id: 'c14', name: 'Some Basic Principles of Organic Chemistry', completed: false },
-        { id: 'c15', name: 'Hydrocarbons', completed: false },
-        { id: 'c16', name: 'Organic Compounds Containing Halogens', completed: false },
-        { id: 'c17', name: 'Organic Compounds Containing Oxygen', completed: false },
-        { id: 'c18', name: 'Organic Compounds Containing Nitrogen', completed: false },
-        { id: 'c19', name: 'Biomolecules', completed: false },
-        { id: 'c20', 'name': 'Principles Related to Practical Chemistry', completed: false },
+      { id: 'c1', name: 'Some Basic Concepts in Chemistry', completed: false },
+      { id: 'c2', name: 'Atomic Structure', completed: false },
+      { id: 'c3', name: 'Chemical Bonding and Molecular Structure', completed: false },
+      { id: 'c4', name: 'Chemical Thermodynamics', completed: false },
+      { id: 'c5', name: 'Solutions', completed: false },
+      { id: 'c6', name: 'Equilibrium', completed: false },
+      { id: 'c7', name: 'Redox Reactions and Electrochemistry', completed: false },
+      { id: 'c8', name: 'Chemical Kinetics', completed: false },
+      { id: 'c9', name: 'Classification of Elements and Periodicity in Properties', completed: false },
+      { id: 'c10', name: 'p-Block Elements', completed: false },
+      { id: 'c11', name: 'd- and f-Block Elements', completed: false },
+      { id: 'c12', name: 'Coordination Compounds', completed: false },
+      { id: 'c13', name: 'Purification and Characterisation of Organic Compounds', completed: false },
+      { id: 'c14', name: 'Some Basic Principles of Organic Chemistry', completed: false },
+      { id: 'c15', name: 'Hydrocarbons', completed: false },
+      { id: 'c16', name: 'Organic Compounds Containing Halogens', completed: false },
+      { id: 'c17', name: 'Organic Compounds Containing Oxygen', completed: false },
+      { id: 'c18', name: 'Organic Compounds Containing Nitrogen', completed: false },
+      { id: 'c19', name: 'Biomolecules', completed: false },
+      { id: 'c20', 'name': 'Principles Related to Practical Chemistry', completed: false },
     ],
   },
   {
@@ -83,40 +85,40 @@ const initialSyllabus = [
     name: 'Biology',
     icon: <Target className="h-5 w-5" />,
     chapters: [
-        { id: 'b1-1', name: 'The Living World', completed: false },
-        { id: 'b1-2', name: 'Biological Classification', completed: false },
-        { id: 'b1-3', name: 'Plant Kingdom', completed: false },
-        { id: 'b1-4', name: 'Animal Kingdom', completed: false },
-        { id: 'b2-1', name: 'Morphology of Flowering Plants', completed: false },
-        { id: 'b2-2', name: 'Anatomy of Flowering Plants', completed: false },
-        { id: 'b2-3', name: 'Structural Organisation in Animals', completed: false },
-        { id: 'b3-1', name: 'Cell: The Unit of Life', completed: false },
-        { id: 'b3-2', name: 'Biomolecules', completed: false },
-        { id: 'b3-3', name: 'Cell Cycle and Cell Division', completed: false },
-        { id: 'b4-3', name: 'Photosynthesis in Higher Plants', completed: false },
-        { id: 'b4-4', name: 'Respiration in Plants', completed: false },
-        { id: 'b4-5', name: 'Plant Growth and Development', completed: false },
-        { id: 'b5-2', name: 'Breathing and Exchange of Gases', completed: false },
-        { id: 'b5-3', name: 'Body Fluids and Circulation', completed: false },
-        { id: 'b5-4', name: 'Excretory Products and their Elimination', completed: false },
-        { id: 'b5-5', name: 'Locomotion and Movement', completed: false },
-        { id: 'b5-6', name: 'Neural Control and Coordination', completed: false },
-        { id: 'b5-7', name: 'Chemical Coordination and Integration', completed: false },
-        { id: 'b6-2', name: 'Sexual Reproduction in Flowering Plants', completed: false },
-        { id: 'b6-3', name: 'Human Reproduction', completed: false },
-        { id: 'b6-4', name: 'Reproductive Health', completed: false },
-        { id: 'b7-1', name: 'Principles of Inheritance and Variation', completed: false },
-        { id: 'b7-2', name: 'Molecular Basis of Inheritance', completed: false },
-        { id: 'b7-3', name: 'Evolution', completed: false },
-        { id: 'b8-1-1', name: 'Human Health and Disease', completed: false },
-        { id: 'b8-2', name: 'Strategies for Enhancement in Food Production', completed: false },
-        { id: 'b8-3', 'name': 'Microbes in Human Welfare', completed: false },
-        { id: 'b9-1', name: 'Biotechnology: Principles and Processes', completed: false },
-        { id: 'b9-2', name: 'Biotechnology and its Applications', completed: false },
-        { id: 'b10-1', name: 'Organisms and Populations', completed: false },
-        { id: 'b10-2', name: 'Ecosystem', completed: false },
-        { id: 'b10-3', name: 'Biodiversity and its Conservation', completed: false },
-        { id: 'b10-4', name: 'Environmental Issues', completed: false },
+      { id: 'b1-1', name: 'The Living World', completed: false },
+      { id: 'b1-2', name: 'Biological Classification', completed: false },
+      { id: 'b1-3', name: 'Plant Kingdom', completed: false },
+      { id: 'b1-4', name: 'Animal Kingdom', completed: false },
+      { id: 'b2-1', name: 'Morphology of Flowering Plants', completed: false },
+      { id: 'b2-2', name: 'Anatomy of Flowering Plants', completed: false },
+      { id: 'b2-3', name: 'Structural Organisation in Animals', completed: false },
+      { id: 'b3-1', name: 'Cell: The Unit of Life', completed: false },
+      { id: 'b3-2', name: 'Biomolecules', completed: false },
+      { id: 'b3-3', name: 'Cell Cycle and Cell Division', completed: false },
+      { id: 'b4-3', name: 'Photosynthesis in Higher Plants', completed: false },
+      { id: 'b4-4', name: 'Respiration in Plants', completed: false },
+      { id: 'b4-5', name: 'Plant Growth and Development', completed: false },
+      { id: 'b5-2', name: 'Breathing and Exchange of Gases', completed: false },
+      { id: 'b5-3', name: 'Body Fluids and Circulation', completed: false },
+      { id: 'b5-4', name: 'Excretory Products and their Elimination', completed: false },
+      { id: 'b5-5', name: 'Locomotion and Movement', completed: false },
+      { id: 'b5-6', name: 'Neural Control and Coordination', completed: false },
+      { id: 'b5-7', name: 'Chemical Coordination and Integration', completed: false },
+      { id: 'b6-2', name: 'Sexual Reproduction in Flowering Plants', completed: false },
+      { id: 'b6-3', name: 'Human Reproduction', completed: false },
+      { id: 'b6-4', name: 'Reproductive Health', completed: false },
+      { id: 'b7-1', name: 'Principles of Inheritance and Variation', completed: false },
+      { id: 'b7-2', name: 'Molecular Basis of Inheritance', completed: false },
+      { id: 'b7-3', name: 'Evolution', completed: false },
+      { id: 'b8-1-1', name: 'Human Health and Disease', completed: false },
+      { id: 'b8-2', name: 'Strategies for Enhancement in Food Production', completed: false },
+      { id: 'b8-3', 'name': 'Microbes in Human Welfare', completed: false },
+      { id: 'b9-1', name: 'Biotechnology: Principles and Processes', completed: false },
+      { id: 'b9-2', name: 'Biotechnology and its Applications', completed: false },
+      { id: 'b10-1', name: 'Organisms and Populations', completed: false },
+      { id: 'b10-2', name: 'Ecosystem', completed: false },
+      { id: 'b10-3', name: 'Biodiversity and its Conservation', completed: false },
+      { id: 'b10-4', name: 'Environmental Issues', completed: false },
     ],
   },
 ];
@@ -152,7 +154,7 @@ const SyllabusTracker = () => {
     () => (user ? collection(firestore, 'users', user.uid, 'chapterCompletions') : null),
     [firestore, user]
   );
-  
+
   const { data: chapterCompletions, isLoading: isLoadingCompletions } = useCollection<UserChapterCompletion>(chapterCompletionsQuery);
 
   useEffect(() => {
@@ -165,7 +167,7 @@ const SyllabusTracker = () => {
           }
         });
       }
-      
+
       const updatedSyllabus = initialSyllabus.map(subject => ({
         ...subject,
         chapters: subject.chapters.map(chapter => ({
@@ -206,7 +208,7 @@ const SyllabusTracker = () => {
     };
     setDocumentNonBlocking(completionRef, data, { merge: true });
   };
-  
+
   const getSubjectProgress = (chapters: Chapter[]) => {
     if (chapters.length === 0) return 0;
     const completedChapters = chapters.filter(chap => chap.completed).length;
@@ -219,15 +221,15 @@ const SyllabusTracker = () => {
     const completedChapters = allChapters.filter(c => c.completed).length;
     return (completedChapters / allChapters.length) * 100;
   }
-  
+
   const isLoading = isUserLoading || isLoadingCompletions;
-  
-  if(isLoading) {
+
+  if (isLoading) {
     return (
       <Card className="w-full max-w-4xl bg-card border-border shadow-2xl shadow-black/50">
         <CardHeader>
           <Skeleton className="h-8 w-1/2" />
-          <Skeleton className="h-4 w-1/4 mt-2"/>
+          <Skeleton className="h-4 w-1/4 mt-2" />
         </CardHeader>
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-8">
@@ -321,8 +323,15 @@ const SyllabusTracker = () => {
             </Accordion>
           </div>
         </div>
+
       </CardContent>
-    </Card>
+      <Script
+        async
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7738925860017359"
+        crossOrigin="anonymous"
+        strategy="afterInteractive"
+      />
+    </Card >
   );
 };
 

@@ -17,17 +17,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="theme-neon-glass dark" suppressHydrationWarning>
+      <head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7738925860017359"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body suppressHydrationWarning>
         <FirebaseClientProvider>
           {children}
         </FirebaseClientProvider>
         <Toaster />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7738925860017359"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );

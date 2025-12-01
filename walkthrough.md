@@ -21,7 +21,11 @@ Verify that the Google Ad script is correctly injected into the Syllabus Tracker
 - [x] Homepage Script Present
 - [x] Syllabus Tracker Script Present
 
-## Verification Recording (Global)
-![Verification Recording Global](file:///C:/Users/barma/.gemini/antigravity/brain/52e6eec5-08e4-4f8d-9807-6efe198969bf/verify_global_ads_1764598011303.webp)
+## Native Script Tag Verification
+- [x] Homepage Head Script Present (Native Tag)
+
+## Verification Recording (Native Script)
+![Verification Recording Native](file:///C:/Users/barma/.gemini/antigravity/brain/52e6eec5-08e4-4f8d-9807-6efe198969bf/verify_native_script_in_head_1764598951564.webp)
+
 
 

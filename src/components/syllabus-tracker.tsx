@@ -1,7 +1,5 @@
 'use client';
 
-import Script from 'next/script';
-
 import { useState, useEffect } from 'react';
 import {
   Accordion,
@@ -325,12 +323,6 @@ const SyllabusTracker = () => {
         </div>
 
       </CardContent>
-      <Script
-        async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7738925860017359"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
     </Card >
   );
 };

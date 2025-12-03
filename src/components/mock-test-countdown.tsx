@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarIcon, Settings } from 'lucide-react';
 import {
@@ -15,33 +15,98 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { CircularProgress } from '@/components/ui/circular-progress';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+
+type MockTest = {
+  id: string;
+  testName: string;
+  examDate: {
+    toDate: () => Date;
+  } | Date;
+};
 
 const MockTestCountdown = () => {
+  const { user } = useUser();
+  const firestore = useFirestore();
   const [targetDate, setTargetDate] = useState<Date | null>(null);
+  const [testName, setTestName] = useState<string>('');
   const [daysLeft, setDaysLeft] = useState<number | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [progress, setProgress] = useState(100);
   const [totalDays, setTotalDays] = useState<number>(30); // Default 30 days
 
-  // Load the saved date from localStorage on initial client render
+  // Fetch mock tests from Firestore
+  const mockTestsQuery = useMemoFirebase(
+    () => (user ? collection(firestore, 'users', user.uid, 'mockTests') : null),
+    [firestore, user]
+  );
+  const { data: mockTests } = useCollection<MockTest>(mockTestsQuery);
+
+  // Find the next upcoming exam
+  const nextExam = useMemo(() => {
+    if (!mockTests || mockTests.length === 0) return null;
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    const upcomingTests = mockTests
+      .map(test => {
+        const examDate = test.examDate instanceof Date
+          ? test.examDate
+          : test.examDate?.toDate?.();
+        return { ...test, examDateObj: examDate };
+      })
+      .filter(test => {
+        if (!test.examDateObj) return false;
+        const testDate = new Date(
+          test.examDateObj.getFullYear(),
+          test.examDateObj.getMonth(),
+          test.examDateObj.getDate()
+        );
+        return testDate >= today;
+      })
+      .sort((a, b) => {
+        const dateA = a.examDateObj!.getTime();
+        const dateB = b.examDateObj!.getTime();
+        return dateA - dateB;
+      });
+
+    return upcomingTests.length > 0 ? upcomingTests[0] : null;
+  }, [mockTests]);
+
+  // Update target date when next exam changes
   useEffect(() => {
-    const savedDate = localStorage.getItem('mockTestTargetDate');
-    const savedStartDate = localStorage.getItem('mockTestStartDate');
+    if (nextExam && nextExam.examDateObj) {
+      setTargetDate(nextExam.examDateObj);
+      setTestName(nextExam.testName);
+      setSelectedDate(nextExam.examDateObj);
 
-    if (savedDate) {
-      const date = new Date(savedDate);
-      setTargetDate(date);
-      setSelectedDate(date);
+      // Calculate total days from today
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const total = Math.ceil((nextExam.examDateObj.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      setTotalDays(total > 0 ? total : 30);
+    } else {
+      // Fall back to localStorage if no upcoming exams
+      const savedDate = localStorage.getItem('mockTestTargetDate');
+      const savedStartDate = localStorage.getItem('mockTestStartDate');
 
-      // Calculate total days from start date if available
-      if (savedStartDate) {
-        const start = new Date(savedStartDate);
-        const total = Math.ceil((date.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-        setTotalDays(total > 0 ? total : 30);
+      if (savedDate) {
+        const date = new Date(savedDate);
+        setTargetDate(date);
+        setSelectedDate(date);
+        setTestName('Manual Override');
+
+        if (savedStartDate) {
+          const start = new Date(savedStartDate);
+          const total = Math.ceil((date.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+          setTotalDays(total > 0 ? total : 30);
+        }
       }
     }
-  }, []);
+  }, [nextExam]);
 
   // Recalculate days left whenever the target date changes
   useEffect(() => {
@@ -92,6 +157,7 @@ const MockTestCountdown = () => {
       setTotalDays(total > 0 ? total : 30);
 
       setTargetDate(selectedDate);
+      setTestName('Manual Override');
       localStorage.setItem('mockTestTargetDate', selectedDate.toISOString());
       localStorage.setItem('mockTestStartDate', today.toISOString());
       setIsDialogOpen(false);
@@ -112,11 +178,11 @@ const MockTestCountdown = () => {
               <Settings className="h-5 w-5" />
             </Button>
           </DialogTrigger>
-          <DialogContent aria-describedby="set-date-desc" aria-labelledby="set-date-title">
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle id="set-date-title">Set Mock Test Date</DialogTitle>
-              <DialogDescription id="set-date-desc">
-                Select the date of your next mock test to start the countdown.
+              <DialogTitle>Set Mock Test Date</DialogTitle>
+              <DialogDescription>
+                Select a date to manually override the countdown. The countdown will automatically use the next exam from your logged tests.
               </DialogDescription>
             </DialogHeader>
             <div className="flex justify-center">
@@ -146,7 +212,7 @@ const MockTestCountdown = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center h-48">
-            <p className="text-muted-foreground">No date set.</p>
+            <p className="text-muted-foreground">No upcoming exams.</p>
             <Button
               variant="link"
               className="text-primary"
@@ -157,12 +223,18 @@ const MockTestCountdown = () => {
           </div>
         )}
       </div>
-      <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
-        <CalendarIcon className="h-4 w-4" />
-        <span>{targetDate ? format(targetDate, 'PPP') : 'Not Set'}</span>
+      <div className="flex flex-col items-center gap-1">
+        {testName && (
+          <p className="text-xs text-muted-foreground font-medium">{testName}</p>
+        )}
+        <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground">
+          <CalendarIcon className="h-4 w-4" />
+          <span>{targetDate ? format(targetDate, 'PPP') : 'Not Set'}</span>
+        </div>
       </div>
     </div>
   );
 };
 
 export default MockTestCountdown;
+
